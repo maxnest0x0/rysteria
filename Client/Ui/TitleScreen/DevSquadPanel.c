@@ -27,7 +27,7 @@
 #include <Shared/Utilities.h>
 #include <Shared/pb.h>
 
-static uint8_t dev_squad_panel_container_should_show(struct rr_ui_element *this,
+/*static uint8_t dev_squad_panel_container_should_show(struct rr_ui_element *this,
                                                      struct rr_game *game)
 {
     return game->is_dev && game->menu_open == rr_game_menu_dev_squad_panel;
@@ -198,3 +198,4 @@ struct rr_ui_element *rr_ui_dev_panel_container_init(struct rr_game *game)
     this->should_show = dev_squad_panel_container_should_show;
     return this;
 }
+*/
