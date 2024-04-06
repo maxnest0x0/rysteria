@@ -122,7 +122,7 @@ struct rr_ui_element *rr_ui_petal_tooltip_init(uint8_t id, uint8_t rarity)
     else if (id == rr_petal_id_light)
     {
         char *extra = malloc((sizeof *extra) * 16);
-        sprintf(extra, "%.1f rad/s", (0.012 + 0.008 * rarity) * 25);
+        sprintf(extra, "%.1f rad/s", (0.012 + 0.019 * rarity) * 25);
         rr_ui_container_add_element(
             this, rr_ui_set_justify(
                       rr_ui_h_container_init(
