@@ -302,22 +302,32 @@ static void mob_toggle_toggle_on_render(struct rr_ui_element *this,
     rr_renderer_fill(renderer);
 }
 
+#include <SDL2/SDL.h> 
 void mob_toggle_toggle_button_on_event(struct rr_ui_element *this,
                                        struct rr_game *game)
 {
-    if (game->input_data->mouse_buttons_up_this_tick & 1)
-    {
-        if (game->pressed != this)
-            return;
-        if (game->menu_open == rr_game_menu_gallery)
-            game->menu_open = rr_game_menu_none;
-        else
-            game->menu_open = rr_game_menu_gallery;
-    }
-    else
-        rr_ui_render_tooltip_right(this, game->gallery_tooltip, game);
-}
+    SDL_Event event; 
 
+    while (SDL_PollEvent(&event)) 
+    {
+        switch (event.type)
+        {
+            case SDL_KEYDOWN:
+                if (event.key.keysym.sym == SDLK_v) // V key pressed
+                {
+                    if (game->menu_open == rr_game_menu_gallery)
+                        game->menu_open = rr_game_menu_none;
+                    else
+                        game->menu_open = rr_game_menu_gallery;
+                }
+                break;
+            default:
+                break;
+        }
+    }
+
+    rr_ui_render_tooltip_right(this, game->gallery_tooltip, game);
+}
 struct rr_ui_element *rr_ui_mob_gallery_toggle_button_init()
 {
     struct rr_ui_element *this = rr_ui_element_init();
