@@ -281,6 +281,7 @@ static void despawn_mob(EntityIdx entity, void *_simulation)
     if (rr_simulation_has_arena(this, entity))
         return;
     struct rr_component_arena *arena = rr_simulation_get_arena(this, 1);
+    struct rr_component_mob *mob = rr_simulation_get_mob(this, entity);
     if (rr_component_arena_get_grid(
             arena,
             rr_fclamp(physical->x / arena->maze->grid_size, 0,
