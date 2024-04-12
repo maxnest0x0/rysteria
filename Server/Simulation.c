@@ -297,7 +297,15 @@ static void despawn_mob(EntityIdx entity, void *_simulation)
         }
     }
     else
-        rr_simulation_get_mob(this, entity)->ticks_to_despawn = 30 * 25;
+        mob->ticks_to_despawn = 30 * 25;
+    if (mob->force_despawn)
+    {
+        if (--mob->ticks_to_force_despawn == 0)
+        {
+            mob->no_drop = 1;
+            rr_simulation_request_entity_deletion(this, entity);
+        }
+    }
 }
 
 static float get_max_points(struct rr_maze_grid *grid)
