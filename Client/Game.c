@@ -501,6 +501,10 @@ void rr_game_init(struct rr_game *this)
         this->window,
         make_label_tooltip("Account")
     );
+    this->squads_tooltip = rr_ui_container_add_element(
+        this->window,
+        make_label_tooltip("Squads")
+    );
 
     this->discord_tooltip = rr_ui_container_add_element(
         this->window,
