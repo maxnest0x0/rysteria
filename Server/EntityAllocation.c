@@ -223,7 +223,7 @@ EntityIdx rr_simulation_alloc_mob(struct rr_simulation *this,
                 mob->ticks_to_force_despawn = (8 + 2 * rr_frand()) * 60 * 25;
             }
             break;
-    }  
+    }
     struct rr_mob_rarity_scale const *rarity_scale =
         RR_MOB_RARITY_SCALING + rarity_id;
     struct rr_mob_data const *mob_data = RR_MOB_DATA + mob_id;

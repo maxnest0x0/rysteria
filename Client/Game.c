@@ -506,6 +506,11 @@ void rr_game_init(struct rr_game *this)
         make_label_tooltip("Squads")
     );
 
+    this->squads_tooltip = rr_ui_container_add_element(
+        this->window,
+        make_label_tooltip("Squads")
+    );
+
     this->discord_tooltip = rr_ui_container_add_element(
         this->window,
         make_label_tooltip("Join Our Discord!")
@@ -1311,7 +1316,7 @@ void rr_game_connect_socket(struct rr_game *this)
 #else
     rr_websocket_init(&this->socket);
     this->socket.user_data = this;
-    rr_websocket_connect_to(&this->socket, "wss://1234-maxnest0x0-rysteria-jzvfi98nq26.ws-eu110.gitpod.io/");
+    rr_websocket_connect_to(&this->socket, "wss://1234-maxnest0x0-rysteria-vel0gxgut59.ws-eu110.gitpod.io/");
     // rr_websocket_connect_to(&this->socket, "45.79.197.197", 1234, 0);
 #endif
 }
