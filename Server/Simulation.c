@@ -290,7 +290,6 @@ static void despawn_mob(EntityIdx entity, void *_simulation)
                       arena->maze->maze_dim - 1))
             ->player_count == 0)
     {
-        struct rr_component_mob *mob = rr_simulation_get_mob(this, entity);
         if (--mob->ticks_to_despawn == 0)
         {
             mob->no_drop = 1;
