@@ -175,14 +175,14 @@ double RR_HELL_CREEK_MOB_ID_RARITY_COEFFICIENTS[rr_mob_id_max] = {
 double RR_GARDEN_MOB_ID_RARITY_COEFFICIENTS[rr_mob_id_max] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 10};
 
 struct rr_petal_rarity_scale RR_PETAL_RARITY_SCALE[rr_rarity_id_max] = {
-    {1.0, 240, 45},
-    {1.8, 120, 60},
-    {3.5, 60,  75},
-    {6.8, 30,  100},
-    {12.5,15,  125},
-    {24.5,7.5, 150},
-    {60.0,2.5, 200},
-    {180, 0.5, 250}
+   {1.0, 240, 45, 10},
+    {1.8, 120, 60, 20},
+    {3.5, 60,  75, 30},
+    {6.8, 30,  100,50},
+    {12.5,15,  125,80},
+    {24.5,7.5, 150,140},
+    {60.0,2.5, 200,240},
+    {180, 0.5, 250,410}
 };
 
 struct rr_mob_rarity_scale RR_MOB_RARITY_SCALING[rr_rarity_id_max] = {
