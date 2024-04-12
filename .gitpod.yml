@@ -53,7 +53,7 @@ ports:
     name: Master Server
     onOpen: ignore
 
-  - port: 1234
+  - port: 2053
     name: Game Server
     onOpen: ignore
     visibility: public

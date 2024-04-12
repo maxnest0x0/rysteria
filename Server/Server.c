@@ -1101,7 +1101,7 @@ void rr_server_run(struct rr_server *this)
                                       MESSAGE_BUFFER_SIZE, 0, NULL, 0},
                                      {0}};
 
-        info.port = 1234;
+        info.port = 2053;
         info.user = this;
         info.pt_serv_buf_size = MESSAGE_BUFFER_SIZE;
 
