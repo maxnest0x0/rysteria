@@ -109,8 +109,9 @@ enum rr_petal_id
     rr_petal_id_wax,       // 25
     rr_petal_id_sand,      // 26
     rr_petal_id_mint,      // 27
+    rr_petal_id_wing,        //28
 
-    rr_petal_id_max,       // 28
+    rr_petal_id_max,       // 29
 };
 
 enum rr_mob_id
@@ -136,6 +137,7 @@ enum rr_mob_id
     rr_mob_id_spider,             // 17
     rr_mob_id_house_centipede,    // 18
     rr_mob_id_lanternfly,         // 19
+    rr_mob_id_pect,                //20
 
     rr_mob_id_max,                // 20
 };
