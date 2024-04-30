@@ -129,12 +129,18 @@ static void set_spawn_zones()
         struct zone zone = perma_zone_positions[i];
         set_special_zone(rr_biome_id_hell_creek, zone.spawn_func, zone.x, zone.y,
                          zone.w, zone.h);
+        struct zone zone = perma_zone_positions[i];
+        set_special_zone(rr_biome_id_garden, zone.spawn_func, zone.x, zone.y
+                          zone.w, zone.h);
     }
 
     for (uint64_t i = 0; i < ZONE_POSITION_COUNT; i++)
     {
         struct zone zone = zone_positions[i];
         set_special_zone(rr_biome_id_hell_creek, NULL, zone.x, zone.y, zone.w,
+                         zone.h);
+        struct zone zone = perma_zone_positions[i];
+        set_special_zone(rr_biome_id_garden, zone.spawn_func, zone.x, zone.y, zone.w, 
                          zone.h);
     }
 
