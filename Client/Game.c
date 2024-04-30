@@ -263,6 +263,7 @@ void rr_game_init(struct rr_game *this)
             -1, -1),
         ui_not_hidden)
     );
+    
 
     rr_ui_container_add_element(
         this->window,
@@ -280,6 +281,10 @@ void rr_game_init(struct rr_game *this)
         ui_not_hidden_and_simulation_ready
         )
     );
+                            rr_ui_h_container_init(rr_ui_container_init(), 0, 10,
+                            rr_ui_biome_button_init("Hell Creek", 0xffff0000, 0),
+                            NULL
+                        ),    
     rr_ui_container_add_element(this->window, rr_ui_pad(
         rr_ui_v_pad(
             rr_ui_set_justify(
