@@ -243,6 +243,7 @@ struct rr_maze_declaration
 
 // RR_DECLARE_MAZE(HELL_CREEK, 54)
 RR_DECLARE_MAZE(HELL_CREEK, 80)
+RR_DECLARE_MAZE(GARDEN, 80)
 RR_DECLARE_MAZE(BURROW, 4)
 
 extern struct rr_maze_declaration RR_MAZES[rr_biome_id_max];
