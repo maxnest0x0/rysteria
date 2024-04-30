@@ -73,13 +73,14 @@ struct rr_petal_data RR_PETAL_DATA[rr_petal_id_max] = {
     {rr_petal_id_wax,       rr_rarity_id_unusual,   offensive, 10.0f,  10.0f,  10.0f,  38,  0, {2,2,2,2,2,2,2,2}},
     {rr_petal_id_sand,      rr_rarity_id_common,    offensive, 15.0f,  10.0f,  10.0f,  37,  0, {4,4,4,4,4,4,4,4}},
     {rr_petal_id_mint,      rr_rarity_id_unusual,   offensive,  5.0f,  10.0f,  10.0f,  50, 25, {1,1,1,1,1,1,1,1}},
+    {rr_petal_id_wing,      rr_rarity_id_common,    offensive,  8.0f,  10.0f,  10.0f,  55, 15, {1,1,1,1,1,1,2,2}},
 };    
 
 char const *RR_PETAL_NAMES[rr_petal_id_max] = {
-    "Secret", "Petal",     "Pellet",    "Fossil",   "Stinger", "Berry",   "Shell",
+    "Secret", "Basic",     "Pellet",    "Fossil",   "Stinger", "Berry",   "Shell",
     "Peas",   "Leaf",      "Egg",       "Magnet",   "Uranium", "Feather", "Azalea",
     "Bone",   "Web",       "Seed",      "Gravel",   "Club",    "Crest",   "Droplet",
-    "Beak",   "Lightning", "Third Eye", "Mandible", "Wax",     "Sand",    "Mint",
+    "Beak",   "Lightning", "Third Eye", "Mandible", "Wax",     "Sand",    "Mint",   "Wing",
 };
     
 char const *RR_PETAL_DESCRIPTIONS[rr_petal_id_max] = {
@@ -111,6 +112,7 @@ char const *RR_PETAL_DESCRIPTIONS[rr_petal_id_max] = {
     "Made by the bees",
     "Very fine",
     "Remember to feed your pets"
+    "It comes and goes"
 };
 
 struct rr_mob_data RR_MOB_DATA[rr_mob_id_max] = {
@@ -119,7 +121,7 @@ struct rr_mob_data RR_MOB_DATA[rr_mob_id_max] = {
     {rr_mob_id_trex,               rr_rarity_id_common, rr_rarity_id_ultimate,  40, 25, 32.0f, {{rr_petal_id_stinger, 0.05},{rr_petal_id_egg,       0.05}}},
     {rr_mob_id_fern,               rr_rarity_id_common, rr_rarity_id_ultimate,  10,  5, 24.0f, {{rr_petal_id_leaf,     0.1},{rr_petal_id_azalea,    0.25}}},
     {rr_mob_id_tree,               rr_rarity_id_common, rr_rarity_id_ultimate, 100,  5, 64.0f, {{rr_petal_id_leaf,     0.5},{rr_petal_id_peas,      0.25},{rr_petal_id_seed,       0.05}}},
-    {rr_mob_id_pteranodon,         rr_rarity_id_common, rr_rarity_id_ultimate,  40, 15, 20.0f, {{rr_petal_id_shell,  0.025},{rr_petal_id_beak,      0.15}}},
+    {rr_mob_id_pteranodon,         rr_rarity_id_common, rr_rarity_id_ultimate,  40, 15, 20.0f, {{rr_petal_id_shell,  0.025},{rr_petal_id_beak,      0.15},{rr_petal_id_wing,        .1}}},
     {rr_mob_id_dakotaraptor,       rr_rarity_id_common, rr_rarity_id_ultimate,  35, 10, 25.0f, {{rr_petal_id_crest,    0.1},{rr_petal_id_feather,    0.1},{rr_petal_id_pellet,    0.05}}},
     {rr_mob_id_pachycephalosaurus, rr_rarity_id_common, rr_rarity_id_ultimate,  35, 20, 20.0f, {{rr_petal_id_fossil,   0.1},{rr_petal_id_berry,      0.1},{rr_petal_id_web,       0.05}}},
     {rr_mob_id_ornithomimus,       rr_rarity_id_common, rr_rarity_id_ultimate,  25, 10, 20.0f, {{rr_petal_id_feather,  0.1},{rr_petal_id_droplet,   0.05},{rr_petal_id_pellet,     0.1}}},
@@ -160,6 +162,20 @@ uint32_t RR_MOB_DIFFICULTY_COEFFICIENTS[rr_mob_id_max] = {
 };
 
 double RR_HELL_CREEK_MOB_ID_RARITY_COEFFICIENTS[rr_mob_id_max] = {
+    50,   //tric
+    100,  //trex
+    15,   //fern
+    0.25, //tree
+    75,   //pter
+    50,   //dako
+    25,   //pachy
+    40,   //ornith
+    25,   //anky
+    0.5,  //meteor
+    75,   //quetz
+    25,   //edmo
+};
+double RR_GARDEN_MOB_ID_RARITY_COEFFICIENTS[rr_mob_id_max] = {
     50,   //tric
     100,  //trex
     15,   //fern
@@ -440,6 +456,7 @@ void rr_static_data_init()
         RR_CRAFT_CHANCES[r] = get_prd_base(RR_BASE_CRAFT_CHANCES[r]);
     init_game_coefficients();
     init(HELL_CREEK);
+    init(GARDEN);
     init(BURROW);
 #ifdef RR_SERVER
     print_chances(52);
@@ -550,6 +567,49 @@ RR_DEFINE_MAZE(HELL_CREEK, 80) = {
 {_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_},//39
 };
 // clang-format on
+RR_DEFINE_MAZE(GARDEN, 80) = {
+// 1 2 3 4 5 6 7 8 9 101112131415161718192021222324252627282930313233343536373839
+{_,_,_,_,_,x,x,x,x,_,_,_,_,_,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,X,_,_,_,_,_},//0
+{_,M,M,_,_,_,_,x,x,x,x,M,M,M,x,_,_,_,_,_,x,_,_,_,_,_,_,_,_,x,_,_,x,X,X,X,X,_,_,_},//1
+{m,m,M,M,_,_,_,_,_,_,_,_,M,_,_,_,_,X,X,_,x,x,x,_,x,x,x,x,x,x,_,_,_,_,X,X,X,X,_,_},//2
+{m,m,m,M,M,M,M,M,M,M,M,M,M,_,_,X,X,X,x,x,x,_,x,x,x,_,_,x,x,x,x,x,_,X,X,X,X,X,_,_},//3
+{m,m,m,_,_,_,_,_,_,_,_,_,_,_,X,X,X,X,X,_,x,_,_,x,x,_,_,_,_,x,x,_,_,X,X,X,X,X,X,_},//4
+{m,m,_,_,_,_,_,U,U,U,_,_,_,_,_,X,X,X,_,_,x,_,_,_,x,_,x,x,_,_,x,_,_,_,X,X,X,_,_,_},//5
+{m,m,_,_,_,U,U,U,u,U,U,U,U,_,_,_,X,X,_,_,_,_,_,_,x,x,x,x,_,_,x,_,x,_,_,X,_,_,_,_},//6
+{m,_,_,_,U,U,U,u,u,u,_,_,r,_,_,_,_,X,X,_,_,_,_,_,x,_,x,x,x,_,x,_,x,M,_,_,_,_,_,_},//7
+{m,_,_,U,U,U,u,u,u,u,_,r,r,e,R,_,_,X,X,X,_,_,_,x,x,_,x,x,X,_,M,_,M,M,M,M,_,_,_,_},//8
+{m,_,R,r,U,_,u,u,u,_,_,r,_,_,R,_,X,X,X,X,X,X,_,_,x,_,_,X,X,_,M,_,_,M,M,M,M,_,_,_},//9
+{m,_,R,R,_,_,_,_,C,_,R,R,_,R,R,_,X,X,_,_,_,X,_,_,x,x,_,_,_,_,M,_,_,_,M,M,M,M,_,_},//10
+{m,_,_,_,_,_,_,_,C,_,_,_,_,u,_,_,X,X,_,X,X,X,_,_,x,x,x,_,_,M,M,_,_,_,_,_,_,M,_,_},//11
+{m,_,_,_,_,c,c,c,C,C,C,u,u,u,_,_,X,X,_,_,_,X,_,_,_,x,M,M,M,M,M,_,_,M,M,_,M,M,_,_},//12
+{m,_,_,_,_,c,c,c,_,_,u,u,u,_,_,_,X,X,_,_,_,X,_,_,_,x,x,_,_,_,M,M,M,M,M,M,M,_,_,_},//13
+{m,_,_,_,_,c,c,c,_,u,u,u,u,U,_,_,X,X,X,X,X,X,_,_,_,_,_,_,_,_,_,M,M,M,M,M,M,_,_,_},//14
+{m,_,_,_,_,_,_,C,_,u,u,u,U,U,_,_,_,_,X,X,X,_,_,_,_,_,_,M,M,M,_,_,_,M,_,M,m,_,_,_},//15
+{m,m,m,m,m,m,_,C,_,_,u,U,U,U,_,r,r,_,_,_,_,_,e,e,e,_,_,_,M,M,M,M,_,M,_,_,m,m,_,_},//16
+{L,_,_,_,_,m,_,C,u,_,_,_,_,U,r,r,r,R,e,e,e,e,R,_,e,e,e,_,M,M,M,M,M,M,m,_,m,m,m,_},//17
+{L,L,_,m,m,m,_,_,u,u,u,U,_,_,_,_,_,_,e,e,_,_,e,_,_,_,E,_,_,M,M,M,_,_,m,m,m,m,m,_},//18
+{_,L,_,_,L,m,_,u,u,_,_,U,U,U,r,_,R,R,R,R,_,_,e,e,_,_,E,_,_,_,M,M,M,_,_,m,m,m,m,_},//19
+{_,L,L,L,L,_,_,U,u,_,_,U,U,r,r,r,r,R,R,R,_,_,_,e,e,e,E,E,_,_,_,_,_,_,_,_,_,_,m,_},//20
+{L,L,_,_,_,_,_,U,U,U,_,U,r,_,r,r,_,_,R,R,R,_,_,_,_,_,E,E,E,E,E,_,_,_,_,l,_,_,m,_},//21
+{L,_,_,_,_,_,_,_,U,U,_,r,_,_,r,R,R,_,_,R,e,e,e,_,_,_,E,E,_,E,E,E,_,_,l,l,l,_,m,_},//22
+{L,_,_,_,L,L,L,_,_,U,_,r,_,_,R,R,R,_,_,e,_,E,E,E,_,_,E,_,_,_,_,E,_,l,l,l,l,_,m,_},//23
+{L,_,_,L,L,L,L,L,_,_,_,r,_,_,_,R,R,_,e,e,_,E,E,E,_,E,E,_,l,_,_,l,l,l,l,l,_,_,m,_},//24
+{L,_,L,L,L,L,L,L,_,_,_,r,_,_,_,R,R,_,e,e,_,e,e,_,_,E,_,_,l,l,_,l,_,_,_,_,_,_,m,_},//25
+{L,L,L,L,L,L,L,L,_,_,_,R,R,R,_,_,e,_,e,e,_,_,E,_,_,E,_,_,l,l,_,l,l,_,_,_,_,m,m,_},//26
+{L,_,L,L,L,L,L,_,_,_,R,R,R,R,R,_,e,_,_,e,e,E,E,_,_,E,_,_,l,l,l,l,l,l,_,_,m,m,m,_},//27
+{L,_,_,L,l,L,_,_,_,_,R,R,R,R,e,_,e,_,_,e,E,E,E,_,_,l,_,_,_,_,_,l,l,l,_,_,m,L,_,_},//28
+{L,_,_,_,l,_,_,_,_,_,R,e,e,E,e,_,e,e,_,_,E,E,E,_,_,l,l,l,l,_,_,_,l,l,_,_,L,L,_,_},//29
+{L,L,_,_,l,_,_,_,_,_,e,e,E,E,e,_,e,e,_,_,_,E,E,_,_,_,l,l,l,l,l,l,l,l,_,L,L,L,_,_},//30
+{L,L,_,_,l,l,_,_,_,_,_,e,e,e,_,_,e,E,E,E,_,_,E,E,_,_,l,l,l,l,_,_,_,_,_,_,_,L,_,_},//31
+{L,L,_,_,l,l,l,l,_,_,_,_,_,_,_,_,E,E,E,E,E,E,E,E,_,_,l,l,l,l,_,_,m,L,L,L,L,L,_,_},//32
+{_,L,L,_,_,l,l,l,l,l,l,_,_,_,_,_,E,E,E,E,_,_,E,E,_,_,l,l,l,_,_,_,m,_,_,_,_,L,_,_},//33
+{_,L,L,_,_,_,_,l,l,l,E,E,E,E,E,E,E,E,E,E,E,_,E,l,_,_,l,l,_,_,M,m,m,_,x,x,_,L,_,_},//34
+{_,L,L,m,m,_,_,_,_,l,l,E,E,E,_,_,_,_,_,_,E,E,l,l,l,_,l,l,L,L,m,_,m,_,_,M,_,L,_,_},//35
+{_,L,m,m,m,m,m,_,_,_,_,_,_,_,_,_,_,_,_,_,E,l,l,l,l,l,l,l,L,L,m,m,m,m,M,M,_,L,_,_},//36
+{_,_,m,m,m,m,m,m,_,_,_,_,_,_,_,_,M,M,_,_,_,l,l,l,_,l,l,l,l,L,_,_,_,_,_,_,_,L,_,_},//37
+{_,_,_,m,m,m,m,m,m,m,m,m,m,m,m,m,M,M,_,_,_,_,_,_,_,l,l,l,l,l,l,L,L,L,L,L,L,L,_,_},//38
+{_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_},//39
+};
 RR_DEFINE_MAZE(BURROW, 4) = {{1, 1}, {0, 1}};
 
 #define MAZE_ENTRY(MAZE, GRID_SIZE)                                            \
@@ -559,10 +619,26 @@ RR_DEFINE_MAZE(BURROW, 4) = {{1, 1}, {0, 1}};
 struct rr_maze_declaration RR_MAZES[rr_biome_id_max] = {
     {MAZE_ENTRY(HELL_CREEK, 1024), {{6, 13}, {11, 15}, {16, 17}, {22, 23}}},
     {MAZE_ENTRY(HELL_CREEK, 1024), {{6, 13}, {11, 15}, {16, 17}, {22, 23}}},
+    {MAZE_ENTRY(GARDEN, 1024), {{6, 13}, {11, 15}, {16, 17}, {22, 23}}},
+    {MAZE_ENTRY(GARDEN, 1024), {{6, 13}, {11, 15}, {16, 17}, {22, 23}}},
     {MAZE_ENTRY(BURROW, 512), {{0}, {0}, {0}, {0}}},
 };
 
 uint8_t RR_GLOBAL_BIOME = rr_biome_id_hell_creek;
+#undef c
+#undef C
+#undef u
+#undef U
+#undef r
+#undef R
+#undef e
+#undef E
+#undef l
+#undef L
+#undef m
+#undef M
+#undef x
+uint8_t RR_GLOBAL_BIOME = rr_biome_id_garden;
 #undef c
 #undef C
 #undef u
