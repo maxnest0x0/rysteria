@@ -73,6 +73,7 @@ static void system_for_each(EntityIdx entity, void *simulation)
     {
     case rr_mob_id_fern:
     case rr_mob_id_tree:
+    case rr_mob_id_rock:
         break;
     case rr_mob_id_triceratops:
         if (mob->rarity >= rr_rarity_id_exotic)
