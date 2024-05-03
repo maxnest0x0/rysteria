@@ -384,6 +384,8 @@ void rr_renderer_mob_cache_init()
 
     rr_renderer_spritesheet_init(&mob_sprites[3], NULL, 384, 384, rr_tree_draw,
                                  0);
+   /* rr_renderer_spritesheet_init(&mob_sprites[4], NULL, 500, 500, rr_moss_draw,
+                                 0);*/
 
     rr_renderer_spritesheet_init(
         &mob_sprites[4], NULL, 336, 192, rr_pteranodon_body_draw, 288, 432,
