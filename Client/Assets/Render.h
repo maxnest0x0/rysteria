@@ -41,6 +41,7 @@ void rr_dakotaraptor_tail_draw(struct rr_renderer *);
 
 void rr_fern_draw(struct rr_renderer *);
 void rr_tree_draw(struct rr_renderer *);
+void rr_moss_draw(struct rr_renderer *);
 void rr_meteor_draw(struct rr_renderer *);
 void rr_beehive_draw(struct rr_renderer *);
 
