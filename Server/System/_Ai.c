@@ -904,6 +904,7 @@ static void system_for_each(EntityIdx entity, void *simulation)
     switch (mob->id)
     {
     case rr_mob_id_fern:
+    case rr_mob_id_moss:
     case rr_mob_id_tree:
         break;
     case rr_mob_id_ant:
