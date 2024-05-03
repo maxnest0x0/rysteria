@@ -100,6 +100,8 @@ void rr_renderer_draw_mob(struct rr_renderer *renderer, uint8_t id,
     case rr_mob_id_fern:
         rr_renderer_scale(renderer, 0.3f);
     case rr_mob_id_tree:
+    case rr_mob_id_moss:
+        rr_renderer_scale(renderer, 0.5f);
     case rr_mob_id_meteor:
     case rr_mob_id_beehive:
         rr_renderer_scale(renderer, 0.4f);
