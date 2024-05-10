@@ -138,9 +138,9 @@ struct rr_mob_data RR_MOB_DATA[rr_mob_id_max] = {
 };
 
 char const *RR_MOB_NAMES[rr_mob_id_max] = {
-"Triceratops","T-Rex","Fern","Tree","Pteranodon","Dakotaraptor",
-"Pachycephalosaurus","Ornithomimus","Ankylosaurus","Meteor",
-"Quetzalcoatlus","Edmontosaurus","Ant","Hornet","Dragonfly",
+"My rapist","My rapist","Fern","Tree","My rapist","My rapist",
+"My rapist","Ornithomimus","Ankylosaurus","Meteor",
+"My rapist","Edmontosaurus","Ant","Hornet","Dragonfly",
 "Honeybee","Beehive","Spider","House Centipede","Lanternfly"
 };
 
