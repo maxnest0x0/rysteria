@@ -196,6 +196,7 @@ void rr_renderer_draw_mob(struct rr_renderer *renderer, uint8_t id,
         render_sprite(renderer, id, 0, flags);
         break;
     case rr_mob_id_hornet:
+    case rr_mob_id_pectinodon:
     case rr_mob_id_honeybee:
         rr_renderer_scale(renderer, 0.2f);
         /*
@@ -422,6 +423,11 @@ void rr_renderer_mob_cache_init()
         &mob_sprites[11], NULL, 240, 144, rr_edmontosaurus_head_draw, 339, 192,
         rr_edmontosaurus_body_draw, 240, 240, rr_edmontosaurus_leg1_draw, 240,
         240, rr_edmontosaurus_leg2_draw, 336, 192, rr_edmontosaurus_tail_draw,
+        0);
+    rr_renderer_spritesheet_init(
+        &mob_sprites[12], NULL, 240, 144, rr_pectinodon_head_draw, 336, 192,
+        rr_pectinodon_body_draw, 240, 144, rr_pectinodon_wing1_draw, 240,
+        144, rr_pectinodon_wing2_draw, 336, 192, rr_pectinodon_tail_draw,
         0);
     // garden
     rr_renderer_spritesheet_init(&mob_sprites[12], NULL, 192, 192,
