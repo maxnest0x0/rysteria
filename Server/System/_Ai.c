@@ -923,6 +923,9 @@ static void system_for_each(EntityIdx entity, void *simulation)
     case rr_mob_id_dakotaraptor:
         tick_ai_aggro_default(entity, this, RR_PLAYER_SPEED * 1.5);
         break;
+      case rr_mob_id_pectinodon:
+        tick_ai_aggro_default(entity, this, RR_PLAYER_SPEED * 1.3);
+        break;
     case rr_mob_id_dragonfly:
         tick_ai_aggro_default(entity, this, RR_PLAYER_SPEED * 1.6);
         break;
