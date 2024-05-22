@@ -35,6 +35,7 @@ set(SRCS
     Assets/Mob/HouseCentipede.c
     Assets/Mob/Ornithomimus.c
     Assets/Mob/Pachycephalosaurus.c
+    Assets/Mob/Pectinodon.c
     Assets/Mob/Pteranodon.c
     Assets/Mob/Quetzalcoatlus.c
     Assets/Mob/Rex.c
