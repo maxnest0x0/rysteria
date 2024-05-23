@@ -69,7 +69,7 @@ struct rr_petal_data RR_PETAL_DATA[rr_petal_id_max] = {
     {rr_petal_id_beak,      rr_rarity_id_unusual,   offensive,  6.0f,   6.0f,   0.0f,  55,  0, {1,1,1,1,1,1,1,1}},
     {rr_petal_id_lightning, rr_rarity_id_unusual,   offensive, 11.0f,   3.0f,   0.0f,  63,  0, {1,1,1,1,1,1,1,1}},
     {rr_petal_id_third_eye, rr_rarity_id_legendary, offensive,  0.0f,   0.0f,   0.0f,   0,  0, {0,0,0,0,0,0,0,0}},
-    {rr_petal_id_tooth,     rr_rarity_id_common,    offensive,  5.0f,  10.0f,   0.0f,  75,  0, {1,1,1,1,1,1,1,1}},
+    {rr_petal_id_mandible,     rr_rarity_id_common,    offensive,  5.0f,  10.0f,   0.0f,  75,  0, {1,1,1,1,1,1,1,1}},
     {rr_petal_id_wax,       rr_rarity_id_unusual,   offensive, 10.0f,  10.0f,  10.0f,  38,  0, {2,2,2,2,2,2,2,2}},
     {rr_petal_id_sand,      rr_rarity_id_common,    offensive, 15.0f,  10.0f,  10.0f,  37,  0, {4,4,4,4,4,4,4,4}},
     {rr_petal_id_mint,      rr_rarity_id_unusual,   offensive,  5.0f,  10.0f,  10.0f,  50, 25, {1,1,1,1,1,1,1,1}},
@@ -116,7 +116,7 @@ char const *RR_PETAL_DESCRIPTIONS[rr_petal_id_max] = {
 struct rr_mob_data RR_MOB_DATA[rr_mob_id_max] = {
 //   id                                     min_rarity  max_rarity              hp dmg    rad  loot
     {rr_mob_id_triceratops,        rr_rarity_id_common, rr_rarity_id_ultimate,  45, 15, 30.0f, {{rr_petal_id_leaf,    0.15},{rr_petal_id_fossil,    0.05}}},
-    {rr_mob_id_trex,               rr_rarity_id_common, rr_rarity_id_ultimate,  40, 25, 32.0f, {{rr_petal_id_stinger, 0.05},{rr_petal_id_tooth,      0.1},{rr_petal_id_egg,        0.05}}},
+    {rr_mob_id_trex,               rr_rarity_id_common, rr_rarity_id_ultimate,  40, 25, 32.0f, {{rr_petal_id_stinger, 0.05},{rr_petal_id_mandible,      0.1},{rr_petal_id_egg,        0.05}}},
     {rr_mob_id_fern,               rr_rarity_id_common, rr_rarity_id_ultimate,  10,  5, 24.0f, {{rr_petal_id_leaf,     0.1},{rr_petal_id_azalea,    0.25}}},
     {rr_mob_id_tree,               rr_rarity_id_common, rr_rarity_id_ultimate, 100,  5, 64.0f, {{rr_petal_id_leaf,     0.5},{rr_petal_id_peas,      0.25},{rr_petal_id_seed,       0.05}}},
     {rr_mob_id_pteranodon,         rr_rarity_id_common, rr_rarity_id_ultimate,  40, 15, 20.0f, {{rr_petal_id_shell,  0.025},{rr_petal_id_beak,      0.15}}},
@@ -127,7 +127,7 @@ struct rr_mob_data RR_MOB_DATA[rr_mob_id_max] = {
     {rr_mob_id_meteor,             rr_rarity_id_common, rr_rarity_id_ultimate, 100, 10, 32.0f, {{rr_petal_id_magnet,   0.5},/*{rr_petal_id_uranium, 0.25}*/}},
     {rr_mob_id_quetzalcoatlus,     rr_rarity_id_common, rr_rarity_id_ultimate,  65, 20, 28.0f, {{rr_petal_id_beak,    0.05},{rr_petal_id_fossil,     0.1},{rr_petal_id_lightning, 0.01}}},
     {rr_mob_id_edmontosaurus,      rr_rarity_id_common, rr_rarity_id_ultimate,  50, 15, 30.0f, {{rr_petal_id_bone,   0.005},{rr_petal_id_fossil,     0.1},{rr_petal_id_third_eye, 0.05}}},
-    {rr_mob_id_pectinodon,         rr_rarity_id_common, rr_rarity_id_ultimate,  15, 25, 26.0f, {{rr_petal_id_feather, 0.15},{rr_petal_id_tooth,     0.1}}},
+    {rr_mob_id_pectinodon,         rr_rarity_id_common, rr_rarity_id_ultimate,  15, 25, 26.0f, {{rr_petal_id_feather, 0.15},{rr_petal_id_mandible,     0.1}}},
     {rr_mob_id_ant,                rr_rarity_id_common, rr_rarity_id_ultimate,  10, 10, 20.0f, {{rr_petal_id_pellet,   0.1},{rr_petal_id_leaf,       0.1},{rr_petal_id_mandible,  0.05}}},
     {rr_mob_id_hornet,             rr_rarity_id_common, rr_rarity_id_ultimate,27.5, 25, 25.0f, {{rr_petal_id_stinger,  0.1},{rr_petal_id_crest,     0.05}}},
     {rr_mob_id_dragonfly,          rr_rarity_id_common, rr_rarity_id_ultimate,  20, 10, 25.0f, {{rr_petal_id_pellet,   0.1},{rr_petal_id_magnet,    0.05}}},
