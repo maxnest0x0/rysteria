@@ -71,6 +71,12 @@ void rr_edmontosaurus_leg2_draw(struct rr_renderer *);
 void rr_edmontosaurus_head_draw(struct rr_renderer *);
 void rr_edmontosaurus_tail_draw(struct rr_renderer *);
 
+void rr_pectinodon_body_draw(struct rr_renderer *);
+void rr_pectinodon_head_draw(struct rr_renderer *);
+void rr_pectinodon_tail_draw(struct rr_renderer *);
+void rr_pectinodon_wing1_draw(struct rr_renderer *);
+void rr_pectinodon_wing2_draw(struct rr_renderer *);
+
 void rr_ant_abdomen_draw(struct rr_renderer *);
 void rr_ant_head_draw(struct rr_renderer *);
 void rr_ant_thorax_draw(struct rr_renderer *);
