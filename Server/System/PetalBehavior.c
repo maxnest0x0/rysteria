@@ -416,6 +416,12 @@ static void system_flower_petal_movement_logic(
         rr_vector_from_polar(&random_vector, 10.0f, rr_frand() * M_PI * 2);
         rr_vector_add(&chase_vector, &random_vector);
     }
+    else if (petal->id == rr_petal_id_egg)
+    {
+        struct rr_vector random_vector;
+        rr_vector_from_polar(&random_vector, 10.0f, rr_frand() * M_PI * 1.5);
+        rr_vector_add(&chase_vector, &random_vector);
+    }
     rr_component_physical_set_angle(
         physical,
         physical->angle + 0.04f * petal->spin_ccw * (1 - petal->no_rotation));
