@@ -595,4 +595,3 @@ uint8_t RR_GLOBAL_BIOME = rr_biome_id_hell_creek;
 #undef x
 #undef X
 #undef a
-#undef A
