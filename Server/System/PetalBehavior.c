@@ -69,7 +69,7 @@ static void uranium_damage(EntityIdx target, void *_captures)
         rr_simulation_get_health(simulation, target);
     float damage = health->damage;
     if (relations->owner == rr_simulation_get_entity_hash(simulation, target))
-        damage *= 2;
+        damage *= 3;
     target_health->flags |= 4;
     rr_component_health_do_damage(
         simulation, target_health, relations->owner, damage,
@@ -82,8 +82,8 @@ static void uranium_damage(EntityIdx target, void *_captures)
         mob->id != rr_mob_id_tree && mob->id != rr_mob_id_meteor)
     {
         ai->ai_type = rr_ai_type_aggro;
-        if (ai->aggro_range < radius)
-            ai->aggro_range = radius;
+        if (ai->aggro_range < radius + target_physical->radius)
+            ai->aggro_range = radius + target_physical->radius;
     }
     if ((ai->target_entity == RR_NULL_ENTITY ||
          rr_frand() < powf(0.3, mob->rarity)) &&
