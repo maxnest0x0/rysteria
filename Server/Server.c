@@ -128,6 +128,14 @@ void rr_server_client_free(struct rr_server_client *this)
     uint8_t i = this - this->server->clients;
     for (uint8_t j = 0; j < RR_MAX_CLIENT_COUNT; ++j)
         rr_bitset_unset(this->server->clients[j].blocked_clients, i);
+    for (uint32_t j = 0; j < this->server->simulation.drop_count; ++j)
+    {
+        EntityIdx drop_id = this->server->simulation.drop_vector[j];
+        struct rr_component_drop *drop =
+            rr_simulation_get_drop(&this->server->simulation, drop_id);
+        rr_bitset_unset(drop->can_be_picked_up_by, i);
+        rr_bitset_unset(drop->picked_up_by, i);
+    }
     struct rr_server_client_message *message = this->message_root;
     while (message != NULL)
     {
@@ -173,8 +181,8 @@ static void write_animation_function(struct rr_simulation *simulation,
     {
         struct rr_server_client *sender =
             rr_simulation_get_player_info(simulation, p_info_id)->client;
-        uint8_t j = sender - client->server->clients;
-        uint8_t blocked = rr_bitset_get(client->blocked_clients, j);
+        uint8_t i = sender - client->server->clients;
+        uint8_t blocked = rr_bitset_get(client->blocked_clients, i);
         if (blocked)
             return;
     }
@@ -597,6 +605,16 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
                         rr_bitset_get(this->clients[k].blocked_clients, j);
                     if (blocked)
                         rr_bitset_set(this->clients[k].blocked_clients, i);
+                }
+                for (uint32_t k = 0; k < this->simulation.drop_count; ++k)
+                {
+                    EntityIdx drop_id = this->simulation.drop_vector[k];
+                    struct rr_component_drop *drop =
+                        rr_simulation_get_drop(&this->simulation, drop_id);
+                    if (rr_bitset_get_bit(drop->can_be_picked_up_by, j))
+                        rr_bitset_set(drop->can_be_picked_up_by, i);
+                    if (rr_bitset_get_bit(drop->picked_up_by, j))
+                        rr_bitset_set(drop->picked_up_by, i);
                 }
                 client->squad_pos = this->clients[j].squad_pos;
                 client->squad = this->clients[j].squad;

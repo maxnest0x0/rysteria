@@ -19,6 +19,7 @@
 #include <stdio.h>
 #include <string.h>
 
+#include <Server/Server.h>
 #include <Shared/Entity.h>
 #include <Shared/SimulationCommon.h>
 #include <Shared/pb.h>
@@ -117,7 +118,15 @@ void rr_component_flower_set_dead(struct rr_component_flower *this,
                 rr_component_drop_set_id(drop, rr_petal_id_basic);
                 rr_component_drop_set_rarity(drop, rr_rarity_id_common);
                 drop->ticks_until_despawn = 25 * 10 * (drop->rarity + 1);
-                drop->can_be_picked_up_by = squad;
+                for (uint8_t pos = 0; pos < RR_SQUAD_MEMBER_COUNT; ++pos)
+                {
+                    struct rr_squad_member *member =
+                        &simulation->server->squads[squad].members[pos];
+                    if (member->in_use == 0)
+                        continue;
+                    uint8_t i = member->client - simulation->server->clients;
+                    rr_bitset_set(drop->can_be_picked_up_by, i);
+                }
                 struct rr_component_physical *drop_physical =
                     rr_simulation_add_physical(simulation, drop_id);
                 rr_component_physical_set_x(drop_physical, physical->x);

@@ -22,6 +22,7 @@
 #include <string.h>
 
 #include <Server/Client.h>
+#include <Server/Server.h>
 #include <Server/Simulation.h>
 #include <Server/SpatialHash.h>
 #include <Shared/Bitset.h>
@@ -106,11 +107,12 @@ rr_simulation_find_entities_in_view_for_each_function(EntityIdx entity,
         physical->y - physical->radius >
             captures->view_y + captures->view_height)
         return;
+    uint8_t i = captures->player_info->client - simulation->server->clients;
     if (rr_simulation_has_drop(simulation, entity) &&
-        (rr_simulation_get_drop(captures->simulation, entity)
-             ->can_be_picked_up_by != captures->player_info->squad ||
-         rr_simulation_get_drop(captures->simulation, entity)->picked_up_by &
-             (1 << captures->player_info->squad_pos)))
+        (rr_bitset_get_bit(rr_simulation_get_drop(captures->simulation, entity)
+                               ->can_be_picked_up_by, i) == 0 ||
+         rr_bitset_get_bit(rr_simulation_get_drop(captures->simulation, entity)
+                               ->picked_up_by, i)))
         return;
     rr_bitset_set(captures->entities_in_view, entity);
 }
@@ -166,9 +168,11 @@ static void rr_simulation_write_entity_deletions_function(uint64_t _id,
             {
                 struct rr_component_drop *drop =
                     rr_simulation_get_drop(captures->simulation, id);
-                if (drop->can_be_picked_up_by != player_info->squad)
+                uint8_t i = player_info->client -
+                            captures->simulation->server->clients;
+                if (rr_bitset_get_bit(drop->can_be_picked_up_by, i) == 0)
                     serverside_delete = 1;
-                else if (drop->picked_up_by & (1 << player_info->squad_pos))
+                else if (rr_bitset_get_bit(drop->picked_up_by, i))
                     // 1 = in-place deletion, 2 = suck to player
                     serverside_delete = 2;
             }

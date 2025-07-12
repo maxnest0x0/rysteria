@@ -19,6 +19,7 @@
 #include <stdlib.h>
 
 #include <Server/Client.h>
+#include <Server/Server.h>
 #include <Server/Simulation.h>
 
 struct drop_pick_up_captures
@@ -41,9 +42,10 @@ static void drop_cb(EntityIdx entity, void *_captures)
     if (drop->ticks_until_despawn == 0)
         return;
 
-    if (drop->can_be_picked_up_by != captures->player_info->squad)
+    uint8_t i = captures->player_info->client - this->server->clients;
+    if (rr_bitset_get_bit(drop->can_be_picked_up_by, i) == 0)
         return;
-    if (drop->picked_up_by & (1 << captures->player_info->squad_pos))
+    if (rr_bitset_get_bit(drop->picked_up_by, i))
         return;
 
     struct rr_component_physical *physical =
@@ -95,7 +97,8 @@ static void drop_pick_up(EntityIdx entity, void *_captures)
 
     struct rr_component_drop *drop =
         rr_simulation_get_drop(this, captures.closest_drop);
-    drop->picked_up_by |= 1 << player_info->squad_pos;
+    uint8_t i = player_info->client - this->server->clients;
+    rr_bitset_set(drop->picked_up_by, i);
     ++player_info
           ->collected_this_run[drop->id * rr_rarity_id_max + drop->rarity];
     rr_component_player_info_set_update_loot(player_info);

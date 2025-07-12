@@ -176,7 +176,15 @@ void rr_component_mob_free(struct rr_component_mob *this,
             rr_component_relations_set_team(relations,
                                             rr_simulation_team_id_players);
             drop->ticks_until_despawn = 25 * 10 * (spawn_rarities[i] + 1);
-            drop->can_be_picked_up_by = squad;
+            for (uint8_t pos = 0; pos < RR_SQUAD_MEMBER_COUNT; ++pos)
+            {
+                struct rr_squad_member *member =
+                    &simulation->server->squads[squad].members[pos];
+                if (member->in_use == 0)
+                    continue;
+                uint8_t j = member->client - simulation->server->clients;
+                rr_bitset_set(drop->can_be_picked_up_by, j);
+            }
             drop_physical->arena = physical->arena;
             if (count != 1)
             {
