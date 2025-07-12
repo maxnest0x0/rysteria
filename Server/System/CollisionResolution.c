@@ -151,10 +151,10 @@ static void colliding_with_function(uint64_t i, void *_captures)
                    (pushable_mob1 &&
                     rr_simulation_get_mob(this, entity1)->player_spawned);
     if (pushable_mob2)
-        mass2 = physical1->mass *
+        mass2 = physical1->mass * 0.4f *
                     (rr_simulation_get_mob(this, entity2)->rarity + 1);
     if (pushable_mob1)
-        mass1 = physical2->mass *
+        mass1 = physical2->mass * 0.4f *
                     (rr_simulation_get_mob(this, entity1)->rarity + 1);
     float v2_coeff, v1_coeff;
     if (inf1 && inf2)
