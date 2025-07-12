@@ -220,7 +220,7 @@ EntityIdx rr_simulation_alloc_mob(struct rr_simulation *this,
     physical->arena = arena_id;
     physical->friction = 0.75;
     physical->mass = 10.0f * powf(2, rarity_id + 1);
-    physical->slow_resist = rr_fclamp(0.2 * (rarity_scale->radius - 1), 0, 1);
+    physical->slow_resist = rr_fclamp(0.075 * powf(1.6, rarity_scale->radius) - 0.075, 0, 1);
     if (mob_id == rr_mob_id_meteor)
     {
         physical->mass *= 25;
