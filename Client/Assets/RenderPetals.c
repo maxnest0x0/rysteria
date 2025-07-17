@@ -2225,7 +2225,10 @@ void rr_renderer_draw_static_petal(struct rr_renderer *renderer, uint8_t id,
             rr_renderer_context_state_init(renderer, &state);
             rr_renderer_translate(renderer, r, 0.0f);
             if (id == rr_petal_id_shell)
-                rr_renderer_rotate(renderer, 1.0f);
+            {
+                rr_renderer_scale2(renderer, 1, -1);
+                rr_renderer_rotate(renderer, -1.0f);
+            }
             else if (id == rr_petal_id_leaf)
                 rr_renderer_rotate(renderer, -1.0f);
             else if (id == rr_petal_id_stinger && rarity >= rr_rarity_id_exotic)
