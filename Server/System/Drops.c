@@ -70,6 +70,8 @@ static void drop_pick_up(EntityIdx entity, void *_captures)
         rr_simulation_get_relations(this, entity);
     struct rr_component_player_info *player_info =
         rr_simulation_get_player_info(this, flower_relations->owner);
+    if (rr_simulation_entity_alive(this, flower_relations->owner) == 0)
+        return;
     if (player_info->client->disconnected)
         return;
     if (player_info->drops_this_tick_size >= 1)
