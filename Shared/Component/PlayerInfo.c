@@ -87,10 +87,7 @@ void rr_component_player_info_free(struct rr_component_player_info *this,
 #ifdef RR_SERVER
     free(this->entities_in_view);
     if (rr_simulation_entity_alive(simulation, this->flower_id))
-    {
-        rr_simulation_request_entity_deletion(simulation, this->flower_id);
-        printf("deleting flower at %s:%d\n", __FILE__, __LINE__);
-    }
+        rr_simulation_request_entity_deletion(simulation, this->flower_id, __FILE__, __LINE__);
 #endif
 }
 
@@ -129,7 +126,7 @@ void rr_component_player_info_petal_swap(struct rr_component_player_info *this,
         EntityHash id = slot->petals[i].entity_hash;
         if (id != RR_NULL_ENTITY && rr_simulation_has_entity(simulation, id))
         {
-            rr_simulation_request_entity_deletion(simulation, id);
+            rr_simulation_request_entity_deletion(simulation, id, __FILE__, __LINE__);
             slot->petals[i].entity_hash = RR_NULL_ENTITY;
         }
     }

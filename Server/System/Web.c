@@ -29,7 +29,7 @@ static void system_for_each_function(EntityIdx entity, void *_captures)
     struct rr_component_web *web = rr_simulation_get_web(this, entity);
     if (web->ticks_until_death == 0)
     {
-        rr_simulation_request_entity_deletion(this, entity);
+        rr_simulation_request_entity_deletion(this, entity, __FILE__, __LINE__);
         return;
     }
     --web->ticks_until_death;

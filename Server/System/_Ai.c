@@ -866,7 +866,7 @@ static void system_for_each(EntityIdx entity, void *simulation)
     {
         if (!rr_simulation_entity_alive(simulation, relations->owner))
         {
-            rr_simulation_request_entity_deletion(simulation, entity);
+            rr_simulation_request_entity_deletion(simulation, entity, __FILE__, __LINE__);
             return;
         }
         struct rr_component_physical *flower_physical =

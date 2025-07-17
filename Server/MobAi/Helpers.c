@@ -162,7 +162,7 @@ uint8_t tick_summon_return_to_owner(EntityIdx entity,
     if (!rr_simulation_entity_alive(simulation, relations->owner) ||
         is_dead_flower(simulation, relations->owner))
     {
-        rr_simulation_request_entity_deletion(simulation, entity);
+        rr_simulation_request_entity_deletion(simulation, entity, __FILE__, __LINE__);
         return 1;
     }
     struct rr_component_physical *parent_physical =
@@ -173,7 +173,7 @@ uint8_t tick_summon_return_to_owner(EntityIdx entity,
                               parent_physical->y - physical->y};
     if (rr_vector_magnitude_cmp(&delta, 5000) == 1)
     {
-        rr_simulation_request_entity_deletion(simulation, entity);
+        rr_simulation_request_entity_deletion(simulation, entity, __FILE__, __LINE__);
         return 1;
     }
     if (ai->ai_type <= rr_ai_type_passive || physical->stun_ticks > 0)

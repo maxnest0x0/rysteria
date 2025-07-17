@@ -69,7 +69,7 @@ static void system_default_idle_heal(EntityIdx entity, void *captures)
             rr_component_flower_set_dead(rr_simulation_get_flower(this, entity),
                                          this, 1);
         else
-            rr_simulation_request_entity_deletion(this, entity);
+            rr_simulation_request_entity_deletion(this, entity, __FILE__, __LINE__);
     }
     else
     {
@@ -160,7 +160,7 @@ static void lightning_petal_system(struct rr_simulation *simulation,
     }
     animation->length = captures.length;
     if (!dev_cheat_enabled(simulation, petal->parent_id, invulnerable))
-        rr_simulation_request_entity_deletion(simulation, petal->parent_id);
+        rr_simulation_request_entity_deletion(simulation, petal->parent_id, __FILE__, __LINE__);
 }
 
 struct fireball_captures
@@ -239,7 +239,7 @@ static void fireball_petal_system(struct rr_simulation *simulation,
     animation->size = radius;
     animation->color_type = rr_animation_color_type_fireball;
     if (!dev_cheat_enabled(simulation, petal->parent_id, invulnerable))
-        rr_simulation_request_entity_deletion(simulation, petal->parent_id);
+        rr_simulation_request_entity_deletion(simulation, petal->parent_id, __FILE__, __LINE__);
 }
 
 static uint8_t damage_effect(struct rr_simulation *simulation, EntityIdx target,

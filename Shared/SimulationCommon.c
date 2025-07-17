@@ -30,12 +30,17 @@ int rr_simulation_has_entity(struct rr_simulation *this, EntityIdx entity)
 }
 
 void rr_simulation_request_entity_deletion(struct rr_simulation *this,
-                                           EntityIdx entity)
+                                           EntityIdx entity, char const *file,
+                                           int line)
 {
 #ifndef NDEBUG
     printf("<rr_simulation::request_delete::%u>\n", entity);
 #endif
     assert(rr_simulation_has_entity(this, entity));
+#if RR_SERVER
+    if (rr_simulation_has_player_info(this, entity))
+        printf("deleting player_info at %s:%d\n", file, line);
+#endif
     rr_bitset_set(this->pending_deletions, entity);
 }
 
