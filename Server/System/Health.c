@@ -286,7 +286,18 @@ static uint8_t damage_effect(struct rr_simulation *simulation, EntityIdx target,
     {
         struct rr_component_petal *petal =
             rr_simulation_get_petal(simulation, attacker);
-        if (petal->id == rr_petal_id_beak)
+        if (petal->id == rr_petal_id_shell)
+        {
+            struct rr_component_health *health =
+                rr_simulation_get_health(simulation, attacker);
+            if (petal->detached)
+                health->damage =
+                    sqrtf(1 + 0.4 * (75 - petal->effect_delay)) *
+                        RR_PETAL_DATA[petal->id].damage *
+                        RR_PETAL_DATA[petal->id].scale[petal->rarity].damage /
+                        RR_PETAL_DATA[petal->id].count[petal->rarity];
+        }
+        else if (petal->id == rr_petal_id_beak)
         {
             struct rr_component_physical *physical =
                 rr_simulation_get_physical(simulation, target);
