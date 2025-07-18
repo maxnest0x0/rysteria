@@ -290,7 +290,10 @@ static uint8_t damage_effect(struct rr_simulation *simulation, EntityIdx target,
         {
             struct rr_component_health *health =
                 rr_simulation_get_health(simulation, attacker);
-            if (petal->detached)
+            struct rr_component_relations *relations =
+                rr_simulation_get_relations(simulation, attacker);
+            if (petal->detached &&
+                rr_simulation_has_flower(simulation, relations->owner))
                 health->damage =
                     sqrtf(1 + 0.4 * (75 - petal->effect_delay)) *
                         RR_PETAL_DATA[petal->id].damage *
