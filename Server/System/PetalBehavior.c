@@ -219,8 +219,6 @@ static uint8_t is_close_enough_and_angle(struct rr_simulation *simulation,
         rr_simulation_get_physical(simulation, target);
     struct rr_vector delta = {physical->x - seeker_physical->x,
                               physical->y - seeker_physical->y};
-    if (rr_vector_magnitude_cmp(&delta, 750) == 1)
-        return 0;
     return rr_angle_within(rr_vector_theta(&delta),
                            seeker_physical->bearing_angle, 1);
 }
@@ -259,7 +257,7 @@ static void system_flower_petal_movement_logic(
             physical->friction = 0.5;
             physical->bearing_angle = curr_angle;
             EntityIdx target = rr_simulation_find_nearest_enemy(
-                simulation, id, 750, NULL, is_close_enough_and_angle);
+                simulation, id, 2190, NULL, is_close_enough_and_angle);
             if (target != RR_NULL_ENTITY)
             {
                 struct rr_component_physical *t_physical =
