@@ -164,6 +164,9 @@ extern "C"
     void rr_renderer_stroke_text(struct rr_renderer *, char const *, float,
                                  float);
 
+    void rr_renderer_set_global_composite_operation(struct rr_renderer *,
+                                                    uint8_t);
+
     float rr_renderer_get_text_size(char const *);
 
     void rr_renderer_execute_instructions();

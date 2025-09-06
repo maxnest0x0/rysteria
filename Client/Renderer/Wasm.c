@@ -461,6 +461,16 @@ void rr_renderer_stroke_text(struct rr_renderer *this, char const *c, float x,
         rr_renderer_execute_instructions();
 }
 
+void rr_renderer_set_global_composite_operation(struct rr_renderer *this,
+                                                uint8_t o)
+{
+    instruction_tape[instruction_size].type = 30;
+    instruction_tape[instruction_size].context_id = this->context_id;
+    instruction_tape[instruction_size].args[0] = o;
+    if (++instruction_size == INSTRUCTION_QUEUE_MAX_SIZE)
+        rr_renderer_execute_instructions();
+}
+
 float rr_renderer_get_text_size(char const *c)
 {
     // clang-format off
@@ -614,6 +624,14 @@ void rr_renderer_execute_instructions()
                     str = UTF8ToString(char_arg);
                     Module.ctxs[ctx_id].strokeText(str, args[0], args[1]);
                     _free(char_arg);
+                    break;
+                case 30:
+                    if (args[0] == 0)
+                        Module.ctxs[ctx_id].globalCompositeOperation =
+                            'source-over';
+                    else if (args[0] == 1)
+                        Module.ctxs[ctx_id].globalCompositeOperation =
+                            'destination-out';
                     break;
                 default:
                     break;

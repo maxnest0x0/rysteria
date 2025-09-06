@@ -416,6 +416,7 @@ void rr_game_init(struct rr_game *this)
                     rr_ui_settings_toggle_button_init(),
                     rr_ui_discord_toggle_button_init(),
                     rr_ui_github_toggle_button_init(),
+                    rr_ui_gardn_toggle_button_init(),
                     rr_ui_account_toggle_button_init(),
                     rr_ui_dev_panel_toggle_button_init(),
                     rr_ui_fullscreen_toggle_button_init(),
@@ -706,6 +707,11 @@ void rr_game_init(struct rr_game *this)
     this->github_tooltip = rr_ui_container_add_element(
         this->window,
         make_label_tooltip("We're Open Source!", 16)
+    );
+
+    this->gardn_tooltip = rr_ui_container_add_element(
+        this->window,
+        make_label_tooltip("Try The Gardn Project!", 16)
     );
 
     this->fullscreen_tooltip = rr_ui_container_add_element(

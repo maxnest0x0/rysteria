@@ -165,6 +165,7 @@ struct rr_game
     struct rr_ui_element *squads_tooltip;
     struct rr_ui_element *discord_tooltip;
     struct rr_ui_element *github_tooltip;
+    struct rr_ui_element *gardn_tooltip;
     struct rr_ui_element *fullscreen_tooltip;
     struct rr_ui_element *abandon_game_tooltip;
     struct rr_ui_element *leave_squad_tooltip;

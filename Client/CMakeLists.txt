@@ -88,6 +88,7 @@ set(SRCS
     Ui/TitleScreen/DevSquadPanel.c
     Ui/TitleScreen/Discord.c
     Ui/TitleScreen/Fullscreen.c
+    Ui/TitleScreen/Gardn.c
     Ui/TitleScreen/Github.c
     Ui/TitleScreen/Inventory.c
     Ui/TitleScreen/LevelBar.c
