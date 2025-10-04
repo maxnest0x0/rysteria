@@ -87,10 +87,7 @@ void rr_component_player_info_free(struct rr_component_player_info *this,
 #ifdef RR_SERVER
     free(this->entities_in_view);
     if (rr_simulation_entity_alive(simulation, this->flower_id))
-    {
         rr_simulation_request_entity_deletion(simulation, this->flower_id);
-        printf("deleting flower at %s:%d\n", __FILE__, __LINE__);
-    }
 #endif
 }
 
