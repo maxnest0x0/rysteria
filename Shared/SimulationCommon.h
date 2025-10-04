@@ -104,8 +104,7 @@ struct rr_simulation
 
 void rr_simulation_init(struct rr_simulation *);
 int rr_simulation_has_entity(struct rr_simulation *, EntityIdx);
-void rr_simulation_request_entity_deletion(struct rr_simulation *, EntityIdx,
-                                           char const *, int);
+void rr_simulation_request_entity_deletion(struct rr_simulation *, EntityIdx);
 void rr_simulation_for_each_entity(struct rr_simulation *, void *,
                                    void (*)(EntityIdx, void *));
 void rr_simulation_create_component_vectors(struct rr_simulation *);

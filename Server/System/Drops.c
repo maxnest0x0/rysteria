@@ -117,7 +117,7 @@ static void drop_despawn_tick(EntityIdx entity, void *_captures)
     struct rr_component_drop *drop = rr_simulation_get_drop(this, entity);
     if (drop->ticks_until_despawn == 0)
     {
-        rr_simulation_request_entity_deletion(this, entity, __FILE__, __LINE__);
+        rr_simulation_request_entity_deletion(this, entity);
         return;
     }
     --drop->ticks_until_despawn;

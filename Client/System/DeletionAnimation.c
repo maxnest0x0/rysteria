@@ -42,7 +42,7 @@ void system_deletion_animation_for_each_function(EntityIdx entity,
         physical->deletion_animation =
             rr_lerp(physical->deletion_animation, 1, 15 * delta);
         if (physical->deletion_animation > 0.9)
-            rr_simulation_request_entity_deletion(this, entity, __FILE__, __LINE__);
+            rr_simulation_request_entity_deletion(this, entity);
     }
 }
 

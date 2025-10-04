@@ -292,7 +292,7 @@ static void despawn_mob(EntityIdx entity, void *_simulation)
         if (--mob->ticks_to_despawn == 0)
         {
             mob->no_drop = 1;
-            rr_simulation_request_entity_deletion(this, entity, __FILE__, __LINE__);
+            rr_simulation_request_entity_deletion(this, entity);
         }
     }
     else

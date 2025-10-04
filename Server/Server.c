@@ -119,8 +119,11 @@ void rr_server_client_free(struct rr_server_client *this)
 {
     // WARNING: ONLY TO BE USED WHEN CLIENT DISCONNECTS
     if (this->player_info != NULL)
+    {
         rr_simulation_request_entity_deletion(&this->server->simulation,
-                                              this->player_info->parent_id, __FILE__, __LINE__);
+                                              this->player_info->parent_id);
+        printf("deleting player_info at %s:%d\n", __FILE__, __LINE__);
+    }
     rr_client_leave_squad(this->server, this);
     uint8_t i = this - this->server->clients;
     for (uint8_t j = 0; j < RR_MAX_CLIENT_COUNT; ++j)
@@ -288,7 +291,7 @@ void rr_server_client_broadcast_animation_update(struct rr_server_client *this)
 static void delete_entity_function(EntityIdx entity, void *_captures)
 {
     if (rr_simulation_has_entity(_captures, entity))
-        rr_simulation_request_entity_deletion(_captures, entity, __FILE__, __LINE__);
+        rr_simulation_request_entity_deletion(_captures, entity);
 }
 
 void rr_server_init(struct rr_server *this)
@@ -338,7 +341,7 @@ static void rr_simulation_dev_cheat_kill_mob(EntityIdx entity, void *_captures)
     if (rr_vector_magnitude_cmp(&delta, 1024 + physical->radius) == -1)
     {
         mob->no_drop = 1;
-        rr_simulation_request_entity_deletion(this, entity, __FILE__, __LINE__);
+        rr_simulation_request_entity_deletion(this, entity);
     }
 }
 
@@ -860,7 +863,8 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
                     if (client->player_info != NULL)
                     {
                         rr_simulation_request_entity_deletion(
-                            &this->simulation, client->player_info->parent_id, __FILE__, __LINE__);
+                            &this->simulation, client->player_info->parent_id);
+                        printf("deleting player_info at %s:%d\n", __FILE__, __LINE__);
                         client->player_info = NULL;
                     }
                     rr_squad_get_client_slot(this, client)->playing = 1;
@@ -885,7 +889,8 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
                         {
                             rr_simulation_request_entity_deletion(
                                 &this->simulation,
-                                client->player_info->parent_id, __FILE__, __LINE__);
+                                client->player_info->parent_id);
+                            printf("deleting player_info at %s:%d\n", __FILE__, __LINE__);
                             client->player_info = NULL;
                             rr_squad_get_client_slot(this, client)->playing = 0;
                         }
@@ -953,7 +958,8 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
                     if (client->player_info != NULL)
                     {
                         rr_simulation_request_entity_deletion(
-                            &this->simulation, client->player_info->parent_id, __FILE__, __LINE__);
+                            &this->simulation, client->player_info->parent_id);
+                        printf("deleting player_info at %s:%d\n", __FILE__, __LINE__);
                         client->player_info = NULL;
                     }
                     member->playing = 1;
@@ -965,7 +971,8 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
                     if (client->player_info != NULL)
                     {
                         rr_simulation_request_entity_deletion(
-                            &this->simulation, client->player_info->parent_id, __FILE__, __LINE__);
+                            &this->simulation, client->player_info->parent_id);
+                        printf("deleting player_info at %s:%d\n", __FILE__, __LINE__);
                         client->player_info = NULL;
                         member->playing = 0;
                     }
@@ -1065,7 +1072,8 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
             if (to_kick->player_info != NULL)
             {
                 rr_simulation_request_entity_deletion(
-                    &this->simulation, to_kick->player_info->parent_id, __FILE__, __LINE__);
+                    &this->simulation, to_kick->player_info->parent_id);
+                printf("deleting player_info at %s:%d\n", __FILE__, __LINE__);
                 to_kick->player_info = NULL;
             }
             rr_client_leave_squad(this, to_kick);
@@ -1498,7 +1506,8 @@ static void server_tick(struct rr_server *this)
                 if (++client->afk_ticks > 10 * 60 * 25)
                 {
                     rr_simulation_request_entity_deletion(
-                        &this->simulation, client->player_info->parent_id, __FILE__, __LINE__);
+                        &this->simulation, client->player_info->parent_id);
+                    printf("deleting player_info at %s:%d\n", __FILE__, __LINE__);
                     client->player_info = NULL;
                     rr_client_leave_squad(this, client);
                     if (client->disconnected == 0)

@@ -43,7 +43,7 @@ static void system_reset_colliding_with(EntityIdx entity, void *captures)
     if (rr_simulation_entity_alive(this, owner) &&
         rr_simulation_has_physical(this, owner))
         if (physical->arena != rr_simulation_get_physical(this, owner)->arena)
-            rr_simulation_request_entity_deletion(this, entity, __FILE__, __LINE__);
+            rr_simulation_request_entity_deletion(this, entity);
 }
 
 static void system_insert_entities(EntityIdx entity, void *_captures)
@@ -155,7 +155,7 @@ static void collapse_arena(EntityIdx entity, void *_captures)
     else if (arena->player_entered)
         --mob->ticks_to_despawn;
     if (mob->ticks_to_despawn == 0)
-        rr_simulation_request_entity_deletion(this, entity, __FILE__, __LINE__);
+        rr_simulation_request_entity_deletion(this, entity);
 }
 
 static void find_collisions(EntityIdx entity, void *_captures)

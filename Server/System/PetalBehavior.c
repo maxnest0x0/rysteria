@@ -317,7 +317,7 @@ static void system_flower_petal_movement_logic(
                         flower_health->max_health - flower_health->health;
                     rr_component_health_set_health(
                         flower_health, flower_health->health + heal);
-                    rr_simulation_request_entity_deletion(simulation, id, __FILE__, __LINE__);
+                    rr_simulation_request_entity_deletion(simulation, id);
                     struct rr_simulation_animation *animation =
                         &simulation->animations[simulation->animation_length++];
                     animation->type = rr_animation_type_damagenumber;
@@ -367,7 +367,7 @@ static void system_flower_petal_movement_logic(
                             flower_health->max_health - flower_health->health;
                         rr_component_health_set_health(
                             flower_health, flower_health->health + heal);
-                        rr_simulation_request_entity_deletion(simulation, id, __FILE__, __LINE__);
+                        rr_simulation_request_entity_deletion(simulation, id);
                         struct rr_simulation_animation *animation =
                             &simulation->animations
                                  [simulation->animation_length++];
@@ -497,7 +497,7 @@ static void system_flower_petal_movement_logic(
                 float max_heal = mob_health->max_health - mob_health->health;
                 rr_component_health_set_health(mob_health,
                                                mob_health->health + heal);
-                rr_simulation_request_entity_deletion(simulation, id, __FILE__, __LINE__);
+                rr_simulation_request_entity_deletion(simulation, id);
                 struct rr_simulation_animation *animation =
                     &simulation->animations[simulation->animation_length++];
                 animation->type = rr_animation_type_damagenumber;
@@ -526,7 +526,7 @@ static void system_flower_petal_movement_logic(
                                       player_info->client->player_accel_y};
             if (accel.x || accel.y)
             {
-                rr_simulation_request_entity_deletion(simulation, id, __FILE__, __LINE__);
+                rr_simulation_request_entity_deletion(simulation, id);
                 if (flower_physical->bubbling_to_death)
                     break;
                 if (flower_physical->bubbling)
@@ -710,7 +710,7 @@ system_egg_hatching_logic(struct rr_simulation *simulation,
         rr_simulation_get_petal(simulation, p_petal->entity_hash);
     if (petal->effect_delay > 0)
         return;
-    rr_simulation_request_entity_deletion(simulation, p_petal->entity_hash, __FILE__, __LINE__);
+    rr_simulation_request_entity_deletion(simulation, p_petal->entity_hash);
     uint8_t m_id, m_rar;
     if (petal->id == rr_petal_id_egg)
     {
@@ -922,7 +922,7 @@ static void rr_system_petal_reload_foreach_function(EntityIdx id,
                     (slot->id == rr_petal_id_bubble && has_bubble))
                 {
                     rr_simulation_request_entity_deletion(simulation,
-                                                          p_petal->entity_hash, __FILE__, __LINE__);
+                                                          p_petal->entity_hash);
                     continue;
                 }
                 if (data->id == rr_petal_id_egg)
@@ -970,7 +970,7 @@ static void system_petal_misc_logic(EntityIdx id, void *_simulation)
     if (!rr_simulation_entity_alive(simulation, relations->owner) ||
         is_dead_flower(simulation, relations->owner))
     {
-        rr_simulation_request_entity_deletion(simulation, id, __FILE__, __LINE__);
+        rr_simulation_request_entity_deletion(simulation, id);
         return;
     }
     if (petal->detached == 0) // it's mob owned if this is true
@@ -980,7 +980,7 @@ static void system_petal_misc_logic(EntityIdx id, void *_simulation)
         if (!rr_simulation_has_mob(simulation, relations->owner))
             return;
         if (--petal->effect_delay == 0)
-            rr_simulation_request_entity_deletion(simulation, id, __FILE__, __LINE__);
+            rr_simulation_request_entity_deletion(simulation, id);
         // check if owner is a mob
         return; // no logic yet
     }
@@ -1001,7 +1001,7 @@ static void system_petal_misc_logic(EntityIdx id, void *_simulation)
             if (!rr_simulation_entity_alive(simulation, petal->bind_target) ||
                 !is_dead_flower(simulation, petal->bind_target))
             {
-                rr_simulation_request_entity_deletion(simulation, id, __FILE__, __LINE__);
+                rr_simulation_request_entity_deletion(simulation, id);
                 return;
             }
             struct rr_component_physical *target_physical =
@@ -1025,7 +1025,7 @@ static void system_petal_misc_logic(EntityIdx id, void *_simulation)
             meat_petal_system(simulation, petal);
         if (--petal->effect_delay <= 0)
         {
-            rr_simulation_request_entity_deletion(simulation, id, __FILE__, __LINE__);
+            rr_simulation_request_entity_deletion(simulation, id);
             if (petal->id == rr_petal_id_seed)
             {
                 struct rr_component_flower *target_flower =
@@ -1039,7 +1039,7 @@ static void system_petal_misc_logic(EntityIdx id, void *_simulation)
                 if (flower_relations->nest != RR_NULL_ENTITY &&
                     rr_simulation_entity_alive(simulation, flower_relations->nest))
                     rr_simulation_request_entity_deletion(
-                        simulation, flower_relations->nest, __FILE__, __LINE__);
+                        simulation, flower_relations->nest);
                 EntityIdx nest_id = rr_simulation_alloc_entity(simulation);
                 petal->p_petal->entity_hash = flower_relations->nest =
                     rr_simulation_get_entity_hash(simulation, nest_id);
@@ -1086,7 +1086,7 @@ static void system_nest_logic(EntityIdx id, void *_simulation)
     nest->rotation_pos = 0;
     if (!rr_simulation_entity_alive(simulation, relations->owner) ||
         is_dead_flower(simulation, relations->owner))
-        rr_simulation_request_entity_deletion(simulation, id, __FILE__, __LINE__);
+        rr_simulation_request_entity_deletion(simulation, id);
     else
     {
         struct rr_component_physical *flower_physical =
@@ -1094,7 +1094,7 @@ static void system_nest_logic(EntityIdx id, void *_simulation)
         struct rr_vector delta = {physical->x - flower_physical->x,
                                   physical->y - flower_physical->y};
         if (rr_vector_magnitude_cmp(&delta, 5000) == 1)
-            rr_simulation_request_entity_deletion(simulation, id, __FILE__, __LINE__);
+            rr_simulation_request_entity_deletion(simulation, id);
     }
 }
 
