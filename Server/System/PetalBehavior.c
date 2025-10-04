@@ -631,7 +631,9 @@ static void petal_modifiers(struct rr_simulation *simulation,
     float feather_diminish_factor = 1;
     float magnet_diminish_factor = 1;
     float third_eye_diminish_factor = 1;
+    float crest_diminish_factor = 1;
     float to_rotate = 0.1;
+    float fov_bonus = 0;
     uint8_t crest_count = 0;
     uint8_t third_eye_count = 0;
     for (uint64_t outer = 0; outer < player_info->slot_count; ++outer)
@@ -662,7 +664,9 @@ static void petal_modifiers(struct rr_simulation *simulation,
         else if (data->id == rr_petal_id_crest)
         {
             ++crest_count;
-            RR_SET_IF_LESS(player_info->camera_fov, 1 - 0.1 * slot->rarity)
+            fov_bonus += (1 / (1 - 0.1 * slot->rarity) - 1) *
+                             crest_diminish_factor;
+            crest_diminish_factor *= 0.5;
         }
         else if (data->id == rr_petal_id_droplet)
             ++rot_count;
@@ -672,7 +676,7 @@ static void petal_modifiers(struct rr_simulation *simulation,
             player_info->modifiers.petal_extension +=
                 45 * (slot->rarity - rr_rarity_id_epic) *
                     third_eye_diminish_factor;
-            third_eye_diminish_factor *= 0.25;
+            third_eye_diminish_factor *= 0.5;
         }
         else if (data->id == rr_petal_id_bone)
         {
@@ -690,7 +694,7 @@ static void petal_modifiers(struct rr_simulation *simulation,
                 {
                     player_info->modifiers.drop_pickup_radius +=
                         (25 + 180 * slot->rarity) * magnet_diminish_factor;
-                    magnet_diminish_factor *= 0.25;
+                    magnet_diminish_factor *= 0.5;
                 }
             }
         }
@@ -699,6 +703,9 @@ static void petal_modifiers(struct rr_simulation *simulation,
     rr_component_flower_set_third_eye_count(flower, third_eye_count);
     player_info->global_rotation +=
         to_rotate * ((rot_count % 3) ? (rot_count % 3 == 2) ? 0 : -1 : 1);
+    rr_component_player_info_set_camera_fov(
+        player_info, RR_BASE_FOV /
+                     (player_info->client->dev_cheats.fov_percent + fov_bonus));
 }
 
 static void
@@ -951,8 +958,8 @@ static void rr_system_petal_reload_foreach_function(EntityIdx id,
                     rotation_pos - 1, outer, inner, data);
             }
         }
-        // if (slot->id == rr_petal_id_bubble)
-        //     has_bubble = 1;
+        if (slot->id == rr_petal_id_bubble)
+            has_bubble = 1;
         rr_component_player_info_set_slot_cd(player_info, outer, max_cd);
         rr_component_player_info_set_slot_hp(player_info, outer, min_hp);
     }

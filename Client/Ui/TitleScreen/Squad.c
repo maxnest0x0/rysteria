@@ -515,7 +515,8 @@ struct rr_ui_element *rr_ui_squad_container_init(struct rr_game_squad *squad)
                                squad_player_container_init(squad, 0),
                                squad_player_container_init(squad, 1),
                                squad_player_container_init(squad, 2),
-                               squad_player_container_init(squad, 3), NULL),
+                               squad_player_container_init(squad, 3),
+                               squad_player_container_init(squad, 4), NULL),
         rr_ui_set_justify(
             rr_ui_h_container_init(
                 rr_ui_container_init(), 5, 0,

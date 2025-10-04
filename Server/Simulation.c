@@ -87,6 +87,7 @@ uint8_t tree_zone() {
 uint8_t pter_zone() {
     return rr_frand() > 0.2 ? rr_mob_id_pteranodon : ALL_MOBS;
 }
+uint8_t trex_zone() { return rr_mob_id_trex; }
 
 struct zone
 {
@@ -97,7 +98,7 @@ struct zone
     uint8_t (*spawn_func)();
 };
 
-#define ZONE_POSITION_COUNT 9
+#define ZONE_POSITION_COUNT 10
 
 static struct zone zone_positions[ZONE_POSITION_COUNT] = {
     {4,  0,  7,  3, fern_zone},
@@ -109,6 +110,7 @@ static struct zone zone_positions[ZONE_POSITION_COUNT] = {
     {16, 25, 5,  2, tree_zone},
     {13, 27, 11, 4, tree_zone},
     {2,  13, 6, 17, pter_zone},
+    {25, 7,  4,  3, trex_zone},
 };
 
 static void set_spawn_zones()

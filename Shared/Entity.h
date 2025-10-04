@@ -23,7 +23,7 @@ typedef uint32_t EntityHash;
 
 #define RR_MAX_ENTITY_COUNT (16384)
 #define RR_NULL_ENTITY (0)
-#define RR_SQUAD_MEMBER_COUNT (4)
+#define RR_SQUAD_MEMBER_COUNT (5)
 
 #define RR_MAX_CLIENT_COUNT (64)
 #define RR_SQUAD_COUNT (RR_MAX_CLIENT_COUNT)

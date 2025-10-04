@@ -255,12 +255,13 @@ static void system_velocity(EntityIdx id, void *simulation)
                             (arena->maze->maze_dim + extra) * arena->maze->grid_size -
                                 physical->radius);
 
-    if (physical->bubbling_to_death && !is_dead_flower(simulation, id) &&
+    if (physical->bubbling_to_death &&
         (now_x < 0 || now_x > arena->maze->maze_dim * arena->maze->grid_size ||
          now_y < 0 || now_y > arena->maze->maze_dim * arena->maze->grid_size))
     {
-        rr_component_flower_set_dead(
-            rr_simulation_get_flower(simulation, id), simulation, 1);
+        if (!is_dead_flower(simulation, id))
+            rr_component_flower_set_dead(
+                rr_simulation_get_flower(simulation, id), simulation, 1);
         physical->friction = 0.75;
     }
 

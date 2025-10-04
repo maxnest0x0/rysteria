@@ -452,6 +452,7 @@ void rr_game_init(struct rr_game *this)
                         rr_ui_in_game_player_hud_init(1),
                         rr_ui_in_game_player_hud_init(2),
                         rr_ui_in_game_player_hud_init(3),
+                        rr_ui_in_game_player_hud_init(4),
                         NULL
                     )
                 , -1, -1)
