@@ -744,6 +744,7 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
             uint8_t pos = proto_bug_read_uint8(&encoder, "petal switch");
             while (pos != 0 && pos <= RR_MAX_SLOT_COUNT)
             {
+                client->afk_ticks = 0;
                 rr_component_player_info_petal_swap(client->player_info,
                                                     &this->simulation, pos - 1);
                 pos = proto_bug_read_uint8(&encoder, "petal switch");
@@ -1144,6 +1145,7 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
             printf("[chat] %s: %s\n", animation->name, animation->message);
             animation->type = rr_animation_type_chat;
             animation->owner = client->player_info->parent_id;
+            client->afk_ticks = 0;
             break;
         }
         case rr_serverbound_chat_block:
