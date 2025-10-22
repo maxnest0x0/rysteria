@@ -167,10 +167,10 @@ static void crafting_ring_petal_on_event(struct rr_ui_element *this,
     }
     if (data->count > 0)
     {
-        rr_ui_set_tooltip_count(
+        rr_ui_set_tooltip_metadata(
             game->petal_tooltips[game->crafting_data.crafting_id]
                                 [game->crafting_data.crafting_rarity],
-            data->count);
+            data->count, 255);
         rr_ui_render_tooltip_above(
             this,
             game->petal_tooltips[game->crafting_data.crafting_id]
@@ -194,10 +194,10 @@ static void crafting_result_container_on_event(struct rr_ui_element *this,
     }
     if (game->crafting_data.success_count > 0)
     {
-        rr_ui_set_tooltip_count(
+        rr_ui_set_tooltip_metadata(
             game->petal_tooltips[game->crafting_data.crafting_id]
                                 [game->crafting_data.crafting_rarity + 1],
-            game->crafting_data.success_count);
+            game->crafting_data.success_count, 255);
         rr_ui_render_tooltip_above(
             this,
             game->petal_tooltips[game->crafting_data.crafting_id]
@@ -533,8 +533,8 @@ static void crafting_inventory_button_on_event(struct rr_ui_element *this,
             }
             game->cursor = rr_game_cursor_pointer;
         }
-        rr_ui_set_tooltip_count(game->petal_tooltips[data->id][data->rarity],
-                                data->count);
+        rr_ui_set_tooltip_metadata(game->petal_tooltips[data->id][data->rarity],
+                                   data->count, 255);
         rr_ui_render_tooltip_above(
             this, game->petal_tooltips[data->id][data->rarity], game);
     }

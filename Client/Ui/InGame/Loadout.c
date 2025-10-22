@@ -54,8 +54,9 @@ static void loadout_button_on_event(struct rr_ui_element *this,
     }
     if (game->cache.loadout[data->pos].id != 0)
     {
-        rr_ui_set_tooltip_count(
-            game->petal_tooltips[data->prev_id][data->prev_rarity], 0);
+        rr_ui_set_tooltip_metadata(
+            game->petal_tooltips[data->prev_id][data->prev_rarity], 0,
+            data->pos % RR_MAX_SLOT_COUNT);
         rr_ui_render_tooltip_above(
             this, game->petal_tooltips[data->prev_id][data->prev_rarity], game);
         game->cursor = rr_game_cursor_pointer;
@@ -89,8 +90,9 @@ static void petal_switch_button_event(struct rr_ui_element *this,
         &game->player_info->secondary_slots[data->pos % RR_MAX_SLOT_COUNT];
     if (slot->id != 0)
     {
-        rr_ui_set_tooltip_count(
-            game->petal_tooltips[slot->id][slot->rarity], 0);
+        rr_ui_set_tooltip_metadata(
+            game->petal_tooltips[slot->id][slot->rarity], 0,
+            data->pos % RR_MAX_SLOT_COUNT);
         rr_ui_render_tooltip_above(this,
             game->petal_tooltips[slot->id][slot->rarity], game);
     }

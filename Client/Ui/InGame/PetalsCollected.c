@@ -40,9 +40,10 @@ static void collected_button_on_event(struct rr_ui_element *this,
                                       struct rr_game *game)
 {
     struct collected_button_metadata *data = this->data;
-    rr_ui_set_tooltip_count(game->petal_tooltips[data->id][data->rarity],
-                            game->player_info->collected_this_run[
-                                data->id * rr_rarity_id_max + data->rarity]);
+    rr_ui_set_tooltip_metadata(game->petal_tooltips[data->id][data->rarity],
+                               game->player_info->collected_this_run[
+                                   data->id * rr_rarity_id_max + data->rarity],
+                               255);
     rr_ui_render_tooltip_above(
         this, game->petal_tooltips[data->id][data->rarity], game);
 }

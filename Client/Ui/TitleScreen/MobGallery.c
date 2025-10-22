@@ -46,8 +46,9 @@ static void mob_button_on_event(struct rr_ui_element *this,
         return;
     if (data->secondary_animation > 0.999)
         return;
-    rr_ui_set_tooltip_count(game->mob_tooltips[data->id][data->rarity],
-                            game->cache.mob_kills[data->id][data->rarity]);
+    rr_ui_set_tooltip_metadata(game->mob_tooltips[data->id][data->rarity],
+                               game->cache.mob_kills[data->id][data->rarity],
+                               255);
     rr_ui_render_tooltip_above(this, game->mob_tooltips[data->id][data->rarity],
                                game);
 }

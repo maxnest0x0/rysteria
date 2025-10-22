@@ -20,30 +20,127 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include <Client/Game.h>
 #include <Client/Ui/Engine.h>
 
 #include <Shared/StaticData.h>
 #include <Shared/Utilities.h>
 
-struct rr_ui_element *rr_ui_petal_tooltip_init(uint8_t id, uint8_t rarity)
+#define calculate_diminish_factor                                              \
+    struct rr_ui_dynamic_text_metadata *data = this->data;                     \
+    struct rr_ui_tooltip_metadata *tooltip_data = data->data;                  \
+    uint8_t id = tooltip_data->id;                                             \
+    uint8_t rarity = tooltip_data->rarity;                                     \
+    char *extra = data->text;                                                  \
+    float diminish_factor = 1;                                                 \
+    if (tooltip_data->pos != 255)                                              \
+    {                                                                          \
+        if (game->simulation_ready)                                            \
+        {                                                                      \
+            for (uint8_t i = 0; i < tooltip_data->pos; ++i)                    \
+                if (game->player_info->slots[i].id == id)                      \
+                    diminish_factor *= 0.5;                                    \
+        }                                                                      \
+        else                                                                   \
+        {                                                                      \
+            for (uint8_t i = 0; i < tooltip_data->pos; ++i)                    \
+                if (game->cache.loadout[i].id == id)                           \
+                    diminish_factor *= 0.5;                                    \
+        }                                                                      \
+    }
+
+static void get_cooldown(struct rr_ui_element *this, struct rr_game *game)
 {
-    char *cd = malloc((sizeof *cd) * 16);
-    char fmt[16];
+    struct rr_ui_dynamic_text_metadata *data = this->data;
+    struct rr_ui_tooltip_metadata *tooltip_data = data->data;
+    uint8_t id = tooltip_data->id;
+    uint8_t rarity = tooltip_data->rarity;
+    char *cd = data->text;
+    float reload_speed = 1;
+    if (tooltip_data->pos != 255)
+    {
+        if (game->simulation_ready)
+        {
+            for (uint8_t i = 0; i < game->slots_unlocked; ++i)
+                if (game->player_info->slots[i].id == rr_petal_id_berry)
+                    reload_speed += 0.02 *
+                                    (game->player_info->slots[i].rarity + 1);
+        }
+        else
+        {
+            for (uint8_t i = 0; i < game->slots_unlocked; ++i)
+                if (game->cache.loadout[i].id == rr_petal_id_berry)
+                    reload_speed += 0.02 * (game->cache.loadout[i].rarity + 1);
+        }
+    }
     if (RR_PETAL_DATA[id].cooldown == 0)
         cd[0] = 0;
     else if (id == rr_petal_id_seed)
-        sprintf(cd, "↻ %.1f + %.1fs",
-                (RR_PETAL_DATA[id].cooldown * 2 / 5) * 0.1,
+        sprintf(cd, "↻ %.1f + %.1f + %.1fs",
+                (RR_PETAL_DATA[id].cooldown * 2 / 5) * 0.1 / reload_speed,
+                (RR_PETAL_DATA[id].secondary_cooldown * 2 / 5) * 0.1,
                 RR_PETAL_RARITY_SCALE[rarity].seed_cooldown);
     else if (id == rr_petal_id_nest)
+        sprintf(cd, "↻ %.1f + %.1f + %.1fs",
+                (RR_PETAL_DATA[id].cooldown * 2 / 5) * 0.1 / reload_speed,
+                (RR_PETAL_DATA[id].secondary_cooldown * 2 / 5) * 0.1, 15.0);
+    else if (RR_PETAL_DATA[id].secondary_cooldown > 0)
         sprintf(cd, "↻ %.1f + %.1fs",
-                (RR_PETAL_DATA[id].cooldown * 2 / 5) * 0.1, 15.0);
-    else if (RR_PETAL_DATA[id].secondary_cooldown > 1)
-        sprintf(cd, "↻ %.1f + %.1fs",
-                (RR_PETAL_DATA[id].cooldown * 2 / 5) * 0.1,
+                (RR_PETAL_DATA[id].cooldown * 2 / 5) * 0.1 / reload_speed,
                 (RR_PETAL_DATA[id].secondary_cooldown * 2 / 5) * 0.1);
     else
-        sprintf(cd, "↻ %.1fs", (RR_PETAL_DATA[id].cooldown * 2 / 5) * 0.1);
+        sprintf(cd, "↻ %.1fs",
+                (RR_PETAL_DATA[id].cooldown * 2 / 5) * 0.1 / reload_speed);
+}
+
+static void get_count(struct rr_ui_element *this, struct rr_game *game)
+{
+    struct rr_ui_dynamic_text_metadata *data = this->data;
+    struct rr_ui_tooltip_metadata *tooltip_data = data->data;
+    if (tooltip_data->count)
+        sprintf(data->text, "x%u", tooltip_data->count);
+    else
+        data->text[0] = 0;
+}
+
+static void get_pickup_range(struct rr_ui_element *this, struct rr_game *game)
+{
+    calculate_diminish_factor
+    sprintf(extra, "+%.0f", (25 + 180 * rarity) * diminish_factor);
+}
+
+static void get_speed_increase(struct rr_ui_element *this, struct rr_game *game)
+{
+    calculate_diminish_factor
+    sprintf(extra, "%.1f%%", (5 + 2.5f * rarity) * diminish_factor);
+}
+
+static void get_damage_reduction(struct rr_ui_element *this,
+                                 struct rr_game *game)
+{
+    calculate_diminish_factor
+    sprintf(extra, "%.0f%%", 100 * 0.04 * (rarity + 1) * diminish_factor);
+}
+
+static void get_fov_increase(struct rr_ui_element *this, struct rr_game *game)
+{
+    calculate_diminish_factor
+    sprintf(extra, "%.0f%%",
+            (100 / (1 - 0.1 * rarity) - 100) * diminish_factor);
+}
+
+static void get_range_increase(struct rr_ui_element *this, struct rr_game *game)
+{
+    calculate_diminish_factor
+    sprintf(extra, "+%.0f",
+            45 * (rarity - rr_rarity_id_epic) * diminish_factor);
+}
+
+#undef calculate_diminish_factor
+
+struct rr_ui_element *rr_ui_petal_tooltip_init(uint8_t id, uint8_t rarity)
+{
+    char fmt[16];
     char *hp = malloc((sizeof *hp) * 16);
     if (id != rr_petal_id_meteor)
         rr_sprintf(hp, RR_PETAL_DATA[id].health *
@@ -62,8 +159,17 @@ struct rr_ui_element *rr_ui_petal_tooltip_init(uint8_t id, uint8_t rarity)
                             RR_MOB_RARITY_SCALING[rarity >= 1 ? rarity - 1
                                                               : 0].damage);
 
-    char *count = malloc((sizeof *count) * 12);
-    count[0] = 0;
+    struct rr_ui_tooltip_metadata *tooltip_data = malloc(sizeof *tooltip_data);
+    tooltip_data->id = id;
+    tooltip_data->rarity = rarity;
+    struct rr_ui_element *cd = rr_ui_dynamic_text_init(16, 0xffffffff,
+                                                       get_cooldown);
+    struct rr_ui_dynamic_text_metadata *d_data = cd->data;
+    d_data->data = tooltip_data;
+    struct rr_ui_element *count = rr_ui_dynamic_text_init(16, 0xffffffff,
+                                                          get_count);
+    d_data = count->data;
+    d_data->data = tooltip_data;
     struct rr_ui_element *this = rr_ui_set_background(
         rr_ui_v_container_init(
             rr_ui_tooltip_container_init(), 10, 5,
@@ -71,11 +177,11 @@ struct rr_ui_element *rr_ui_petal_tooltip_init(uint8_t id, uint8_t rarity)
                 rr_ui_set_justify(
                     rr_ui_h_container_init(rr_ui_container_init(), 0, 10,
                         rr_ui_text_init(RR_PETAL_NAMES[id], 24, 0xffffffff),
-                        rr_ui_text_init(count, 16, 0xffffffff),
+                        count,
                         NULL
                     ),
                 -1, 0),
-                rr_ui_set_justify(rr_ui_text_init(cd, 16, 0xffffffff), 1, 0),
+                rr_ui_set_justify(cd, 1, 0),
                 30),
             rr_ui_set_justify(rr_ui_text_init(RR_RARITY_NAMES[rarity], 16,
                                               RR_RARITY_COLORS[rarity]),
@@ -87,7 +193,7 @@ struct rr_ui_element *rr_ui_petal_tooltip_init(uint8_t id, uint8_t rarity)
             NULL),
         0x80000000);
     struct rr_ui_container_metadata *data = this->data;
-    data->data = count;
+    data->data = tooltip_data;
 
     if (id != rr_petal_id_crest && id != rr_petal_id_third_eye &&
         id != rr_petal_id_lightning && id != rr_petal_id_fireball)
@@ -125,23 +231,16 @@ struct rr_ui_element *rr_ui_petal_tooltip_init(uint8_t id, uint8_t rarity)
     }
     else if (id == rr_petal_id_magnet)
     {
-        char *extra = malloc((sizeof *extra) * 8);
-        sprintf(extra, "+%d", 25 + 180 * rarity);
+        struct rr_ui_element *text =
+            rr_ui_dynamic_text_init(12, 0xffffffff, get_pickup_range);
+        d_data = text->data;
+        d_data->data = tooltip_data;
         rr_ui_container_add_element(
             this, rr_ui_set_justify(
                       rr_ui_h_container_init(
                           rr_ui_container_init(), 0, 0,
                           rr_ui_text_init("Pickup range: ", 12, 0xff44ffdd),
-                          rr_ui_text_init(extra, 12, 0xffffffff), NULL),
-                      -1, 0));
-        extra = malloc((sizeof *extra) * 8);
-        sprintf(extra, "%.1f", 0.5);
-        rr_ui_container_add_element(
-            this, rr_ui_set_justify(
-                      rr_ui_h_container_init(
-                          rr_ui_container_init(), 0, 0,
-                          rr_ui_text_init("Diminish factor: ", 12, 0xff0f8282),
-                          rr_ui_text_init(extra, 12, 0xffffffff), NULL),
+                          text, NULL),
                       -1, 0));
     }
     else if (id == rr_petal_id_leaf)
@@ -215,23 +314,16 @@ struct rr_ui_element *rr_ui_petal_tooltip_init(uint8_t id, uint8_t rarity)
     }
     else if (id == rr_petal_id_feather)
     {
-        char *extra = malloc((sizeof *extra) * 16);
-        sprintf(extra, "%.1f%%", 5 + 2.5f * rarity);
+        struct rr_ui_element *text =
+            rr_ui_dynamic_text_init(12, 0xffffffff, get_speed_increase);
+        d_data = text->data;
+        d_data->data = tooltip_data;
         rr_ui_container_add_element(
             this, rr_ui_set_justify(
                       rr_ui_h_container_init(
                           rr_ui_container_init(), 0, 0,
                           rr_ui_text_init("Speed increase: ", 12, 0xff5682c4),
-                          rr_ui_text_init(extra, 12, 0xffffffff), NULL),
-                      -1, 0));
-        extra = malloc((sizeof *extra) * 8);
-        sprintf(extra, "%.1f", 0.5);
-        rr_ui_container_add_element(
-            this, rr_ui_set_justify(
-                      rr_ui_h_container_init(
-                          rr_ui_container_init(), 0, 0,
-                          rr_ui_text_init("Diminish factor: ", 12, 0xff0f8282),
-                          rr_ui_text_init(extra, 12, 0xffffffff), NULL),
+                          text, NULL),
                       -1, 0));
     }
     else if (id == rr_petal_id_azalea)
@@ -249,23 +341,16 @@ struct rr_ui_element *rr_ui_petal_tooltip_init(uint8_t id, uint8_t rarity)
     }
     else if (id == rr_petal_id_bone)
     {
-        char *extra = malloc((sizeof *extra) * 8);
-        sprintf(extra, "%s%%", rr_sprintf(fmt, 100 * 0.04 * (rarity + 1)));
+        struct rr_ui_element *text =
+            rr_ui_dynamic_text_init(12, 0xffffffff, get_damage_reduction);
+        d_data = text->data;
+        d_data->data = tooltip_data;
         rr_ui_container_add_element(
             this, rr_ui_set_justify(
                       rr_ui_h_container_init(
                           rr_ui_container_init(), 0, 0,
                           rr_ui_text_init("Damage reduction: ", 12, 0xffafafaf),
-                          rr_ui_text_init(extra, 12, 0xffffffff), NULL),
-                      -1, 0));
-        extra = malloc((sizeof *extra) * 8);
-        sprintf(extra, "%.1f", 0.5);
-        rr_ui_container_add_element(
-            this, rr_ui_set_justify(
-                      rr_ui_h_container_init(
-                          rr_ui_container_init(), 0, 0,
-                          rr_ui_text_init("Diminish factor: ", 12, 0xff0f8282),
-                          rr_ui_text_init(extra, 12, 0xffffffff), NULL),
+                          text, NULL),
                       -1, 0));
     }
     else if (id == rr_petal_id_web)
@@ -300,23 +385,16 @@ struct rr_ui_element *rr_ui_petal_tooltip_init(uint8_t id, uint8_t rarity)
     }
     else if (id == rr_petal_id_crest)
     {
-        char *extra = malloc((sizeof *extra) * 8);
-        sprintf(extra, "%.0f%%", 100 / (1 - 0.1 * rarity) - 100);
+        struct rr_ui_element *text =
+            rr_ui_dynamic_text_init(12, 0xffffffff, get_fov_increase);
+        d_data = text->data;
+        d_data->data = tooltip_data;
         rr_ui_container_add_element(
             this, rr_ui_set_justify(
                       rr_ui_h_container_init(
                           rr_ui_container_init(), 0, 0,
                           rr_ui_text_init("FOV increase: ", 12, 0xffe38329),
-                          rr_ui_text_init(extra, 12, 0xffffffff), NULL),
-                      -1, 0));
-        extra = malloc((sizeof *extra) * 8);
-        sprintf(extra, "%.1f", 0.5);
-        rr_ui_container_add_element(
-            this, rr_ui_set_justify(
-                      rr_ui_h_container_init(
-                          rr_ui_container_init(), 0, 0,
-                          rr_ui_text_init("Diminish factor: ", 12, 0xff0f8282),
-                          rr_ui_text_init(extra, 12, 0xffffffff), NULL),
+                          text, NULL),
                       -1, 0));
     }
     else if (id == rr_petal_id_beak)
@@ -358,23 +436,16 @@ struct rr_ui_element *rr_ui_petal_tooltip_init(uint8_t id, uint8_t rarity)
     }
     else if (id == rr_petal_id_third_eye)
     {
-        char *extra = malloc((sizeof *extra) * 8);
-        sprintf(extra, "+%d", 45 * (rarity - rr_rarity_id_epic));
+        struct rr_ui_element *text =
+            rr_ui_dynamic_text_init(12, 0xffffffff, get_range_increase);
+        d_data = text->data;
+        d_data->data = tooltip_data;
         rr_ui_container_add_element(
             this, rr_ui_set_justify(
                       rr_ui_h_container_init(
                           rr_ui_container_init(), 0, 0,
                           rr_ui_text_init("Range increase: ", 12, 0xff4266f5),
-                          rr_ui_text_init(extra, 12, 0xffffffff), NULL),
-                      -1, 0));
-        extra = malloc((sizeof *extra) * 8);
-        sprintf(extra, "%.1f", 0.5);
-        rr_ui_container_add_element(
-            this, rr_ui_set_justify(
-                      rr_ui_h_container_init(
-                          rr_ui_container_init(), 0, 0,
-                          rr_ui_text_init("Diminish factor: ", 12, 0xff0f8282),
-                          rr_ui_text_init(extra, 12, 0xffffffff), NULL),
+                          text, NULL),
                       -1, 0));
     }
     else if (id == rr_petal_id_nest)

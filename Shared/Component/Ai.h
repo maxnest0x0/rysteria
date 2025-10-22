@@ -19,6 +19,7 @@
 #include <Shared/Component/Common.h>
 #include <Shared/Entity.h>
 #include <Shared/Utilities.h>
+#include <Shared/Vector.h>
 
 struct rr_simulation;
 struct proto_bug;
@@ -43,7 +44,8 @@ enum rr_ai_state
     rr_ai_state_waiting_to_attack,
     rr_ai_state_exotic_special,
 
-    rr_ai_state_returning_to_owner
+    rr_ai_state_returning_to_owner,
+    rr_ai_state_returning_to_higher_zone
 };
 
 struct rr_component_ai
@@ -56,6 +58,7 @@ struct rr_component_ai
     RR_SERVER_ONLY(uint8_t protocol_state;)
     RR_SERVER_ONLY(uint8_t has_prediction;)
     RR_SERVER_ONLY(float aggro_range;)
+    RR_SERVER_ONLY(struct rr_vector return_pos;)
 };
 
 void rr_component_ai_init(struct rr_component_ai *, struct rr_simulation *);

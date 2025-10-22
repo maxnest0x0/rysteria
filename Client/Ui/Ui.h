@@ -75,6 +75,14 @@ struct rr_ui_container_metadata
     void *data;
 };
 
+struct rr_ui_tooltip_metadata
+{
+    uint8_t id;
+    uint8_t rarity;
+    uint32_t count;
+    uint8_t pos;
+};
+
 struct rr_ui_element_vector
 {
     struct rr_ui_element **start;
@@ -127,7 +135,7 @@ void rr_ui_render_tooltip_below(struct rr_ui_element *, struct rr_ui_element *,
                                 struct rr_game *);
 void rr_ui_render_tooltip_right(struct rr_ui_element *, struct rr_ui_element *,
                                 struct rr_game *);
-void rr_ui_set_tooltip_count(struct rr_ui_element *, uint32_t);
+void rr_ui_set_tooltip_metadata(struct rr_ui_element *, uint32_t, uint8_t);
 uint8_t rr_ui_mouse_over(struct rr_ui_element *, struct rr_game *);
 void rr_ui_element_check_if_focused(struct rr_ui_element *, struct rr_game *);
 uint8_t rr_ui_always_show(struct rr_ui_element *, struct rr_game *);

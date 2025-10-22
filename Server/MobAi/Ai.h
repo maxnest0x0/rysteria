@@ -33,6 +33,7 @@ void tick_idle(EntityIdx, struct rr_simulation *);
 void tick_idle_move_default(EntityIdx, struct rr_simulation *);
 void tick_idle_move_sinusoid(EntityIdx, struct rr_simulation *, float);
 uint8_t tick_summon_return_to_owner(EntityIdx, struct rr_simulation *);
+void tick_return_to_higher_zone(EntityIdx, struct rr_simulation *);
 
 void tick_ai_default(EntityIdx, struct rr_simulation *, float);
 void tick_ai_triceratops(EntityIdx, struct rr_simulation *);

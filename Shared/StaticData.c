@@ -62,7 +62,7 @@ struct rr_petal_data RR_PETAL_DATA[rr_petal_id_max] = {
     {rr_petal_id_azalea,    rr_rarity_id_common,    defensive,  5.0f,  15.0f,  10.0f,  25, 50, {1,1,1,1,1,1,3,3}},
     {rr_petal_id_bone,      rr_rarity_id_common,    defensive,  2.5f,  25.0f,   0.0f,  68,  0, {1,1,1,1,1,1,1,1}},
     {rr_petal_id_web,       rr_rarity_id_rare,      defensive,  5.0f,   5.0f,   0.0f,  50, 13, {1,1,1,1,1,1,1,1}},
-    {rr_petal_id_seed,      rr_rarity_id_legendary, defensive,  1.0f,  75.0f,   0.0f,  63,  1, {1,1,1,1,1,1,1,1}},
+    {rr_petal_id_seed,      rr_rarity_id_legendary, defensive,  1.0f,  75.0f,   0.0f,  63, 13, {1,1,1,1,1,1,1,1}},
     {rr_petal_id_gravel,    rr_rarity_id_unusual,   offensive,  9.0f,  20.0f,   0.0f,  20, 10, {1,2,2,2,3,3,4,4}},
     {rr_petal_id_club,      rr_rarity_id_common,    offensive,  2.0f,1200.0f,   0.0f, 250,  0, {1,1,1,1,1,1,1,1}},
     {rr_petal_id_crest,     rr_rarity_id_rare,      offensive,  0.0f,   0.0f,   0.0f,   0,  0, {0,0,0,0,0,0,0,0}},
@@ -70,11 +70,11 @@ struct rr_petal_data RR_PETAL_DATA[rr_petal_id_max] = {
     {rr_petal_id_beak,      rr_rarity_id_unusual,   defensive,  5.0f,   5.0f,   0.0f,  55,  0, {1,1,1,1,1,1,1,1}},
     {rr_petal_id_lightning, rr_rarity_id_unusual,   offensive,  7.0f,   1.0f,   0.0f,  63,  0, {1,1,1,1,1,1,1,1}},
     {rr_petal_id_third_eye, rr_rarity_id_legendary, offensive,  0.0f,   0.0f,   0.0f,   0,  0, {0,0,0,0,0,0,0,0}},
-    {rr_petal_id_nest,      rr_rarity_id_legendary, defensive,  5.0f,  25.0f,   0.0f, 125,  1, {1,1,1,1,1,1,1,1}},
+    {rr_petal_id_nest,      rr_rarity_id_legendary, defensive,  5.0f,  25.0f,   0.0f, 125, 13, {1,1,1,1,1,1,1,1}},
     {rr_petal_id_fireball,  rr_rarity_id_unusual,   offensive,260.0f,   1.0f,   0.0f, 600,  0, {1,1,1,1,1,1,1,1}},
     {rr_petal_id_meat,      rr_rarity_id_common,    offensive,  0.0f,1600.0f,   0.0f, 188, 13, {1,1,1,1,1,1,1,1}},
     {rr_petal_id_bubble,    rr_rarity_id_common,    defensive,  1.0f,  25.0f,   0.0f, 150,  3, {1,1,1,1,1,1,1,1}},
-    {rr_petal_id_meteor,    rr_rarity_id_unusual,   defensive,  0.0f,   0.0f,   0.0f,  50,  0, {1,1,1,1,1,1,1,1}},
+    {rr_petal_id_meteor,    rr_rarity_id_unusual,   defensive,  0.0f,   0.0f,   0.0f,  75,  0, {1,1,1,1,1,1,1,1}},
     {rr_petal_id_mandible,  rr_rarity_id_common,    offensive,  5.0f,  10.0f,   0.0f,  75,  0, {1,1,1,1,1,1,1,1}},
     {rr_petal_id_wax,       rr_rarity_id_unusual,   offensive, 10.0f,  10.0f,  10.0f,  38,  0, {2,2,2,2,2,2,2,2}},
     {rr_petal_id_sand,      rr_rarity_id_common,    offensive, 15.0f,  10.0f,  10.0f,  37,  0, {4,4,4,4,4,4,4,4}},
@@ -206,7 +206,7 @@ struct rr_mob_rarity_scale RR_MOB_RARITY_SCALING[rr_rarity_id_max] = {
     {40,     8.5,  2.8},
     {192,    14.5, 4  },
     {2560,   24.6, 5.5},
-    {128000, 42,   7  },
+    {38400,  42,   7  },
 };
 // clang-format on
 
@@ -557,7 +557,7 @@ RR_DEFINE_MAZE(HELL_CREEK, 80) = {
 {_,e,e,_,E,E,_,E,E,_,L,_,_,R,_,E,E,E,E,E,E,E,_,E,_,_,L,L,_,x,x,_,_,m,m,m,_,_,x,x}, // 18
 {e,e,_,E,E,_,E,E,_,L,L,_,R,R,_,E,E,_,_,_,E,E,_,E,E,_,L,L,_,x,x,_,m,m,m,_,_,x,x,x}, // 19
 {e,_,E,E,_,l,l,_,L,L,_,_,R,_,E,E,_,_,M,_,_,E,E,_,E,_,_,L,_,_,x,_,_,m,m,_,x,x,x,x}, // 20
-{E,E,E,_,l,l,_,L,L,L,_,e,e,e,e,_,_,m,L,c,_,_,l,l,l,l,_,L,L,_,x,x,_,_,_,_,x,x,x,M}, // 21
+{E,E,E,_,l,l,_,L,L,L,_,e,e,e,e,_,_,m,L,c,_,_,l,l,l,l,_,L,L,_,x,x,_,_,_,_,x,x,x,x}, // 21
 {E,E,_,l,l,_,L,L,L,_,_,e,e,e,_,_,e,l,_,r,E,_,_,l,l,l,_,_,L,_,_,x,x,_,_,x,x,_,_,M}, // 22
 {E,_,l,l,_,l,l,_,L,_,e,e,e,_,_,r,L,_,_,_,C,e,_,_,l,l,l,_,L,L,_,_,x,x,x,x,_,_,M,M}, // 23
 {_,l,l,_,l,l,_,L,L,_,e,e,_,_,R,E,_,_,_,_,_,l,m,_,_,l,l,_,L,L,L,_,_,x,x,_,_,M,M,M}, // 24

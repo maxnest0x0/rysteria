@@ -44,3 +44,4 @@ EntityIdx rr_simulation_choose_nearby_enemy_custom_pos(
     uint8_t (*)(struct rr_simulation *, EntityIdx, EntityIdx, void *));
 
 uint8_t no_filter(struct rr_simulation *, EntityIdx, EntityIdx, void *);
+uint8_t high_zone_filter(struct rr_simulation *, EntityIdx, EntityIdx, void *);

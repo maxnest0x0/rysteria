@@ -314,3 +314,33 @@ uint8_t no_filter(struct rr_simulation *simulation, EntityIdx seeker,
 {
     return 1;
 }
+
+uint8_t high_zone_filter(struct rr_simulation *simulation, EntityIdx seeker,
+                         EntityIdx target, void *captures)
+{
+    struct rr_component_mob *mob = rr_simulation_get_mob(simulation, seeker);
+    if (mob->rarity < rr_rarity_id_ultimate)
+        return 1;
+    struct rr_component_physical *physical =
+        rr_simulation_get_physical(simulation, seeker);
+    struct rr_component_arena *arena =
+        rr_simulation_get_arena(simulation, physical->arena);
+    uint32_t grid_x = rr_fclamp(physical->x / arena->maze->grid_size,
+                                0, arena->maze->maze_dim - 1);
+    uint32_t grid_y = rr_fclamp(physical->y / arena->maze->grid_size,
+                                0, arena->maze->maze_dim - 1);
+    struct rr_maze_grid *grid =
+        rr_component_arena_get_grid(arena, grid_x, grid_y);
+    if (grid->difficulty < 48)
+        return 1;
+    physical = rr_simulation_get_physical(simulation, target);
+    arena = rr_simulation_get_arena(simulation, physical->arena);
+    grid_x = rr_fclamp(physical->x / arena->maze->grid_size,
+                       0, arena->maze->maze_dim - 1);
+    grid_y = rr_fclamp(physical->y / arena->maze->grid_size,
+                       0, arena->maze->maze_dim - 1);
+    grid = rr_component_arena_get_grid(arena, grid_x, grid_y);
+    if (grid->difficulty >= 48 || grid->value == 0 || (grid->value & 8))
+        return 1;
+    return 0;
+}

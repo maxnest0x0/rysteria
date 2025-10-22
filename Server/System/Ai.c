@@ -68,8 +68,16 @@ static void system_for_each(EntityIdx entity, void *simulation)
         }
     }
     if (mob->player_spawned)
+    {
         if (tick_summon_return_to_owner(entity, this))
             return;
+    }
+    else
+    {
+        tick_return_to_higher_zone(entity, this);
+        if (ai->ai_state == rr_ai_state_returning_to_higher_zone)
+            return;
+    }
     if (physical->stun_ticks > 0)
     {
         physical->knockback_scale = 1;

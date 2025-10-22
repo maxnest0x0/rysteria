@@ -28,6 +28,16 @@
 #include <Shared/StaticData.h>
 #include <Shared/Utilities.h>
 
+static void get_count(struct rr_ui_element *this, struct rr_game *game)
+{
+    struct rr_ui_dynamic_text_metadata *data = this->data;
+    struct rr_ui_tooltip_metadata *tooltip_data = data->data;
+    if (tooltip_data->count)
+        sprintf(data->text, "x%u", tooltip_data->count);
+    else
+        data->text[0] = 0;
+}
+
 static void inventory_button_on_render(struct rr_ui_element *this,
                                        struct rr_game *game)
 {
@@ -59,15 +69,20 @@ struct rr_ui_element *rr_ui_mob_tooltip_init(uint8_t id, uint8_t rarity)
     rr_sprintf(dmg,
                RR_MOB_DATA[id].damage * RR_MOB_RARITY_SCALING[rarity].damage);
 
-    char *count = malloc((sizeof *count) * 12);
-    count[0] = 0;
+    struct rr_ui_tooltip_metadata *tooltip_data = malloc(sizeof *tooltip_data);
+    tooltip_data->id = id;
+    tooltip_data->rarity = rarity;
+    struct rr_ui_element *count = rr_ui_dynamic_text_init(16, 0xffffffff,
+                                                          get_count);
+    struct rr_ui_dynamic_text_metadata *d_data = count->data;
+    d_data->data = tooltip_data;
     struct rr_ui_element *this = rr_ui_set_background(
         rr_ui_v_container_init(
             rr_ui_tooltip_container_init(), 10, 5,
             rr_ui_set_justify(
                 rr_ui_h_container_init(rr_ui_container_init(), 0, 10,
                     rr_ui_text_init(RR_MOB_NAMES[id], 24, 0xffffffff),
-                    rr_ui_text_init(count, 16, 0xffffffff),
+                    count,
                     NULL
                 ),
             -1, -1),
@@ -88,7 +103,7 @@ struct rr_ui_element *rr_ui_mob_tooltip_init(uint8_t id, uint8_t rarity)
             NULL),
         0x80000000);
     struct rr_ui_container_metadata *data = this->data;
-    data->data = count;
+    data->data = tooltip_data;
 
     if (id == rr_mob_id_pteranodon)
     {

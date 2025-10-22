@@ -183,14 +183,13 @@ void rr_ui_render_tooltip_right(struct rr_ui_element *this,
         (this->abs_y / game->renderer->scale - tooltip->abs_height / 2);
 }
 
-void rr_ui_set_tooltip_count(struct rr_ui_element *this, uint32_t count)
+void rr_ui_set_tooltip_metadata(struct rr_ui_element *this,
+                                uint32_t count, uint8_t pos)
 {
     struct rr_ui_container_metadata *data = this->data;
-    char *text = data->data;
-    if (count)
-        sprintf(text, "x%u", count);
-    else
-        text[0] = 0;
+    struct rr_ui_tooltip_metadata *tooltip_data = data->data;
+    tooltip_data->count = count;
+    tooltip_data->pos = pos;
 }
 
 uint8_t rr_ui_mouse_over(struct rr_ui_element *this, struct rr_game *game)

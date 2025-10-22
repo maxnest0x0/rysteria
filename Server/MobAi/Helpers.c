@@ -46,7 +46,8 @@ uint8_t has_new_target(struct rr_component_ai *ai,
         EntityIdx target_id;
         if (relations->team == rr_simulation_team_id_mobs)
             target_id = rr_simulation_choose_nearby_enemy(
-                simulation, ai->parent_id, ai->aggro_range, NULL, no_filter);
+                simulation, ai->parent_id, ai->aggro_range, NULL,
+                high_zone_filter);
         else
             target_id = rr_simulation_find_nearest_enemy(
                 simulation, ai->parent_id, ai->aggro_range,
@@ -205,4 +206,60 @@ uint8_t tick_summon_return_to_owner(EntityIdx entity,
         return 0;
     }
     return 0;
+}
+
+void tick_return_to_higher_zone(EntityIdx entity,
+                                struct rr_simulation *simulation)
+{
+    struct rr_component_ai *ai = rr_simulation_get_ai(simulation, entity);
+    struct rr_component_physical *physical =
+        rr_simulation_get_physical(simulation, entity);
+    if (ai->ai_state == rr_ai_state_returning_to_higher_zone)
+    {
+        struct rr_vector delta = {ai->return_pos.x - physical->x,
+                                  ai->return_pos.y - physical->y};
+        if (rr_vector_magnitude_cmp(&delta, physical->radius) == 1)
+        {
+            struct rr_vector accel = delta;
+            rr_vector_set_magnitude(&accel, RR_PLAYER_SPEED * 1.2);
+            rr_vector_add(&physical->acceleration, &accel);
+            rr_component_physical_set_angle(physical, rr_vector_theta(&accel));
+            ai->target_entity = RR_NULL_ENTITY;
+        }
+        else
+        {
+            ai->ai_state = rr_ai_state_idle;
+            ai->ticks_until_next_action = rand() % 25 + 25;
+        }
+        return;
+    }
+    struct rr_component_mob *mob = rr_simulation_get_mob(simulation, entity);
+    if (mob->rarity < rr_rarity_id_ultimate)
+        return;
+    struct rr_component_arena *arena =
+        rr_simulation_get_arena(simulation, physical->arena);
+    int32_t grid_x = rr_fclamp(physical->x / arena->maze->grid_size,
+                               0, arena->maze->maze_dim - 1);
+    int32_t grid_y = rr_fclamp(physical->y / arena->maze->grid_size,
+                               0, arena->maze->maze_dim - 1);
+    struct rr_maze_grid *grid =
+        rr_component_arena_get_grid(arena, grid_x, grid_y);
+    if (grid->difficulty >= 48 || grid->value == 0 || (grid->value & 8))
+        return;
+    for (int8_t i = -1; i <= 1; ++i)
+        for (int8_t j = -1; j <= 1; ++j)
+        {
+            int32_t x = (grid_x / 2 + i) * 2 + 1;
+            int32_t y = (grid_y / 2 + j) * 2 + 1;
+            if (x < 0 || x >= arena->maze->maze_dim ||
+                y < 0 || y >= arena->maze->maze_dim)
+                continue;
+            grid = rr_component_arena_get_grid(arena, x, y);
+            if (grid->difficulty < 48)
+                continue;
+            rr_vector_set(&ai->return_pos, x * arena->maze->grid_size,
+                          y * arena->maze->grid_size);
+            ai->ai_state = rr_ai_state_returning_to_higher_zone;
+            return;
+        }
 }
