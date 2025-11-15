@@ -1,0 +1,24 @@
+{
+    "build": {
+        "dockerfile": "Dockerfile"
+    },
+    "postCreateCommand": {
+        "Client": "cmake -S Client -B Client/build -DWASM_BUILD=1",
+        "Server": "cmake -S Server -B Server/build",
+        "Master Server": "npm install --prefix MasterServer"
+    },
+    "portsAttributes": {
+        "8080": {
+            "label": "HTTP Server",
+            "onAutoForward": "openBrowser"
+        },
+        "55554": {
+            "label": "Master Server",
+            "onAutoForward": "silent"
+        },
+        "1234": {
+            "label": "Game Server",
+            "onAutoForward": "openBrowserOnce"
+        }
+    }
+}

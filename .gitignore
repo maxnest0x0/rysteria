@@ -4,7 +4,7 @@ node_modules/
 .vs/
 emsdk/
 
-rrolf-client
+rrolf-client.js
 rrolf-client.wasm
 database.json
 logs.txt

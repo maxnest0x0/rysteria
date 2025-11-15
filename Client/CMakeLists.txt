@@ -163,6 +163,7 @@ if(RIVET_BUILD)
 endif()
 
 add_executable(rrolf-client ${SRCS})
+set(CMAKE_EXECUTABLE_SUFFIX ".js")
 
 if(NOT WASM_BUILD)
     target_link_libraries(rrolf-client websockets cairo curl)

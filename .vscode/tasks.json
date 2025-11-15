@@ -1,0 +1,96 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "HTTP Server",
+            "type": "shell",
+            "command": "http-server -c-1 --port 8080",
+            "options": {
+                "cwd": "${workspaceFolder}/Client/public"
+            },
+            "isBackground": true,
+            "runOptions": {
+                "runOn": "folderOpen"
+            },
+            "presentation": {
+                "panel": "dedicated"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Master Server",
+            "type": "shell",
+            "command": "node main.js",
+            "options": {
+                "cwd": "${workspaceFolder}/MasterServer"
+            },
+            "isBackground": true,
+            "runOptions": {
+                "runOn": "folderOpen"
+            },
+            "presentation": {
+                "panel": "dedicated"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Game Server",
+            "type": "shell",
+            "command": "until ./rrolf-server; do sleep 1; done",
+            "options": {
+                "cwd": "${workspaceFolder}/Server/build"
+            },
+            "isBackground": true,
+            "runOptions": {
+                "runOn": "folderOpen"
+            },
+            "presentation": {
+                "panel": "dedicated"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Client Build",
+            "type": "shell",
+            "command": "make -j$(nproc) && cp rrolf-client.* ../public",
+            "options": {
+                "cwd": "${workspaceFolder}/Client/build"
+            },
+            "group": "build",
+            "runOptions": {
+                "runOn": "folderOpen"
+            },
+            "presentation": {
+                "panel": "dedicated"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Server Build",
+            "type": "shell",
+            "command": "make -j$(nproc) && (killall rrolf-server || true)",
+            "options": {
+                "cwd": "${workspaceFolder}/Server/build"
+            },
+            "group": "build",
+            "runOptions": {
+                "runOn": "folderOpen"
+            },
+            "presentation": {
+                "panel": "dedicated"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Build All",
+            "dependsOn": [
+                "Client Build",
+                "Server Build"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        }
+    ]
+}
