@@ -1135,7 +1135,8 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
                 --this->simulation.animation_length;
                 break;
             }
-            if (!rr_validate_user_string(animation->message))
+            if (!rr_validate_user_string(animation->message) ||
+                level_from_xp(client->experience) < 3)
             {
                 printf("[blocked chat] %s: %s\n",
                        animation->name, animation->message);

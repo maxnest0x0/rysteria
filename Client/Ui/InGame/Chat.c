@@ -27,9 +27,12 @@
 #include <Shared/pb.h>
 #include <Client/DOM.h>
 
+static uint8_t min_level_to_chat = 3;
+
 static void chat_bar_on_event(struct rr_ui_element *this, struct rr_game *game)
 {
-    if (game->input_data->mouse_buttons_up_this_tick & 1)
+    if ((game->input_data->mouse_buttons_up_this_tick & 1) &&
+        level_from_xp(game->cache.experience) >= min_level_to_chat)
     {
         game->chat.chat_active = 1;
         game->menu_open = 0;
@@ -39,6 +42,8 @@ static void chat_bar_on_event(struct rr_ui_element *this, struct rr_game *game)
 static void chat_bar_animate(struct rr_ui_element *this, struct rr_game *game)
 {
     rr_ui_default_animate(this, game);
+    if (level_from_xp(game->cache.experience) < min_level_to_chat)
+        game->chat.chat_active = 0;
     if (game->chat.chat_active)
     {
         this->fill = 0xffffffff;
@@ -46,7 +51,8 @@ static void chat_bar_animate(struct rr_ui_element *this, struct rr_game *game)
     }
     else
         this->fill = 0x80000000;
-    if (rr_bitset_get_bit(game->input_data->keys_pressed_this_tick, 13))
+    if (rr_bitset_get_bit(game->input_data->keys_pressed_this_tick, 13) &&
+        level_from_xp(game->cache.experience) >= min_level_to_chat)
     {
         if (game->chat.chat_active)
         {
@@ -76,7 +82,9 @@ static void chat_bar_animate(struct rr_ui_element *this, struct rr_game *game)
 
 static uint8_t chat_bar_choose(struct rr_ui_element *this, struct rr_game *game)
 {
-    return game->chat.chat_active || game->chat.sending[0];
+    if (level_from_xp(game->cache.experience) < min_level_to_chat)
+        return 2;
+    return !(game->chat.chat_active || game->chat.sending[0]);
 }
 
 static uint8_t chat_should_show(struct rr_ui_element *this,
@@ -124,15 +132,20 @@ struct rr_ui_element *rr_ui_message_box_init(struct rr_game *game)
 struct rr_ui_element *rr_ui_chat_bar_init(struct rr_game *game)
 {
     struct rr_ui_element *input = rr_ui_text_input_init(200, 18, game->chat.sending, 64, "_0x4523");
-    struct rr_ui_element *text = rr_ui_text_init("Press [Enter] or click here to chat", 14, 0xffffffff);
-    struct rr_ui_element *inner = rr_ui_choose_element_init(
+    struct rr_ui_element *text1 = rr_ui_text_init("Press [Enter] or click here to chat", 14, 0xffffffff);
+    char *buf = malloc((sizeof *buf) * 24);
+    sprintf(buf, "Reach level %u to chat", min_level_to_chat);
+    struct rr_ui_element *text2 = rr_ui_text_init(buf, 14, 0xffffffff);
+    struct rr_ui_element *inner = rr_ui_multi_choose_element_init(
+        chat_bar_choose,
         rr_ui_flex_container_init(
             rr_ui_text_init("[Global]", 14, 0xffffffff),
             input,
             10
         ),
-        text,
-        chat_bar_choose
+        text1,
+        text2,
+        NULL
     );
     inner->prevent_on_event = 1;
     struct rr_ui_element *this = rr_ui_set_background(
