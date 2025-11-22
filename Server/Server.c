@@ -123,8 +123,6 @@ void rr_server_client_free(struct rr_server_client *this)
                                               this->player_info->parent_id);
     rr_client_leave_squad(this->server, this);
     uint8_t i = this - this->server->clients;
-    for (uint8_t j = 0; j < RR_MAX_CLIENT_COUNT; ++j)
-        rr_bitset_unset(this->server->clients[j].blocked_clients, i);
     for (uint32_t j = 0; j < this->server->simulation.drop_count; ++j)
     {
         EntityIdx drop_id = this->server->simulation.drop_vector[j];
@@ -178,10 +176,10 @@ static void write_animation_function(struct rr_simulation *simulation,
     {
         struct rr_server_client *sender =
             rr_simulation_get_player_info(simulation, p_info_id)->client;
-        uint8_t i = sender - client->server->clients;
-        uint8_t blocked = rr_bitset_get(client->blocked_clients, i);
-        if (blocked)
-            return;
+        for (uint8_t i = 0; i < RR_MAX_CLIENT_COUNT; ++i)
+            if (strcmp(client->blocked_clients[i],
+                       sender->rivet_account.uuid) == 0)
+                return;
     }
     proto_bug_write_uint8(encoder, 1, "continue");
     proto_bug_write_uint8(encoder, animation->type, "ani type");
@@ -240,8 +238,14 @@ void rr_server_client_broadcast_update(struct rr_server_client *this)
         proto_bug_write_uint8(&encoder, member->playing, "ready");
         proto_bug_write_uint8(&encoder, member->client->disconnected,
                               "disconnected");
-        uint8_t j = member->client - server->clients;
-        uint8_t blocked = rr_bitset_get(this->blocked_clients, j);
+        uint8_t blocked = 0;
+        for (uint8_t j = 0; j < RR_MAX_CLIENT_COUNT; ++j)
+            if (strcmp(this->blocked_clients[j],
+                member->client->rivet_account.uuid) == 0)
+            {
+                blocked = 1;
+                break;
+            }
         proto_bug_write_uint8(&encoder, blocked, "blocked");
         proto_bug_write_uint8(&encoder, member->is_dev, "is_dev");
         proto_bug_write_uint8(&encoder, member->kick_vote_count, "kick votes");
@@ -596,13 +600,6 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
                 memcpy(client->blocked_clients,
                        this->clients[j].blocked_clients,
                        sizeof this->clients[j].blocked_clients);
-                for (uint8_t k = 0; k < RR_MAX_CLIENT_COUNT; ++k)
-                {
-                    uint8_t blocked =
-                        rr_bitset_get(this->clients[k].blocked_clients, j);
-                    if (blocked)
-                        rr_bitset_set(this->clients[k].blocked_clients, i);
-                }
                 for (uint32_t k = 0; k < this->simulation.drop_count; ++k)
                 {
                     EntityIdx drop_id = this->simulation.drop_vector[k];
@@ -1168,9 +1165,27 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
                 client->squad == index && client->squad_pos == pos)
                 break;
             struct rr_server_client *to_block = block_member->client;
-            uint8_t j = to_block - this->clients;
-            uint8_t blocked = rr_bitset_get(client->blocked_clients, j);
-            rr_bitset_maybe_set(client->blocked_clients, j, blocked ^ 1);
+            uint8_t j = 0;
+            for (; j < RR_MAX_CLIENT_COUNT; ++j)
+            {
+                if (strcmp(client->blocked_clients[j],
+                    to_block->rivet_account.uuid) == 0)
+                {
+                    client->blocked_clients[j][0] = 0;
+                    break;
+                }
+            }
+            if (j < RR_MAX_CLIENT_COUNT)
+                break;
+            for (j = 0; j < RR_MAX_CLIENT_COUNT; ++j)
+            {
+                if (client->blocked_clients[j][0] == 0)
+                {
+                    strcpy(client->blocked_clients[j],
+                           to_block->rivet_account.uuid);
+                    break;
+                }
+            }
             break;
         }
         case rr_serverbound_dev_cheat:
@@ -1587,8 +1602,14 @@ static void server_tick(struct rr_server *this)
                     proto_bug_write_uint8(&encoder,
                                           member->client->disconnected,
                                           "disconnected");
-                    uint8_t j = member->client - this->clients;
-                    uint8_t blocked = rr_bitset_get(client->blocked_clients, j);
+                    uint8_t blocked = 0;
+                    for (uint8_t j = 0; j < RR_MAX_CLIENT_COUNT; ++j)
+                        if (strcmp(client->blocked_clients[j],
+                            member->client->rivet_account.uuid) == 0)
+                        {
+                            blocked = 1;
+                            break;
+                        }
                     proto_bug_write_uint8(&encoder, blocked, "blocked");
                     proto_bug_write_uint8(&encoder, member->is_dev, "is_dev");
                     proto_bug_write_uint8(&encoder, member->kick_vote_count,

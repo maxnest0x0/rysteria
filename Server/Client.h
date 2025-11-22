@@ -77,7 +77,7 @@ struct rr_server_client
     uint32_t disconnected_ticks;
     uint32_t afk_ticks;
     uint8_t joined_squad_before[RR_BITSET_ROUND(RR_SQUAD_COUNT)];
-    uint8_t blocked_clients[RR_BITSET_ROUND(RR_MAX_CLIENT_COUNT)];
+    char blocked_clients[RR_MAX_CLIENT_COUNT][37];
     uint8_t squad_pos;
     uint8_t squad;
     uint8_t checkpoint;
