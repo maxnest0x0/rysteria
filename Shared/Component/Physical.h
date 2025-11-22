@@ -62,6 +62,8 @@ struct rr_component_physical
     RR_SERVER_ONLY(uint8_t bubbling : 1;)
     RR_SERVER_ONLY(uint8_t bubbling_to_death : 1;)
     RR_SERVER_ONLY(uint32_t stun_ticks;)
+    RR_SERVER_ONLY(uint32_t pachy_stun_ticks;)
+    RR_SERVER_ONLY(uint32_t shell_ignore_ticks;)
     RR_CLIENT_ONLY(uint8_t deletion_type : 2;)
     RR_CLIENT_ONLY(uint8_t animation_started : 1;)
     RR_SERVER_ONLY(uint8_t protocol_state;)

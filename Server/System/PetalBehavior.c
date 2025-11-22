@@ -217,6 +217,8 @@ static uint8_t is_close_enough_and_angle(struct rr_simulation *simulation,
         rr_simulation_get_physical(simulation, seeker);
     struct rr_component_physical *physical =
         rr_simulation_get_physical(simulation, target);
+    if (physical->shell_ignore_ticks > 0)
+        return 0;
     struct rr_vector delta = {physical->x - seeker_physical->x,
                               physical->y - seeker_physical->y};
     return rr_angle_within(rr_vector_theta(&delta),

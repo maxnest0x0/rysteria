@@ -279,7 +279,7 @@ static uint8_t damage_effect(struct rr_simulation *simulation, EntityIdx target,
         {
             struct rr_component_physical *physical =
                 rr_simulation_get_physical(simulation, target);
-            physical->stun_ticks = 15;
+            physical->pachy_stun_ticks = 250;
         }
     }
     else if (rr_simulation_has_petal(simulation, attacker))
@@ -295,7 +295,7 @@ static uint8_t damage_effect(struct rr_simulation *simulation, EntityIdx target,
             if (petal->detached &&
                 rr_simulation_has_flower(simulation, relations->owner))
                 health->damage =
-                    sqrtf(1 + 0.4 * (75 - petal->effect_delay)) *
+                    (1 + 0.1 * (75 - petal->effect_delay)) *
                         RR_PETAL_DATA[petal->id].damage *
                         RR_PETAL_DATA[petal->id].scale[petal->rarity].damage /
                         RR_PETAL_DATA[petal->id].count[petal->rarity];

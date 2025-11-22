@@ -210,6 +210,14 @@ static void system_velocity(EntityIdx id, void *simulation)
             physical->acceleration_scale = 0;
         --physical->stun_ticks;
     }
+    if (physical->pachy_stun_ticks > 0)
+    {
+        if (!rr_simulation_has_petal(simulation, id))
+            physical->acceleration_scale *= 0.5;
+        --physical->pachy_stun_ticks;
+    }
+    if (physical->shell_ignore_ticks > 0)
+        --physical->shell_ignore_ticks;
     struct rr_vector accel = {
         physical->acceleration.x * physical->acceleration_scale,
         physical->acceleration.y * physical->acceleration_scale};

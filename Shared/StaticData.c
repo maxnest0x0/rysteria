@@ -52,7 +52,7 @@ struct rr_petal_data RR_PETAL_DATA[rr_petal_id_max] = {
     {rr_petal_id_fossil,    rr_rarity_id_common,    offensive,  5.0f, 150.0f,   0.0f, 100,  0, {1,1,1,1,1,1,1,1}},
     {rr_petal_id_stinger,   rr_rarity_id_common,    offensive, 65.0f,   3.0f,  10.0f, 150,  0, {1,1,1,1,1,3,5,5}},
     {rr_petal_id_berry,     rr_rarity_id_rare,      offensive,  5.0f,   5.0f,  12.0f,  13,  0, {1,1,1,1,1,2,3,3}},
-    {rr_petal_id_shell,     rr_rarity_id_rare,      offensive, 15.0f,  16.0f,   0.0f,  50, 13, {1,1,1,1,1,2,3,3}},
+    {rr_petal_id_shell,     rr_rarity_id_rare,      offensive, 10.0f,  16.0f,   0.0f,  50, 13, {1,1,1,1,1,2,3,3}},
     {rr_petal_id_peas,      rr_rarity_id_rare,      offensive, 22.0f,  12.0f,   8.0f,  13, 12, {4,4,4,4,4,4,5,5}},
     {rr_petal_id_leaf,      rr_rarity_id_unusual,   offensive,  9.0f,   8.0f,   8.0f,  38,  0, {1,1,1,1,1,2,2,2}},
     {rr_petal_id_egg,       rr_rarity_id_unusual,   defensive,  1.0f,  75.0f,  10.0f,  25,100, {3,3,3,2,2,2,1,1}},
@@ -554,9 +554,9 @@ RR_DEFINE_MAZE(HELL_CREEK, 80) = {
 {e,e,e,_,e,e,_,E,E,E,_,_,R,R,R,_,_,_,e,_,_,_,E,E,E,_,_,L,L,L,_,_,x,x,_,_,L,L,L,_}, // 15
 {e,e,_,e,e,_,E,E,_,E,E,_,_,R,R,R,_,e,e,e,_,E,E,E,_,_,L,L,L,_,_,x,x,_,_,L,L,L,_,_}, // 16
 {e,_,e,e,_,E,E,_,E,E,_,_,_,R,R,_,_,_,E,_,_,_,E,E,_,L,L,L,_,_,x,x,_,_,m,m,m,_,_,x}, // 17
-{_,e,e,_,E,E,_,E,E,_,L,_,_,R,_,E,E,E,E,E,E,E,_,E,_,_,L,L,_,x,x,_,_,m,m,m,_,_,x,x}, // 18
-{e,e,_,E,E,_,E,E,_,L,L,_,R,R,_,E,E,_,_,_,E,E,_,E,E,_,L,L,_,x,x,_,m,m,m,_,_,x,x,x}, // 19
-{e,_,E,E,_,l,l,_,L,L,_,_,R,_,E,E,_,_,M,_,_,E,E,_,E,_,_,L,_,_,x,_,_,m,m,_,x,x,x,x}, // 20
+{_,e,e,_,E,E,_,E,E,_,L,_,_,R,_,E,E,E,E,E,E,E,_,E,_,_,L,L,_,x,x,_,_,M,M,m,_,_,x,x}, // 18
+{e,e,_,E,E,_,E,E,_,L,L,_,R,R,_,E,E,_,_,_,E,E,_,E,E,_,L,L,_,x,x,_,M,M,M,_,_,x,x,x}, // 19
+{e,_,E,E,_,l,l,_,L,L,_,_,R,_,E,E,_,_,M,_,_,E,E,_,E,_,_,L,_,_,x,_,_,M,M,_,x,x,x,x}, // 20
 {E,E,E,_,l,l,_,L,L,L,_,e,e,e,e,_,_,m,L,c,_,_,l,l,l,l,_,L,L,_,x,x,_,_,_,_,x,x,x,x}, // 21
 {E,E,_,l,l,_,L,L,L,_,_,e,e,e,_,_,e,l,_,r,E,_,_,l,l,l,_,_,L,_,_,x,x,_,_,x,x,_,_,M}, // 22
 {E,_,l,l,_,l,l,_,L,_,e,e,e,_,_,r,L,_,_,_,C,e,_,_,l,l,l,_,L,L,_,_,x,x,x,x,_,_,M,M}, // 23
