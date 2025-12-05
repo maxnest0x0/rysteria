@@ -83,7 +83,7 @@ static void get_cooldown(struct rr_ui_element *this, struct rr_game *game)
     else if (id == rr_petal_id_nest)
         sprintf(cd, "↻ %.1f + %.1f + %.1fs",
                 (RR_PETAL_DATA[id].cooldown * 2 / 5) * 0.1 / reload_speed,
-                (RR_PETAL_DATA[id].secondary_cooldown * 2 / 5) * 0.1, 15.0);
+                (RR_PETAL_DATA[id].secondary_cooldown * 2 / 5) * 0.1, 5.0);
     else if (RR_PETAL_DATA[id].secondary_cooldown > 0)
         sprintf(cd, "↻ %.1f + %.1fs",
                 (RR_PETAL_DATA[id].cooldown * 2 / 5) * 0.1 / reload_speed,

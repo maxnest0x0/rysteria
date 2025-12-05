@@ -424,7 +424,7 @@ static void system_flower_petal_movement_logic(
         {
             if ((player_info->input & 2) == 0)
                 break;
-            petal->effect_delay = 15 * 25;
+            petal->effect_delay = 5 * 25;
             rr_component_petal_set_detached(petal, 1);
             break;
         }
@@ -1047,8 +1047,15 @@ static void system_petal_misc_logic(EntityIdx id, void *_simulation)
                     rr_simulation_get_relations(simulation, relations->owner);
                 if (flower_relations->nest != RR_NULL_ENTITY &&
                     rr_simulation_entity_alive(simulation, flower_relations->nest))
-                    rr_simulation_request_entity_deletion(
-                        simulation, flower_relations->nest);
+                {
+                    struct rr_component_nest *old_nest =
+                        rr_simulation_get_nest(simulation, flower_relations->nest);
+                    if (old_nest->rarity < petal->rarity)
+                        rr_simulation_request_entity_deletion(
+                            simulation, flower_relations->nest);
+                    else
+                        return;
+                }
                 EntityIdx nest_id = rr_simulation_alloc_entity(simulation);
                 petal->p_petal->entity_hash = flower_relations->nest =
                     rr_simulation_get_entity_hash(simulation, nest_id);
