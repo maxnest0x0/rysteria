@@ -63,16 +63,13 @@ void rr_server_client_create_flower(struct rr_server_client *this)
     struct rr_component_arena *arena =
         rr_simulation_get_arena(simulation, physical->arena);
     struct rr_maze_declaration *decl = &RR_MAZES[RR_GLOBAL_BIOME];
-    uint8_t checkpoint = this->checkpoint;
-    if (arena->pvp)
-        checkpoint = 4;
     rr_component_physical_set_x(
         physical,
-        2 * decl->grid_size * (decl->checkpoints[checkpoint].spawn_x +
+        2 * decl->grid_size * (decl->checkpoints[this->checkpoint].spawn_x +
                                rr_frand()));
     rr_component_physical_set_y(
         physical,
-        2 * decl->grid_size * (decl->checkpoints[checkpoint].spawn_y +
+        2 * decl->grid_size * (decl->checkpoints[this->checkpoint].spawn_y +
                                rr_frand()));
     struct rr_binary_encoder encoder;
     rr_binary_encoder_init(&encoder, outgoing_message);

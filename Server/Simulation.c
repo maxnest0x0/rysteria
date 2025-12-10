@@ -310,8 +310,7 @@ static void despawn_mob(EntityIdx entity, void *_simulation)
 static float get_max_points(struct rr_simulation *this,
                             struct rr_maze_grid *grid)
 {
-    float coeff = rr_simulation_get_arena(this, 1)->pvp ? 0.3 : 3;
-    return coeff * (0.2 + (grid->player_count) * 1.2) *
+    return 3 * (0.2 + (grid->player_count) * 1.2) *
            powf(1.1, grid->overload_factor);
 }
 static int tick_grid(struct rr_simulation *this, struct rr_maze_grid *grid,
