@@ -129,7 +129,7 @@ void rr_component_player_info_petal_swap(struct rr_component_player_info *this,
             if (!rr_simulation_has_player_info(simulation, id) &&
                 !rr_simulation_has_flower(simulation, id))
                 rr_simulation_request_entity_deletion(simulation, id);
-	    else
+            else
                 puts("would crash");
             slot->petals[i].entity_hash = RR_NULL_ENTITY;
         }

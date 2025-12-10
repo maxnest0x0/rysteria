@@ -1,7 +1,6 @@
-import { readFileSync } from 'fs'
+import { readFileSync } from 'fs';
 
-const db = JSON.parse(readFileSync('database.json', 'utf8'))
-
+const db = JSON.parse(readFileSync('database.json', 'utf8'));
 
 function xp_to_reach_level(level) {
 	if (level <= 60)
@@ -26,7 +25,7 @@ function xp_from_level(level) {
 	return xp;
 }
 
-const arr = []
+const arr = [];
 for (const uuid in db) {
 	if (uuid === 'accounts' || uuid === 'links') continue;
 	db[uuid].exos = 0;
@@ -43,14 +42,17 @@ for (const uuid in db) {
 	arr.push(db[uuid]);
 }
 
-console.log(new Date())
-console.log('uuid', 'xp', 'lvl', 'exos', 'aatts', 'mobs')
+console.log(new Date());
+console.log('uuid', 'xp', 'lvl', 'exos', 'aatts', 'mobs');
+
 console.log('sorted by xp');
 arr.sort((a, b) => b.xp - a.xp);
 for (const acc of arr.slice(0, 50)) console.log(acc.id, acc.xp, acc.level, acc.exos, acc.aatts, acc.mobs);
-console.log('sorted by exos')
+
+console.log('sorted by exos');
 arr.sort((a, b) => b.exos - a.exos);
 for (const acc of arr.slice(0, 50)) console.log(acc.id, acc.xp, acc.level, acc.exos, acc.aatts, acc.mobs);
-console.log('sorted by mobs')
+
+console.log('sorted by mobs');
 arr.sort((a, b) => b.mobs - a.mobs);
 for (const acc of arr.slice(0, 50)) console.log(acc.id, acc.xp, acc.level, acc.exos, acc.aatts, acc.mobs);
