@@ -20,5 +20,6 @@
             "label": "Game Server",
             "onAutoForward": "openBrowserOnce"
         }
-    }
+    },
+    "remoteUser": "root"
 }
