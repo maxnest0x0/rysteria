@@ -1,87 +1,15 @@
-<!--
-Copyright (C) 2024 Paul Johnson
-Copyright (C) 2024-2025 Maxim Nesterov
-
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU Affero General Public License as
-published by the Free Software Foundation, either version 3 of the
-License, or (at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU Affero General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License
-along with this program.  If not, see <https://www.gnu.org/licenses/>.
--->
-
 <!DOCTYPE html>
 <html>
-    <head>
-        <title>Rysteria</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-        <link href="https://rysteria.pro/logo.png" rel="icon" type="image/png">
-        <link href="https://fonts.googleapis.com/css?family=Ubuntu:700" rel="stylesheet" type="text/css">
-        <style>
-            * {
-                margin: 0px;
-                padding: 0px;
-                overflow: hidden;
-            }
-
-            .rrolf
-            {
-                position: absolute;
-                left: 0px;
-                right: 0px;
-            }
-
-            #canvas {
-                position: absolute;
-                top: 0;
-                left: 0;
-                right: 0;
-                bottom: 0;
-                width: 100%;
-                height: 100%;
-                cursor: default;
-            }
-
-            input {
-                background: none;
-                border: none;
-                outline: none;
-                padding-left: 2px;
-            }
-
-            html, body {
-                height: 100%;
-            }
-
-            body {
-                display: flex;
-            }
-
-            #rrolf-error {
-                display: none;
-                font: 48px Ubuntu;
-                margin: auto;
-            }
-        </style>
-    </head>
-    <body>
-        <h2 id="rrolf-error">Sorry, the server is not running</h2>
-        <script>
-            let rrolfErrors = 0;
-            function rrolfError() {
-                if (++rrolfErrors === 1) {
-                    document.querySelector("#rrolf-error").style.display = "block";
-                    setTimeout(() => window.location.reload(), 10000);
-                }
-            }
-            var rrolfScript = null;
-        </script>
-        <script src="https://rysteria.pro/rrolf-client.js" onerror="rrolfError()" onload="rrolfScript = this"></script>
-    </body>
+<head>
+    <script>
+        const uuid = window.localStorage["rivet_account_uuid"];
+        const url = new URL("https://rysteria.pro/");
+        const text = `The game has been moved to ${url}\n` +
+                     `Would you like to transfer this account (${uuid}) there?\n` +
+                     `Your current account there will be overwritten.`;
+        if (uuid && confirm(text))
+            url.searchParams.set("uuid", uuid);
+        window.location.href = url;
+    </script>
+</head>
 </html>
