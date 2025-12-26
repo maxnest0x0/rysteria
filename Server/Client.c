@@ -42,6 +42,7 @@ void rr_server_client_init(struct rr_server_client *this)
     this->serverbound_encryption_key = rr_get_rand();
     this->requested_verification = rr_get_rand();
     this->quick_verification = RR_SECRET8;
+    this->nonce = rr_get_rand();
     memset(&this->dev_cheats, 0, sizeof(struct rr_server_client_dev_cheats));
     this->dev_cheats.speed_percent = 1;
     this->dev_cheats.fov_percent = 1;
@@ -128,8 +129,6 @@ void rr_server_client_write_account(struct rr_server_client *client)
     struct proto_bug encoder;
     proto_bug_init(&encoder, outgoing_message);
     proto_bug_write_uint8(&encoder, rr_clientbound_account_result, "header");
-    proto_bug_write_string(&encoder, client->rivet_account.uuid,
-                           sizeof client->rivet_account.uuid, "uuid");
     proto_bug_write_float64(&encoder, client->experience, "xp");
     for (uint8_t id = 1; id < rr_petal_id_max; ++id)
         for (uint8_t rarity = 0; rarity < rr_rarity_id_max; ++rarity)
@@ -164,6 +163,20 @@ void rr_server_client_write_account(struct rr_server_client *client)
                                     "count");
         }
     proto_bug_write_uint8(&encoder, 0, "id");
+    rr_server_client_write_message(client, encoder.start,
+                                   encoder.current - encoder.start);
+}
+
+void rr_server_client_write_oauth2_data(struct rr_server_client *client) {
+    struct proto_bug encoder;
+    proto_bug_init(&encoder, outgoing_message);
+    proto_bug_write_uint8(&encoder, rr_clientbound_oauth2_data, "header");
+    proto_bug_write_string(&encoder, client->rivet_account.uuid,
+                           sizeof client->rivet_account.uuid, "uuid");
+    proto_bug_write_string(&encoder, client->rivet_account.token,
+                           sizeof client->rivet_account.token, "token");
+    proto_bug_write_string(&encoder, client->rivet_account.name,
+                           sizeof client->rivet_account.name, "name");
     rr_server_client_write_message(client, encoder.start,
                                    encoder.current - encoder.start);
 }
@@ -242,10 +255,11 @@ int rr_server_client_read_from_api(struct rr_server_client *this,
     memset(this->inventory, 0, sizeof this->inventory);
     memset(this->craft_fails, 0, sizeof this->craft_fails);
     memset(this->mob_gallery, 0, sizeof this->mob_gallery);
-    char uuid[sizeof this->rivet_account.uuid];
-    rr_binary_encoder_read_nt_string(encoder, uuid);
-    if (strcmp(uuid, this->rivet_account.uuid))
+    if (rr_binary_encoder_read_varuint(encoder) != this->nonce)
         return 0;
+    rr_binary_encoder_read_nt_string(encoder, this->rivet_account.uuid);
+    rr_binary_encoder_read_nt_string(encoder, this->rivet_account.token);
+    rr_binary_encoder_read_nt_string(encoder, this->rivet_account.name);
     if (this->dev)
     {
         this->checkpoint = 4;

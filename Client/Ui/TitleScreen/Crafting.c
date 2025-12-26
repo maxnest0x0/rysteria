@@ -66,7 +66,7 @@ struct craft_captures
 
 static uint8_t can_craft(struct rr_game *game)
 {
-    return game->logged_in && game->socket_ready &&
+    return game->socket_ready &&
            game->crafting_data.success_count == 0 &&
            game->crafting_data.count >= PETALS_PER_CRAFT &&
            game->crafting_data.crafting_id != 0 &&

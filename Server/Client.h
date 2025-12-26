@@ -57,6 +57,7 @@ struct rr_server_client
     uint64_t serverbound_encryption_key;
     uint64_t requested_verification;
     uint8_t quick_verification;
+    uint16_t nonce;
     uint64_t message_length;
     struct rr_server *server;
     struct lws *socket_handle;
@@ -97,6 +98,7 @@ void rr_server_client_create_flower(struct rr_server_client *);
 void rr_server_client_write_message(struct rr_server_client *, uint8_t *,
                                     uint64_t);
 void rr_server_client_write_account(struct rr_server_client *);
+void rr_server_client_write_oauth2_data(struct rr_server_client *);
 void rr_server_client_craft_petal(struct rr_server_client *, struct rr_server *,
                                   uint8_t, uint8_t, uint32_t);
 int rr_server_client_read_from_api(struct rr_server_client *,

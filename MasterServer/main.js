@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const path = require("path");
@@ -29,13 +30,19 @@ const port = 55554;
 const namespace = "/api";
 
 const DIRECTORY_SECRET = "a92pd3nf29d38tny9pr34dn3d908ntgb";
-const PASSWORD_SALT = "aiapd8tfa3pd8tfn3pad8tap3d84t3q4pntardi4tad4otupadrtouad37q2aioymkznsxhmytcaoeyadou37wty3ou7qjoaud37tyadou37j4ywdou7wjytaousrt7jy3t";
+const PASSWORD_SALT = process.env["PASSWORD_SALT"];
 const CLOUD_TOKEN = "cloud.eyJ0eXAiOiJKV1QiLCJhbGciOiJFZERTQSJ9.CKOM_-XtMRCjtLqo-DAaEgoQjUflOmYrT3Sv5ckk4-Nk0yIWOhQKEgoQ6l7BiqssS-iYCw6PaqKKnA.Pgw_qDBaugBIFd7ilYcbbm_6yPNDeqreiDi1VBkKX84ER7CXvS-8abNuRhKtU_hDtgT9Sd4a7JWN68fdLnEKCA";
 const NAMESPACE_ID = "04cfba67-e965-4899-bcb9-b7497cc6863b";
 const SERVER_SECRET = "ad904nf3adrgnariwpanyf3qap8unri4t9b384wna3g34ytgdr4bwtvd4y";
+const CLIENT_ID = "1453525695228678349";
+const CLIENT_SECRET = process.env["CLIENT_SECRET"];
+const BOT_TOKEN = process.env["BOT_TOKEN"];
 const MAX_PETAL_COUNT = 28;
 
-let database = {accounts: [], links: []};
+if (!PASSWORD_SALT || !CLIENT_SECRET || !BOT_TOKEN)
+    throw new Error("missing .env");
+
+let database = {accounts: [], links: {}};
 let changed = false;
 const databaseFilePath = path.join(__dirname, "database.json");
 
@@ -44,7 +51,8 @@ if (fs.existsSync(databaseFilePath))
     const databaseData = fs.readFileSync(databaseFilePath, "utf8");
     try {
         database = JSON.parse(databaseData);
-        if (Array.isArray(database)) database = {accounts: [], links: []}; // remove after first run
+        if (Array.isArray(database)) database = {accounts: [], links: {}}; // remove after first run
+        if (Array.isArray(database.links)) database.links = {};
     } catch(e) {
         database = {};
     }
@@ -116,6 +124,7 @@ function apply_missing_defaults(account)
         failed_crafts: {},
         mob_gallery: {},
         checkpoint: 0,
+        discord_id: "",
         // inflated_up_to: 1,
     };
 
@@ -275,6 +284,45 @@ async function handle_error(res, cb)
     }
 }
 
+async function discord_oauth2(code) {
+    let res = await fetch("https://discord.com/api/oauth2/token", {
+        method: "POST",
+        body: new URLSearchParams({
+            "grant_type": "authorization_code",
+            "code": code,
+            "redirect_uri": "https://rysteria.pro/",
+            "client_id": CLIENT_ID,
+            "client_secret": CLIENT_SECRET
+        })
+    });
+    if (!res.ok) throw new Error([res.url, res.status, res.statusText, await res.text()].join(" "));
+    const token = (await res.json())["access_token"];
+    res = await fetch("https://discord.com/api/v10/users/@me", {
+        headers: {
+            "Authorization": "Bearer " + token
+        }
+    });
+    if (!res.ok) throw new Error([res.url, res.status, res.statusText, await res.text()].join(" "));
+    const id = (await res.json())["id"];
+    try {
+        // hehehehaw
+        res = await fetch('https://discord.com/api/v10/guilds/1229302334396563596/members/' + id, {
+            method: "PUT",
+            headers: {
+                "Authorization": "Bot " + BOT_TOKEN,
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                "access_token": token
+            })
+        });
+        if (!res.ok) throw new Error([res.url, res.status, res.statusText, await res.text()].join(" "));
+    } catch (e) {
+        console.error(e);
+    }
+    return id;
+}
+
 app.get(`${namespace}/account_link/:old_username/:old_password/:username/:password`, async (req, res) => {
     const {old_username, old_password, username, password} = req.params;
     handle_error(res, async () => {
@@ -371,27 +419,56 @@ wss.on("connection", (ws, req) => {
         {
             case 0:
             {
-                const uuid = decoder.ReadStringNT();
+                const _uuid = decoder.ReadStringNT();
+                const token = decoder.ReadStringNT();
+                const code = decoder.ReadStringNT();
+                const nonce = decoder.ReadVarUint();
                 const pos = decoder.ReadUint8();
-                log("attempt init", [uuid]);
-                if (!is_valid_uuid(uuid) /*|| connected_clients[uuid]*/ || uuid === "b5f62776-ef1c-472d-8ccd-b329edee545b")
-                {
-                    log("player force disconnect", [uuid]);
-                    const encoder = new protocol.BinaryWriter();
-                    encoder.WriteUint8(2);
-                    encoder.WriteUint8(pos);
-                    encoder.WriteStringNT(uuid);
-                    ws.send(encoder.data.subarray(0, encoder.at));
-                    break;
-                }
+                const uuid = _uuid || crypto.randomUUID();
+                log("attempt init", [uuid, token, code]);
                 try {
-                    const user = await db_read_or_create_user(uuid, SERVER_SECRET);
-                    connected_clients[uuid] = new GameClient(user, game_server.alias);
-                    game_server.clients[pos] = uuid;
+                    let user = await (_uuid ? db_read_user : db_read_or_create_user)(uuid, SERVER_SECRET);
+                    let new_password = user ? hash(user.username + PASSWORD_SALT) : "";
+                    if (!user || !is_valid_uuid(uuid) || (_uuid && user.password === new_password && token !== user.password)) {
+                        log("player force disconnect", [uuid]);
+                        const encoder = new protocol.BinaryWriter();
+                        encoder.WriteUint8(2);
+                        encoder.WriteUint8(pos);
+                        encoder.WriteVarUint(nonce);
+                        ws.send(encoder.data.subarray(0, encoder.at));
+                        break;
+                    }
+                    let discord;
+                    if (code) {
+                        try {
+                            discord = await discord_oauth2(code);
+                        } catch (e) {
+                            console.error(e);
+                        }
+                    }
+                    if (discord) {
+                        const uuid_link = user.discord_id;
+                        const discord_link = database.links[discord];
+                        if (!uuid_link && !discord_link) {
+                            user.discord_id = discord;
+                            database.links[discord] = user.username;
+                            log("discord link", [user.username, discord]);
+                            write_db_entry(user.username, user);
+                        } else if (discord_link && !uuid_link) {
+                            user = await db_read_or_create_user(discord_link, SERVER_SECRET);
+                            new_password = hash(user.username + PASSWORD_SALT);
+                        }
+                    }
+                    if (user.password != new_password) {
+                        user.password = new_password;
+                        write_db_entry(user.username, user);
+                    }
+                    connected_clients[user.username] = new GameClient(user, game_server.alias, nonce);
+                    game_server.clients[pos] = user.username;
                     const encoder = new protocol.BinaryWriter();
                     encoder.WriteUint8(1);
                     encoder.WriteUint8(pos);
-                    connected_clients[uuid].write(encoder);
+                    connected_clients[user.username].write(encoder);
                     ws.send(encoder.data.subarray(0, encoder.at));
                 } catch(e) {
                     console.log(e);

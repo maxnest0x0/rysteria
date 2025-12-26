@@ -417,6 +417,22 @@ transfer_ownership_button_init(struct rr_game_squad *squad, uint8_t pos)
     return this;
 }
 
+static void copy_player_data(struct rr_ui_element *this, struct rr_game *game)
+{
+    struct rr_ui_text_metadata *data = this->data;
+    struct rr_squad_member *member = data->data;
+    if (game->input_data->mouse_buttons_up_this_tick & 1) {
+        char buf[100];
+        if (member->discord[0])
+            sprintf(buf, "%s <@%s> - %s", member->uuid, member->discord, member->nickname);
+        else
+            sprintf(buf, "%s - %s", member->uuid, member->nickname);
+        rr_copy_string(buf);
+    }
+    rr_ui_render_tooltip_right(this, game->click_to_copy_tooltip, game);
+    game->cursor = rr_game_cursor_pointer;
+}
+
 struct rr_ui_element *squad_player_container_init(struct rr_game_squad *squad,
                                                   uint8_t pos)
 {
@@ -428,9 +444,13 @@ struct rr_ui_element *squad_player_container_init(struct rr_game_squad *squad,
             loadout,
             rr_ui_set_justify(squad_loadout_button_init(&member->loadout[i]),
                               -1, -1));
+    struct rr_ui_element *nickname = rr_ui_text_init(member->nickname, 14, 0xffffffff);
+    nickname->on_event = copy_player_data;
+    struct rr_ui_text_metadata *p_data = nickname->data;
+    p_data->data = member;
+    struct rr_ui_element *flower = rr_ui_flower_init(member, 50);
     struct rr_ui_element *top = rr_ui_v_container_init(
-        rr_ui_container_init(), 0, 10, rr_ui_flower_init(member, 50),
-        rr_ui_text_init(member->nickname, 14, 0xffffffff), NULL);
+        rr_ui_container_init(), 0, 10, flower, nickname, NULL);
     member->kick_text_el = member_kick_text_init(member);
     struct rr_ui_element *right_options =
         rr_ui_v_container_init(rr_ui_container_init(), 0, 5,
@@ -446,8 +466,9 @@ struct rr_ui_element *squad_player_container_init(struct rr_game_squad *squad,
     rr_ui_v_pad(rr_ui_set_justify(loadout, 0, 1), 10);
     rr_ui_pad(rr_ui_set_justify(right_options, 1, -1), 5);
     rr_ui_pad(rr_ui_set_justify(left_options, -1, -1), 5);
-    top->prevent_on_event = loadout->prevent_on_event = 1;
-    right_options->pass_on_event = left_options->pass_on_event =
+    loadout->prevent_on_event = 1;
+    top->pass_on_event = flower->pass_on_event =
+        right_options->pass_on_event = left_options->pass_on_event =
         member->kick_text_el->pass_on_event = 1;
     struct rr_ui_element *squad_container = rr_ui_container_init();
     squad_container->abs_width = squad_container->width = 120;

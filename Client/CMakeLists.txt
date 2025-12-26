@@ -106,6 +106,7 @@ set(SRCS
     InputData.c
     Main.c
     Mobile.c
+    Oauth2.c
     Simulation.c
     Socket.c
     Storage.c
@@ -128,7 +129,7 @@ set(SRCS
     # ../Shared/cJSON.c
     ../Shared/Crypto.c
     ../Shared/pb.c
-    ../Shared/Rivet.c
+    # ../Shared/Rivet.c
     ../Shared/SimulationCommon.c
     ../Shared/StaticData.c
     ../Shared/Utilities.c
@@ -152,7 +153,7 @@ endif()
 if (WASM_BUILD)
     set(CMAKE_C_COMPILER "emcc")
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} --closure=1 -DWASM_BUILD")
-    add_link_options(-sINITIAL_MEMORY=33554432 -sNO_EXIT_RUNTIME=1 -sEXPORTED_FUNCTIONS=_malloc,_free,_rr_rivet_on_log_in,_rr_rivet_lobby_on_find,_rr_renderer_main_loop,_main,_rr_key_event,_rr_mouse_event,_rr_touch_event,_rr_wheel_event,_rr_paste_event,_rr_context_event,_rr_focus_event,_rr_on_socket_event_emscripten,_rr_api_on_get_password)
+    add_link_options(-sINITIAL_MEMORY=33554432 -sNO_EXIT_RUNTIME=1 -sEXPORTED_FUNCTIONS=_malloc,_free,_rr_discord_oauth2_on_log_in,_rr_rivet_lobby_on_find,_rr_renderer_main_loop,_main,_rr_key_event,_rr_mouse_event,_rr_touch_event,_rr_wheel_event,_rr_paste_event,_rr_context_event,_rr_focus_event,_rr_on_socket_event_emscripten)
     set(SRCS ${SRCS} Renderer/Wasm.c)
 else()
     set(SRCS ${SRCS} Renderer/Native.cc)

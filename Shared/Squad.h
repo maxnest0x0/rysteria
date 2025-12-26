@@ -39,6 +39,8 @@ struct rr_squad_member
     uint8_t is_dev : 1;
     struct rr_id_rarity_pair loadout[RR_MAX_SLOT_COUNT * 2];
     char nickname[16];
+    RR_CLIENT_ONLY(char uuid[37];)
+    RR_CLIENT_ONLY(char discord[20];)
     RR_CLIENT_ONLY(char level_text[16];)
     RR_CLIENT_ONLY(char health_text[16];)
     RR_CLIENT_ONLY(char damage_text[16];)

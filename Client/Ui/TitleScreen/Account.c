@@ -37,10 +37,10 @@ static uint8_t account_container_should_show(struct rr_ui_element *this,
 static uint8_t account_button_should_show(struct rr_ui_element *this,
                                           struct rr_game *game)
 {
-    if (game->account_linked == 0 && !game->simulation_ready)
-    {
-        rr_ui_render_tooltip_right(this, game->link_reminder_tooltip, game);
-    }
+    // if (game->account_linked == 0 && !game->simulation_ready)
+    // {
+    //     rr_ui_render_tooltip_right(this, game->link_reminder_tooltip, game);
+    // }
     return !game->simulation_ready;
 }
 
@@ -204,13 +204,9 @@ static void render_link(struct rr_ui_element *this, struct rr_game *game)
 static void link_rivet_account(struct rr_ui_element *this, struct rr_game *game)
 {
     if (game->input_data->mouse_buttons_up_this_tick & 1)
-    { // TODO: make it display a loading status and disable the click
-        // funcitonality
-        rr_rivet_link_account(game->rivet_account.token,
-                              game->rivet_account.api_password, 0);
-    }
-    else if (!(game->input_data->mouse_buttons & 1))
-        rr_ui_render_tooltip_right(this, game->link_account_tooltip, game);
+        rr_discord_oauth2_link_account();
+    rr_ui_render_tooltip_right(this, game->link_account_tooltip, game);
+    game->cursor = rr_game_cursor_pointer;
 }
 
 static struct rr_ui_element *link_account_button_init(struct rr_game *game)
@@ -232,7 +228,7 @@ static void copy_uuid(struct rr_ui_element *this, struct rr_game *game)
 {
     if (game->input_data->mouse_buttons_up_this_tick & 1)
         rr_copy_string(game->rivet_account.uuid);
-    rr_ui_render_tooltip_above(this, game->click_to_copy_tooltip, game);
+    rr_ui_render_tooltip_right(this, game->click_to_copy_tooltip, game);
     game->cursor = rr_game_cursor_pointer;
 }
 
@@ -252,7 +248,6 @@ struct rr_ui_element *rr_ui_account_container_init(struct rr_game *game)
                         rr_ui_h_container_init(rr_ui_container_init(), 0, 0, 
                             rr_ui_text_init("Account Name: ", 15, 0xffffffff),
                             rr_ui_text_init(game->rivet_account.name, 15, 0xffffffff),
-                            rr_ui_text_init(game->rivet_account.account_number, 15, 0xffcccccc),
                             NULL
                         ),
                         uuid,
@@ -260,8 +255,7 @@ struct rr_ui_element *rr_ui_account_container_init(struct rr_game *game)
                         rr_ui_choose_element_init(
                             rr_ui_flex_container_init(
                                 rr_ui_v_container_init(rr_ui_container_init(), 0, 5, 
-                                    rr_ui_text_init("Progress on guest accounts", 15, 0xffffffff),
-                                    rr_ui_text_init("will be lost after 4 months.", 15, 0xffffffff),
+                                    rr_ui_text_init("Login to save progress across devices", 15, 0xffffffff),
                                     NULL
                                 ),
                                 link_account_button_init(game),

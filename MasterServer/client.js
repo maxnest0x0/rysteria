@@ -16,10 +16,11 @@
 
 class GameClient
 {
-    constructor(user, server) 
+    constructor(user, server, nonce) 
     {
         this.user = user;
         this.server = server;
+        this.nonce = nonce;
         this.needs_gameserver_update = false;
         this.needs_database_update = false;
     }
@@ -27,7 +28,10 @@ class GameClient
     write(encoder) 
     {
         const user = this.user;
+        encoder.WriteVarUint(this.nonce);
         encoder.WriteStringNT(user.username);
+        encoder.WriteStringNT(user.password);
+        encoder.WriteStringNT(user.discord_id);
         encoder.WriteFloat64(user.xp);
         encoder.WriteUint8(user.checkpoint);
         for (const petal of Object.keys(user.petals))

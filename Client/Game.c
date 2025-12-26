@@ -75,9 +75,6 @@ static void rr_game_read_account(struct rr_game *this, struct proto_bug *decoder
     memset(this->inventory, 0, sizeof this->inventory);
     memset(this->failed_crafts, 0, sizeof this->failed_crafts);
     memset(this->cache.mob_kills, 0, sizeof this->cache.mob_kills);
-    char uuid[sizeof this->rivet_account.uuid];
-    proto_bug_read_string(decoder, uuid, sizeof this->rivet_account.uuid,
-                          "uuid");
     this->cache.experience = proto_bug_read_float64(decoder, "xp");
     uint8_t id;
     while ((id = proto_bug_read_uint8(decoder, "id")))
@@ -234,6 +231,7 @@ static void rr_game_autocraft_tick(struct rr_game *this, float delta)
     this->crafting_data.crafting_id = this->crafting_data.crafting_rarity = 0;
 }
 
+/*
 void rr_api_on_get_password(char *s, void *captures)
 {
     struct rr_game *this = captures;
@@ -257,6 +255,7 @@ void rr_rivet_on_log_in(char *token, char *avatar_url, char *name,
     // rr_api_get_password(this->rivet_account.token, this);
     rr_api_on_get_password("5d68a8ec6cbf3997a641803260390362d59681bc7524ef3a3fd67afddaba0ba96d1196d30834aa25aa1440cadffb4c87af6495e613c535b793cc1c71aa8c4d04", this);
 }
+*/
 
 static struct rr_ui_element *make_label_tooltip(char const *text, float size)
 {
@@ -400,12 +399,11 @@ void rr_game_init(struct rr_game *this)
     this->window->resizeable = 0;
     this->window->on_event = window_on_event;
 
-    strcpy(this->rivet_account.name, "loading");
-    strcpy(this->rivet_account.avatar_url, "");
+    strcpy(this->rivet_account.name, "Guest");
     strcpy(this->rivet_account.token, "");
-    strcpy(this->rivet_account.account_number, "#0000");
-    strcpy(this->rivet_account.uuid, "no-uuid");
-    rr_rivet_identities_create_guest(this);
+    strcpy(this->rivet_account.code, "");
+    strcpy(this->rivet_account.uuid, "");
+    rr_discord_oauth2_init(this);
 
     // clang-format off
     rr_ui_container_add_element(
@@ -662,7 +660,7 @@ void rr_game_init(struct rr_game *this)
 
     this->link_account_tooltip = rr_ui_container_add_element(
         this->window,
-        make_label_tooltip("Login with Rivet", 16)
+        make_label_tooltip("Login with Discord", 16)
     );
 
     this->inventory_tooltip = rr_ui_container_add_element(
@@ -722,7 +720,7 @@ void rr_game_init(struct rr_game *this)
 
     this->link_reminder_tooltip = rr_ui_container_add_element(
         this->window,
-        make_label_tooltip("Login to save progess across devices", 16)
+        make_label_tooltip("Login to save progress across devices", 16)
     );
 
     this->leave_squad_tooltip = rr_ui_container_add_element(
@@ -871,10 +869,12 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
                                    "useless bytes");
             proto_bug_write_uint64(&verify_encoder, verification,
                                    "verification");
-            proto_bug_write_string(&verify_encoder, this->rivet_player_token,
+            proto_bug_write_string(&verify_encoder, this->rivet_account.token,
                                    300, "rivet token");
             proto_bug_write_string(&verify_encoder, this->rivet_account.uuid,
                                    100, "rivet uuid");
+            proto_bug_write_string(&verify_encoder, this->rivet_account.code,
+                                   100, "oauth2 code");
             proto_bug_write_varuint(&verify_encoder, this->dev_flag,
                                     "dev_flag");
             rr_websocket_send(&this->socket,
@@ -945,6 +945,12 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
                 proto_bug_read_string(&encoder,
                                       this->squad.squad_members[i].nickname, 16,
                                       "nickname");
+                proto_bug_read_string(&encoder,
+                                      this->squad.squad_members[i].uuid, 37,
+                                      "uuid");
+                proto_bug_read_string(&encoder,
+                                      this->squad.squad_members[i].discord, 20,
+                                      "discord");
                 for (uint32_t j = 0; j < RR_MAX_SLOT_COUNT * 2; ++j)
                 {
                     this->squad.squad_members[i].loadout[j].id =
@@ -1072,6 +1078,12 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
                     proto_bug_read_string(&encoder,
                                           squad->squad_members[i].nickname, 16,
                                           "nickname");
+                    proto_bug_read_string(&encoder,
+                                          squad->squad_members[i].uuid, 37,
+                                          "uuid");
+                    proto_bug_read_string(&encoder,
+                                          squad->squad_members[i].discord, 20,
+                                          "discord");
                     for (uint32_t j = 0; j < RR_MAX_SLOT_COUNT * 2; ++j)
                     {
                         squad->squad_members[i].loadout[j].id =
@@ -1224,6 +1236,9 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
                           this->crafting_data.temp_fails)) / 5.0f;
             break;
         }
+        case rr_clientbound_oauth2_data:
+            rr_discord_oauth2_read_data(this, &encoder);
+            break;
         default:
             RR_UNREACHABLE("how'd this happen");
         }

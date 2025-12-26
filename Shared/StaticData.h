@@ -63,7 +63,8 @@ enum rr_clientbound_packet_header
     rr_clientbound_squad_fail,
     rr_clientbound_squad_leave,
     rr_clientbound_account_result,
-    rr_clientbound_craft_result
+    rr_clientbound_craft_result,
+    rr_clientbound_oauth2_data
 };
 
 enum rr_dev_cheat_type
