@@ -46,5 +46,6 @@ void rr_renderer_draw_third_eye(struct rr_renderer *, float, float);
 void rr_renderer_petal_cache_init();
 void rr_renderer_background_cache_init();
 void rr_renderer_text_cache_init();
+void rr_renderer_text_cache_redraw(void *);
 void rr_renderer_mob_cache_init();
 void rr_renderer_tiles_init();

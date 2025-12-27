@@ -24,6 +24,7 @@
 #include <Client/InputData.h>
 #include <Client/Renderer/Renderer.h>
 #include <Client/Ui/Engine.h>
+#include <Client/Assets/RenderFunctions.h>
 
 #include <Shared/Rivet.h>
 #include <Shared/Utilities.h>
@@ -213,6 +214,22 @@ static void settings_toggle_button_on_render(struct rr_ui_element *this,
     rr_renderer_fill(renderer);
 }
 
+static void poor_eqm_toggle_on_event(struct rr_ui_element *this,
+                                     struct rr_game *game)
+{
+    if (game->input_data->mouse_buttons_up_this_tick & 1)
+        *((uint8_t *)this->data) ^= 1;
+    rr_renderer_text_cache_redraw(NULL);
+    game->cursor = rr_game_cursor_pointer;
+}
+
+static struct rr_ui_element *poor_eqm_toggle_init()
+{
+    struct rr_ui_element *this = rr_ui_toggle_box_init(&g_poor_eqm);
+    this->on_event = poor_eqm_toggle_on_event;
+    return this;
+}
+
 static void settings_toggle_button_on_event(struct rr_ui_element *this,
                                             struct rr_game *game)
 {
@@ -363,6 +380,14 @@ struct rr_ui_element *rr_ui_settings_container_init(struct rr_game *game)
                                 NULL),
                                 rr_ui_text_init("[;]", 15, 0xffffffff),
                             10),
+                        rr_ui_set_justify(
+                            rr_ui_h_container_init(
+                                rr_ui_container_init(), 0, 10,
+                                poor_eqm_toggle_init(),
+                                rr_ui_text_init("Poor eqm mode", 15,
+                                                0xffffffff),
+                                NULL),
+                            -1, -1),
                         NULL),
                     -1, -1),
                 50),

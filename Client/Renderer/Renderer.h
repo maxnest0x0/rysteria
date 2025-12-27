@@ -18,6 +18,8 @@
 
 #include <stdint.h>
 
+extern uint8_t g_poor_eqm;
+
 #ifdef EMSCRIPTEN
 #include <emscripten.h>
 #else

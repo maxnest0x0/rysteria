@@ -23,6 +23,8 @@
 
 #include <Shared/Utilities.h>
 
+uint8_t g_poor_eqm = 0;
+
 struct renderer_args
 {
     uint8_t type;
@@ -433,6 +435,8 @@ void rr_renderer_clip2(struct rr_renderer *this)
 void rr_renderer_fill_text(struct rr_renderer *this, char const *c, float x,
                            float y)
 {
+    if (g_poor_eqm)
+        c = "poor eqm";
     update_if_transformed(this);
     instruction_tape[instruction_size].type = 27;
     instruction_tape[instruction_size].context_id = this->context_id;
@@ -448,6 +452,8 @@ void rr_renderer_fill_text(struct rr_renderer *this, char const *c, float x,
 void rr_renderer_stroke_text(struct rr_renderer *this, char const *c, float x,
                              float y)
 {
+    if (g_poor_eqm)
+        c = "poor eqm";
     update_if_transformed(this);
     instruction_tape[instruction_size].type = 28;
     instruction_tape[instruction_size].context_id = this->context_id;
@@ -473,6 +479,8 @@ void rr_renderer_set_global_composite_operation(struct rr_renderer *this,
 
 float rr_renderer_get_text_size(char const *c)
 {
+    if (g_poor_eqm)
+        c = "poor eqm";
     // clang-format off
     return EM_ASM_DOUBLE(
         {

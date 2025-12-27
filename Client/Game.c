@@ -1514,7 +1514,7 @@ void rr_game_tick(struct rr_game *this, float delta)
 {
     if (this->ticks_until_text_cache == 0)
     {
-        rr_renderer_text_cache_init();
+        rr_renderer_text_cache_redraw(NULL);
         this->ticks_until_text_cache = 255;
     }
     else if (this->ticks_until_text_cache < 25)

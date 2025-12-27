@@ -93,8 +93,12 @@ static void rr_renderer_text_cache_draw()
     }
 }
 
-static void rr_renderer_text_cache_redraw(void *captures)
+void rr_renderer_text_cache_redraw(void *captures)
 {
+    rr_renderer_set_dimensions(&text_cache, 0, 0);
+    rr_renderer_set_dimensions(
+        &text_cache, 256,
+        14 * (rr_petal_id_max + rr_mob_id_max + rr_rarity_id_max));
     rr_renderer_text_cache_draw();
 }
 

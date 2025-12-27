@@ -26,13 +26,13 @@
 
 static void text_on_render(struct rr_ui_element *this, struct rr_game *game)
 {
-    if (this->fill == 0x0000000)
-        return;
     struct rr_ui_text_metadata *data = this->data;
     struct rr_renderer *renderer = game->renderer;
     rr_renderer_scale(renderer, renderer->scale);
     this->abs_width = this->width =
         rr_renderer_get_text_size(data->text) * this->height;
+    if (this->fill == 0x00000000)
+        return;
     rr_renderer_set_text_baseline(renderer, 1);
     rr_renderer_set_text_align(renderer, 1);
     rr_renderer_set_fill(renderer, this->fill);
