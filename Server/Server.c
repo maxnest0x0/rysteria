@@ -268,7 +268,10 @@ void rr_server_client_broadcast_update(struct rr_server_client *this)
     char joined_code[16];
     sprintf(joined_code, "%s-%s", server->server_alias, squad->squad_code);
     proto_bug_write_string(&encoder, joined_code, 16, "squad code");
-    proto_bug_write_uint8(&encoder, this->afk_ticks > 9 * 60 * 25, "afk");
+    proto_bug_write_uint8(&encoder, this->afk, "afk");
+    if (this->afk)
+        proto_bug_write_string(&encoder, this->afk_challenge, 7,
+                               "afk_challenge");
     proto_bug_write_uint8(&encoder, this->player_info != NULL, "in game");
     if (this->player_info != NULL)
         rr_simulation_write_binary(&server->simulation, &encoder,
@@ -633,21 +636,15 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
             }
             if ((x != 0 || y != 0) && fabsf(x) < 10000 && fabsf(y) < 10000)
             {
-                if (client->player_accel_x != x || client->player_accel_y != y)
-                    client->afk_ticks = 0;
                 client->player_accel_x = x;
                 client->player_accel_y = y;
             }
             else
             {
-                if (client->player_accel_x != 0 || client->player_accel_y != 0)
-                    client->afk_ticks = 0;
                 client->player_accel_x = 0;
                 client->player_accel_y = 0;
             }
 
-            if (client->player_info->input != ((movementFlags >> 4) & 3))
-                client->afk_ticks = 0;
             client->player_info->input = (movementFlags >> 4) & 3;
             break;
         }
@@ -658,7 +655,6 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
             uint8_t pos = proto_bug_read_uint8(&encoder, "petal switch");
             while (pos != 0 && pos <= RR_MAX_SLOT_COUNT)
             {
-                client->afk_ticks = 0;
                 rr_component_player_info_petal_swap(client->player_info,
                                                     &this->simulation, pos - 1);
                 pos = proto_bug_read_uint8(&encoder, "petal switch");
@@ -1049,6 +1045,13 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
                 --this->simulation.animation_length;
                 break;
             }
+            if (client->afk &&
+                strcmp(animation->message, client->afk_challenge) == 0)
+            {
+                client->afk_ticks = 0;
+                --this->simulation.animation_length;
+                break;
+            }
             if (!rr_validate_user_string(animation->message) ||
                 level_from_xp(client->experience) < 3)
             {
@@ -1060,7 +1063,6 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
             printf("[chat] %s: %s\n", animation->name, animation->message);
             animation->type = rr_animation_type_chat;
             animation->owner = client->player_info->parent_id;
-            client->afk_ticks = 0;
             break;
         }
         case rr_serverbound_chat_block:
@@ -1520,9 +1522,10 @@ static void server_tick(struct rr_server *this)
             if (!client->dev && client->player_info != NULL &&
                 client->player_info->flower_id != RR_NULL_ENTITY &&
                 !is_dead_flower(&this->simulation,
-                                client->player_info->flower_id))
+                                client->player_info->flower_id) &&
+                level_from_xp(client->experience) >= 3)
             {
-                if (++client->afk_ticks > 10 * 60 * 25)
+                if (++client->afk_ticks > 30 * 60 * 25)
                 {
                     rr_simulation_request_entity_deletion(
                         &this->simulation, client->player_info->parent_id);
@@ -1543,6 +1546,12 @@ static void server_tick(struct rr_server *this)
             }
             else
                 client->afk_ticks = 0;
+            if (!client->afk && client->afk_ticks > 27 * 60 * 25) {
+                for (uint32_t i = 0; i < 6; ++i)
+                    client->afk_challenge[i] = (char)(97 + rand() % 26);
+                client->afk_challenge[6] = 0;
+            }
+            client->afk = client->afk_ticks > 27 * 60 * 25;
             if (client->pending_kick)
                 lws_callback_on_writable(client->socket_handle);
             if (!client->verified)

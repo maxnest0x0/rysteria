@@ -650,6 +650,8 @@ void rr_game_init(struct rr_game *this)
             ),
         -1, 1)
     );
+    this->window->elements.start[this->window->elements.size - 1]
+        ->pass_on_event = 1;
 
     rr_ui_container_add_element(this->window, rr_ui_container_add_element(rr_ui_inventory_container_init(), close_menu_button_init(25))->container);
     rr_ui_container_add_element(this->window, rr_ui_container_add_element(rr_ui_mob_container_init(), close_menu_button_init(25))->container);
@@ -765,7 +767,7 @@ void rr_game_init(struct rr_game *this)
 
     this->anti_afk = rr_ui_container_add_element(
         this->window,
-        rr_ui_anti_afk_container_init()
+        rr_ui_anti_afk_container_init(this)
     );
 
     // clang-format on
@@ -972,6 +974,9 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
             // this->is_dev =
             //     this->squad.squad_members[this->squad.squad_pos].is_dev;
             this->afk = proto_bug_read_uint8(&encoder, "afk");
+            if (this->afk)
+                proto_bug_read_string(&encoder, this->afk_challenge, 7,
+                                      "afk_challenge");
             if (proto_bug_read_uint8(&encoder, "in game") == 1)
             {
                 if (!this->simulation_ready)

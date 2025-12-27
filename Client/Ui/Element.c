@@ -77,12 +77,12 @@ void rr_ui_render_element(struct rr_ui_element *this, struct rr_game *game)
             game->renderer,
             (this->x +
              (this->h_justify) *
-                 (this->container->abs_width / 2 / game->renderer->scale -
+                 (this->container->abs_width / 2 -
                   this->width / 2 - (this->abs_width - this->width) / 2)) *
                 game->renderer->scale,
             (this->y +
              (this->v_justify) *
-                 (this->container->abs_height / 2 / game->renderer->scale -
+                 (this->container->abs_height / 2 -
                   this->height / 2 - (this->abs_height - this->height) / 2)) *
                 game->renderer->scale); // necessary btw
     else

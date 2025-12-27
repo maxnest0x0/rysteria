@@ -37,6 +37,8 @@ static void chat_bar_on_event(struct rr_ui_element *this, struct rr_game *game)
         game->chat.chat_active = 1;
         game->menu_open = 0;
     }
+    if (game->chat.chat_active == 0)
+        game->cursor = rr_game_cursor_pointer;
 }
 
 static void chat_bar_animate(struct rr_ui_element *this, struct rr_game *game)
@@ -153,11 +155,14 @@ struct rr_ui_element *rr_ui_chat_bar_init(struct rr_game *game)
     0x80000000);
     this->animate = chat_bar_animate;
     this->on_event = chat_bar_on_event;
+    struct rr_ui_element *messages = rr_ui_message_box_init(game);
+    messages->prevent_on_event = 1;
     struct rr_ui_element *chat = rr_ui_v_container_init(rr_ui_container_init(), 10, 10,
-        rr_ui_set_justify(rr_ui_message_box_init(game), -1, -1),
+        rr_ui_set_justify(messages, -1, -1),
         rr_ui_set_justify(this, -1, -1),
         NULL
     );
+    chat->pass_on_event = 1;
     chat->should_show = chat_should_show;
     return chat;
 }

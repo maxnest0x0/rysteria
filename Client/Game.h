@@ -221,6 +221,7 @@ struct rr_game
 
     char rivet_player_token[400];
     char connect_code[16];
+    char afk_challenge[7];
 };
 
 void rr_game_init(struct rr_game *);

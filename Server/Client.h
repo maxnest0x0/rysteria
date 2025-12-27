@@ -69,6 +69,7 @@ struct rr_server_client
     float player_accel_x;
     float player_accel_y;
     char ip_address[100];
+    char afk_challenge[7];
 
     uint32_t inventory[rr_petal_id_max][rr_rarity_id_max];
     uint32_t craft_fails[rr_petal_id_max][rr_rarity_id_max];
@@ -90,6 +91,7 @@ struct rr_server_client
     uint8_t in_use : 1;
     uint8_t pending_quick_join : 1;
     uint8_t disconnected : 1;
+    uint8_t afk : 1;
 };
 
 void rr_server_client_init(struct rr_server_client *);
