@@ -392,9 +392,13 @@ static void crafting_attempt_text_animate(struct rr_ui_element *this,
     }
     this->fill = RR_RARITY_COLORS[game->crafting_data.crafting_rarity + 1];
     static char text[100] = {0};
-    snprintf(text, 99, "Attempt %d",
-             game->failed_crafts[game->crafting_data.crafting_id]
-                                [game->crafting_data.crafting_rarity] + 1);
+    uint32_t attempts =
+        game->failed_crafts[game->crafting_data.crafting_id]
+                           [game->crafting_data.crafting_rarity];
+    if (game->crafting_data.success_count ||
+        game->crafting_data.count < PETALS_PER_CRAFT)
+        attempts = game->crafting_data.last_attempts;
+    snprintf(text, 99, "Attempt %d", attempts + 1);
     data->text = text;
 }
 
@@ -417,11 +421,14 @@ static void crafting_chance_text_animate(struct rr_ui_element *this,
     }
     this->fill = RR_RARITY_COLORS[game->crafting_data.crafting_rarity + 1];
     static char text[100] = {0};
-    double chance =
-        100 *
-        (1 + game->failed_crafts[game->crafting_data.crafting_id]
-                                [game->crafting_data.crafting_rarity]) *
-        RR_CRAFT_CHANCES[game->crafting_data.crafting_rarity];
+    uint32_t attempts =
+        game->failed_crafts[game->crafting_data.crafting_id]
+                           [game->crafting_data.crafting_rarity];
+    if (game->crafting_data.success_count ||
+        game->crafting_data.count < PETALS_PER_CRAFT)
+        attempts = game->crafting_data.last_attempts;
+    double chance = 100 * (1 + attempts) *
+                    RR_CRAFT_CHANCES[game->crafting_data.crafting_rarity];
     if (game->crafting_data.crafting_id == rr_petal_id_basic)
         chance = 100;
     snprintf(text, 99, "Chance: %0.3f%%", chance > 100 ? 100 : chance);

@@ -1231,6 +1231,8 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
                 proto_bug_read_varuint(&encoder, "fail count");
             this->crafting_data.temp_attempts =
                 proto_bug_read_varuint(&encoder, "attempts");
+            this->crafting_data.last_attempts =
+                proto_bug_read_varuint(&encoder, "last attempts");
             this->crafting_data.temp_xp =
                 proto_bug_read_float64(&encoder, "craft xp");
             this->crafting_data.animation =

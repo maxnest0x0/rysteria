@@ -14,8 +14,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#define _GNU_SOURCE
-
 #include <Shared/Utilities.h>
 
 #include <math.h>
@@ -216,16 +214,20 @@ char *rr_sprintf(char *buf, double i)
 
 uint8_t rr_validate_user_string(char *str)
 {
-    return strstr(str, "\ufdfd") == NULL &&
-           strstr(str, "\U0001242b") == NULL &&
-           strstr(str, "\U00012219") == NULL &&
-           strstr(str, "\u2e3b") == NULL &&
-           strstr(str, "\ua9c5") == NULL &&
-           strstr(str, "\u102a") == NULL &&
-           strstr(str, "\u0bf5") == NULL &&
-           strstr(str, "\u0bf8") == NULL &&
-           strstr(str, "\u2031") == NULL;
-           // strcasestr(str, "rwar") == NULL;
+    return strstr(str, u8"\ufdfd") == NULL &&
+           strstr(str, u8"\U0001242b") == NULL &&
+           strstr(str, u8"\U00012219") == NULL &&
+           strstr(str, u8"\u2e3b") == NULL &&
+           strstr(str, u8"\ua9c5") == NULL &&
+           strstr(str, u8"\u102a") == NULL &&
+           strstr(str, u8"\u0bf5") == NULL &&
+           strstr(str, u8"\u0bf8") == NULL &&
+           strstr(str, u8"\u2031") == NULL &&
+           strstr(str, u8"\u00ad") != str &&
+           strstr(str, u8"\u200b") != str &&
+           strstr(str, u8"\u200c") != str &&
+           strstr(str, u8"\u200d") != str &&
+           strstr(str, u8"\u2060") != str;
 }
 
 char *rr_trim_string(char *str)

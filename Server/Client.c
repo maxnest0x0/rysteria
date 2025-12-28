@@ -193,10 +193,12 @@ void rr_server_client_craft_petal(struct rr_server_client *this,
         return;
     uint32_t now = count;
     uint32_t success = 0;
+    uint32_t last_fails = this->craft_fails[id][rarity];
     double base = RR_CRAFT_CHANCES[rarity];
     double xp_gain = 0;
     while (now >= 5)
     {
+        last_fails = this->craft_fails[id][rarity];
         if (id == rr_petal_id_basic ||
             rr_frand() < base * (++this->craft_fails[id][rarity]))
         {
@@ -244,6 +246,7 @@ void rr_server_client_craft_petal(struct rr_server_client *this,
     proto_bug_write_varuint(&encoder, count - now, "fail count");
     proto_bug_write_varuint(&encoder, this->craft_fails[id][rarity],
                             "attempts");
+    proto_bug_write_varuint(&encoder, last_fails, "last attempts");
     proto_bug_write_float64(&encoder, xp_gain, "craft xp");
     rr_server_client_write_message(this, encoder.start,
                                    encoder.current - encoder.start);
