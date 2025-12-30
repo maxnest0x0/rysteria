@@ -187,22 +187,22 @@ void rr_main_loop(struct rr_game *this)
             Module.ctxs = [Module.canvas.getContext('2d')];
             Module.availableCtxs =
                 new Array(256).fill(0).map(function(_, i) { return i; });
-            window.onkeydown = function(e)
+            window.addEventListener("keydown", function(e)
             {
                 _rr_key_event(
                     $0, 1, e.which,
                     e.key ? (!e.ctrlKey && !e.metaKey && e.key.length == 1) *
                                 e.key.charCodeAt()
                           : 0, +e.repeat, +e.isTrusted);
-            };
-            window.onkeyup = function(e)
+            });
+            window.addEventListener("keyup", function(e)
             {
                 _rr_key_event(
                     $0, 0, e.which,
                     e.key ? (!e.ctrlKey && !e.metaKey && e.key.length == 1) *
                                 e.key.charCodeAt()
                           : 0, +e.repeat, +e.isTrusted);
-            };
+            });
             window.addEventListener(
                 "mousedown", async function(e) {
                     const clientX = e.clientX;
