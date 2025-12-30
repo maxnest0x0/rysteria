@@ -58,6 +58,8 @@ static void get_challenge_text(struct rr_ui_element *this, struct rr_game *game)
     struct rr_ui_dynamic_text_metadata *data = this->data;
     strcpy(data->text, game->afk_challenge);
     data->text[rand() % 6] = (char)(97 + rand() % 26);
+    if (rr_frand() < 1 / powf(game->lerp_delta * 60, 2))
+        data->text[rand() % 6] = (char)(97 + rand() % 26);
 }
 
 static uint8_t choose_const(struct rr_ui_element *this, struct rr_game *game) {

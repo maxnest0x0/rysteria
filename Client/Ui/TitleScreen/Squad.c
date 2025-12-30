@@ -804,3 +804,16 @@ struct rr_ui_element *rr_ui_toggle_expose_code_button_init(struct rr_game *game)
     this->on_event = toggle_expose_code_on_event;
     return this;
 }
+
+struct rr_ui_element *
+rr_ui_squad_toggle_buttons_container_init(struct rr_game *game)
+{
+    return rr_ui_h_container_init(rr_ui_container_init(), 0, 10, 
+        rr_ui_text_init("Private", 14, 0xffffffff),
+        rr_ui_toggle_private_button_init(game),
+        rr_ui_static_space_init(10),
+        rr_ui_text_init("Reveal code", 14, 0xffffffff),
+        rr_ui_toggle_expose_code_button_init(game),
+        NULL
+    );
+}

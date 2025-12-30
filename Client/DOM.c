@@ -189,19 +189,25 @@ uint8_t rr_dom_test_mobile()
     });
 }
 
-void rr_page_open(char const *name)
+void rr_page_open(char const *name, uint8_t redirect)
 {
     EM_ASM(
         {
             try
             {
-                window.open(UTF8ToString($0), "_blank").focus();
+                if ($1)
+                {
+                    window.onbeforeunload = null;
+                    window.location.href = UTF8ToString($0);
+                }
+                else
+                    window.open(UTF8ToString($0), "_blank").focus();
             }
             catch (e)
             {
             }
         },
-        name);
+        name, redirect);
 }
 
 void rr_dom_set_cursor(uint8_t cursor)

@@ -17,6 +17,7 @@
 #include <Server/Server.h>
 
 #include <assert.h>
+#include <ctype.h>
 #include <math.h>
 #include <pthread.h>
 #include <string.h>
@@ -1045,14 +1046,21 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
                 --this->simulation.animation_length;
                 break;
             }
-            if (client->afk &&
-                strcmp(animation->message, client->afk_challenge) == 0)
+            if (client->afk && strlen(animation->message) == 6)
             {
-                printf("[afk] %s passed in %.2fs\n", client->rivet_account.uuid,
-                       (client->afk_ticks - 27 * 60 * 25) / 25.0f);
-                client->afk_ticks = 0;
-                --this->simulation.animation_length;
-                break;
+                char temp[7];
+                for (uint8_t i = 0; i < 6; ++i)
+                    temp[i] = tolower(animation->message[i]);
+                temp[6] = 0;
+                if (strcmp(temp, client->afk_challenge) == 0)
+                {
+                    printf("[afk] %s passed in %.2fs\n",
+                           client->rivet_account.uuid,
+                           (client->afk_ticks - 27 * 60 * 25) / 25.0f);
+                    client->afk_ticks = 0;
+                    --this->simulation.animation_length;
+                    break;
+                }
             }
             if (!rr_validate_user_string(animation->message) ||
                 level_from_xp(client->experience) < 3)

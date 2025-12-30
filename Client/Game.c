@@ -412,9 +412,6 @@ void rr_game_init(struct rr_game *this)
             rr_ui_set_justify(
                 rr_ui_h_container_init(rr_ui_container_init(), 10, 10,
                     rr_ui_settings_toggle_button_init(),
-                    rr_ui_discord_toggle_button_init(),
-                    rr_ui_github_toggle_button_init(),
-                    rr_ui_gardn_toggle_button_init(),
                     rr_ui_account_toggle_button_init(),
                     rr_ui_dev_panel_toggle_button_init(),
                     rr_ui_fullscreen_toggle_button_init(),
@@ -422,6 +419,20 @@ void rr_game_init(struct rr_game *this)
                     NULL
                 ),
             -1, -1),
+        ui_not_hidden)
+    );
+
+    rr_ui_container_add_element(
+        this->window,
+        rr_ui_link_toggle(
+            rr_ui_set_justify(
+                rr_ui_h_container_init(rr_ui_container_init(), 10, 10,
+                    rr_ui_gardn_toggle_button_init(),
+                    rr_ui_github_toggle_button_init(),
+                    rr_ui_discord_toggle_button_init(),
+                    NULL
+                ),
+            1, -1),
         ui_not_hidden)
     );
 
@@ -499,14 +510,7 @@ void rr_game_init(struct rr_game *this)
                                     rr_ui_v_container_init(
                                         rr_ui_popup_container_init(), 10, 10,
                                         rr_ui_text_init("Squad", 24, 0xffffffff),
-                                        rr_ui_h_container_init(rr_ui_container_init(), 0, 10, 
-                                            rr_ui_text_init("Private", 14, 0xffffffff),
-                                            rr_ui_toggle_private_button_init(this),
-                                            rr_ui_static_space_init(10),
-                                            rr_ui_text_init("Reveal code", 14, 0xffffffff),
-                                            rr_ui_toggle_expose_code_button_init(this),
-                                            NULL
-                                        ),
+                                        rr_ui_squad_toggle_buttons_container_init(this),
                                         rr_ui_multi_choose_element_init(
                                             socket_ready,
                                             rr_ui_text_init("Connecting...", 24, 0xffffffff),
@@ -702,17 +706,17 @@ void rr_game_init(struct rr_game *this)
 
     this->discord_tooltip = rr_ui_container_add_element(
         this->window,
-        make_label_tooltip("Join Our Discord!", 16)
+        make_label_tooltip("Join our Discord!", 16)
     );
 
     this->github_tooltip = rr_ui_container_add_element(
         this->window,
-        make_label_tooltip("We're Open Source!", 16)
+        make_label_tooltip("We're open source!", 16)
     );
 
     this->gardn_tooltip = rr_ui_container_add_element(
         this->window,
-        make_label_tooltip("Try The Gardn Project!", 16)
+        make_label_tooltip("Try the gardn project!", 16)
     );
 
     this->fullscreen_tooltip = rr_ui_container_add_element(

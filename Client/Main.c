@@ -68,7 +68,7 @@ static void *rr_create_game_thread(void *arg)
 #define troll_skids                                                            \
     if (!trusted)                                                              \
     {                                                                          \
-        rr_page_open("https://www.youtube.com/watch?v=dQw4w9WgXcQ");           \
+        rr_page_open("https://www.youtube.com/watch?v=dQw4w9WgXcQ", 1);        \
         return;                                                                \
     }
 

@@ -72,6 +72,8 @@ static void text_input_on_render(struct rr_ui_element *this,
             EM_ASM(
                 {
                     const element = document.getElementById(UTF8ToString($0));
+                    if (element.id === "_0x4523")
+                        return;
                     element.value = prompt();
                 },
                 data->name);

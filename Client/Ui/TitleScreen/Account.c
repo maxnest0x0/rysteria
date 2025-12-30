@@ -31,7 +31,7 @@
 static uint8_t account_container_should_show(struct rr_ui_element *this,
                                              struct rr_game *game)
 {
-    return game->menu_open == rr_game_menu_account && !game->simulation_ready;
+    return game->menu_open == rr_game_menu_account;
 }
 
 static uint8_t account_button_should_show(struct rr_ui_element *this,
@@ -41,7 +41,7 @@ static uint8_t account_button_should_show(struct rr_ui_element *this,
     // {
     //     rr_ui_render_tooltip_right(this, game->link_reminder_tooltip, game);
     // }
-    return !game->simulation_ready;
+    return 1;
 }
 
 static void account_container_animate(struct rr_ui_element *this,
@@ -256,6 +256,7 @@ struct rr_ui_element *rr_ui_account_container_init(struct rr_game *game)
                             rr_ui_flex_container_init(
                                 rr_ui_v_container_init(rr_ui_container_init(), 0, 5, 
                                     rr_ui_text_init("Login to save progress across devices", 15, 0xffffffff),
+                                    rr_ui_text_init("and avoid losing access to your account", 15, 0xffffffff),
                                     NULL
                                 ),
                                 link_account_button_init(game),

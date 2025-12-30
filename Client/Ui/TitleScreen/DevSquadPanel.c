@@ -392,7 +392,7 @@ static struct rr_ui_element *speed_slider_init(struct rr_game *game)
             rr_ui_text_init("Speed:", 16, 0xffffffff),
             rr_ui_h_slider_init(150, 20, &game->dev_cheats.speed_percent, 1),
             NULL);
-    game->dev_cheats.speed_percent = 1;
+    game->dev_cheats.speed_percent = 0;
     return element;
 }
 
@@ -406,6 +406,22 @@ static struct rr_ui_element *fov_slider_init(struct rr_game *game)
             NULL);
     game->dev_cheats.fov_percent = 0;
     return element;
+}
+
+static uint8_t squad_toggle_buttons_should_show(struct rr_ui_element *this,
+                                                struct rr_game *game)
+{
+    struct rr_ui_container_metadata *data = this->data;
+    struct rr_game_squad *squad = data->data;
+    return game->joined_squad && game->squad.squad_index == squad->squad_index;
+}
+
+static uint8_t dev_tools_squad_should_show(struct rr_ui_element *this,
+                                           struct rr_game *game)
+{
+    struct rr_ui_container_metadata *data = this->data;
+    struct rr_ui_element *squad_container = data->data;
+    return squad_container->should_show(squad_container, game);
 }
 
 struct rr_ui_element *rr_ui_dev_panel_container_init(struct rr_game *game)
@@ -433,8 +449,22 @@ struct rr_ui_element *rr_ui_dev_panel_container_init(struct rr_game *game)
     struct rr_ui_element *inner = rr_ui_v_container_init(
         rr_ui_container_init(), 10, 10, NULL);
     for (uint32_t i = 0; i < RR_SQUAD_COUNT; ++i)
-        rr_ui_container_add_element(
-            inner, rr_ui_squad_container_init(&game->other_squads[i]));
+    {
+        struct rr_ui_element *squad_toggle_buttons =
+            rr_ui_squad_toggle_buttons_container_init(game);
+        struct rr_ui_container_metadata *data = squad_toggle_buttons->data;
+        data->data = &game->other_squads[i];
+        squad_toggle_buttons->should_show = squad_toggle_buttons_should_show;
+        struct rr_ui_element *squad_container =
+            rr_ui_squad_container_init(&game->other_squads[i]);
+        struct rr_ui_element *this =
+            rr_ui_v_container_init(rr_ui_container_init(), 0, 10,
+                                   squad_toggle_buttons, squad_container, NULL);
+        data = this->data;
+        data->data = squad_container;
+        this->should_show = dev_tools_squad_should_show;
+        rr_ui_container_add_element(inner, this);
+    }
     struct rr_ui_element *this =
         // clang-format off
     rr_ui_pad(
@@ -445,7 +475,7 @@ struct rr_ui_element *rr_ui_dev_panel_container_init(struct rr_game *game)
                         rr_ui_container_init(), 10, 10,
                         rr_ui_text_init("Squads", 24, 0xffffffff),
                         dev_tools,
-                        rr_ui_scroll_container_init(inner, 322),
+                        rr_ui_scroll_container_init(inner, 317),
                         NULL),
                     -1, -1),
                 50),

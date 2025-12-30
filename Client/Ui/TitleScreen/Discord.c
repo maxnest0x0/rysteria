@@ -112,7 +112,7 @@ static void discord_toggle_button_on_event(struct rr_ui_element *this,
     {
         if (game->pressed != this)
             return;
-        rr_page_open("https://discord.gg/x6gW8Qrs7d");
+        rr_page_open("https://discord.gg/x6gW8Qrs7d", 0);
     }
     rr_ui_render_tooltip_below(this, game->discord_tooltip, game);
     game->cursor = rr_game_cursor_pointer;
