@@ -54,6 +54,7 @@ struct rr_component_player_info_petal_slot
 struct rr_player_info_modifiers
 {
     float drop_pickup_radius;
+    uint8_t magnet_count;
     float petal_extension;
     // float rotation_direction;
     float reload_speed;
@@ -92,7 +93,8 @@ struct rr_component_player_info
     uint8_t slot_count;
     RR_SERVER_ONLY(uint8_t *entities_in_view;)
     RR_SERVER_ONLY(struct rr_id_rarity_pair
-                       drops_this_tick[1];) // yes, it's limited to 1. if the
+                       drops_this_tick[RR_MAX_SLOT_COUNT];)
+                                            // yes, it's limited to 12. if the
                                             // player poicks up more than that
                                             // then it waits until the next tick
     RR_SERVER_ONLY(uint8_t drops_this_tick_size;)

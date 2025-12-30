@@ -222,7 +222,10 @@ static void system_velocity(EntityIdx id, void *simulation)
         physical->acceleration.x * physical->acceleration_scale,
         physical->acceleration.y * physical->acceleration_scale};
     rr_vector_add(&physical->velocity, &accel);
-    if (physical->bubbling)
+    if (physical->bubbling ||
+        (rr_simulation_has_petal(simulation, id) &&
+         rr_simulation_get_petal(simulation, id)->detached &&
+         rr_simulation_get_petal(simulation, id)->id == rr_petal_id_peas))
     {
         float vel = rr_vector_get_magnitude(&physical->velocity);
         if (physical->wall_collision.x || physical->wall_collision.y)
@@ -230,8 +233,10 @@ static void system_velocity(EntityIdx id, void *simulation)
             float angle = 2 * rr_vector_theta(&physical->wall_collision) -
                               (M_PI + rr_vector_theta(&physical->velocity));
             rr_vector_from_polar(&physical->velocity, vel, angle);
+            if (rr_simulation_has_petal(simulation, id))
+                rr_component_physical_set_angle(physical, angle);
         }
-        if (vel < 25)
+        if (vel < 25 && !rr_simulation_has_petal(simulation, id))
             physical->bubbling = 0;
     }
     physical->acceleration_scale = physical->web_slowdown = 1;
@@ -277,7 +282,8 @@ static void system_velocity(EntityIdx id, void *simulation)
         (rr_simulation_has_petal(simulation, id) &&
          rr_simulation_get_petal(simulation, id)->id != rr_petal_id_egg &&
          rr_simulation_get_petal(simulation, id)->id != rr_petal_id_nest &&
-         rr_simulation_get_petal(simulation, id)->id != rr_petal_id_meat) ||
+         rr_simulation_get_petal(simulation, id)->id != rr_petal_id_meat &&
+         rr_simulation_get_petal(simulation, id)->id != rr_petal_id_peas) ||
         physical->bubbling_to_death ||
         dev_cheat_enabled(simulation, id, no_wall_collision))
     {

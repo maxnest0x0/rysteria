@@ -86,7 +86,7 @@ static void uranium_damage(EntityIdx target, void *_captures)
             ai->aggro_range = radius + target_physical->radius;
     }
     if ((ai->target_entity == RR_NULL_ENTITY ||
-         rr_frand() < powf(0.3, mob->rarity)) &&
+         rr_frand() < powf(0.3, mob->rarity / (petal->rarity / 3.0 + 1))) &&
         !dev_cheat_enabled(simulation, relations->owner, no_aggro))
         ai->target_entity = relations->owner;
 }
@@ -622,6 +622,7 @@ static void petal_modifiers(struct rr_simulation *simulation,
     // reset
     physical->acceleration_scale = 1;
     player_info->modifiers.drop_pickup_radius = 25;
+    player_info->modifiers.magnet_count = 0;
     player_info->modifiers.petal_extension = 0;
     player_info->modifiers.reload_speed = 1;
 
@@ -694,6 +695,7 @@ static void petal_modifiers(struct rr_simulation *simulation,
                     continue;
                 if (data->id == rr_petal_id_magnet)
                 {
+                    ++player_info->modifiers.magnet_count;
                     player_info->modifiers.drop_pickup_radius +=
                         (25 + 180 * slot->rarity) * magnet_diminish_factor;
                     magnet_diminish_factor *= 0.5;

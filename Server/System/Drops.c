@@ -35,6 +35,8 @@ static void drop_cb(EntityIdx entity, void *_captures)
 {
     struct drop_pick_up_captures *captures = _captures;
     struct rr_simulation *this = captures->simulation;
+    if (!rr_simulation_has_drop(this, entity))
+        return;
 
     struct rr_component_drop *drop = rr_simulation_get_drop(this, entity);
     if (drop->ticks_until_despawn > 25 * 10 * (drop->rarity + 1) - 10)
@@ -74,8 +76,6 @@ static void drop_pick_up(EntityIdx entity, void *_captures)
         return;
     if (player_info->client->disconnected)
         return;
-    if (player_info->drops_this_tick_size >= 1)
-        return;
 
     struct rr_component_physical *flower_physical =
         rr_simulation_get_physical(this, entity);
@@ -84,31 +84,39 @@ static void drop_pick_up(EntityIdx entity, void *_captures)
 
     struct rr_component_arena *arena =
         rr_simulation_get_arena(this, flower_physical->arena);
-    struct drop_pick_up_captures captures;
-    captures.simulation = this;
-    captures.player_info = player_info;
-    captures.flower_physical = flower_physical;
-    captures.closest_dist =
-        flower_physical->radius + player_info->modifiers.drop_pickup_radius;
-    captures.closest_drop = RR_NULL_ENTITY;
-    rr_spatial_hash_query(&arena->spatial_hash, flower_physical->x,
-                          flower_physical->y, captures.closest_dist,
-                          captures.closest_dist, &captures, drop_cb);
-    if (captures.closest_drop == RR_NULL_ENTITY)
-        return;
+    uint8_t count = player_info->modifiers.magnet_count;
+    if (count == 0)
+        count = 1;
+    for (uint8_t i = 0; i < count; ++i)
+    {
+        if (player_info->drops_this_tick_size >= RR_MAX_SLOT_COUNT)
+            return;
+        struct drop_pick_up_captures captures;
+        captures.simulation = this;
+        captures.player_info = player_info;
+        captures.flower_physical = flower_physical;
+        captures.closest_dist =
+            flower_physical->radius + player_info->modifiers.drop_pickup_radius;
+        captures.closest_drop = RR_NULL_ENTITY;
+        rr_spatial_hash_query(&arena->spatial_hash, flower_physical->x,
+                              flower_physical->y, captures.closest_dist,
+                              captures.closest_dist, &captures, drop_cb);
+        if (captures.closest_drop == RR_NULL_ENTITY)
+            return;
 
-    struct rr_component_drop *drop =
-        rr_simulation_get_drop(this, captures.closest_drop);
-    uint8_t i = player_info->client - this->server->clients;
-    rr_bitset_set(drop->picked_up_by, i);
-    ++player_info
-          ->collected_this_run[drop->id * rr_rarity_id_max + drop->rarity];
-    rr_component_player_info_set_update_loot(player_info);
-    player_info->drops_this_tick[player_info->drops_this_tick_size].id =
-        drop->id;
-    player_info->drops_this_tick[player_info->drops_this_tick_size].rarity =
-        drop->rarity;
-    ++player_info->drops_this_tick_size;
+        struct rr_component_drop *drop =
+            rr_simulation_get_drop(this, captures.closest_drop);
+        uint8_t i = player_info->client - this->server->clients;
+        rr_bitset_set(drop->picked_up_by, i);
+        ++player_info
+              ->collected_this_run[drop->id * rr_rarity_id_max + drop->rarity];
+        rr_component_player_info_set_update_loot(player_info);
+        player_info->drops_this_tick[player_info->drops_this_tick_size].id =
+            drop->id;
+        player_info->drops_this_tick[player_info->drops_this_tick_size].rarity =
+            drop->rarity;
+        ++player_info->drops_this_tick_size;
+    }
 }
 
 static void drop_despawn_tick(EntityIdx entity, void *_captures)
