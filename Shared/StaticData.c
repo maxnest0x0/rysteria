@@ -288,12 +288,10 @@ static void init_maze(uint32_t size, uint8_t *template,
         for (int32_t x = 0; x < size / 2; ++x)
         {
             uint8_t this_tile = offset(0, 0);
-#ifdef RR_SERVER
             maze_grid(x * 2, y * 2).difficulty = this_tile;
             maze_grid(x * 2 + 1, y * 2).difficulty = this_tile;
             maze_grid(x * 2, y * 2 + 1).difficulty = this_tile;
             maze_grid(x * 2 + 1, y * 2 + 1).difficulty = this_tile;
-#endif
             this_tile = this_tile != 0;
             // top left
             uint8_t top = offset(0, -1);
@@ -491,7 +489,6 @@ uint32_t level_from_xp(double xp)
     return level;
 }
 
-#ifdef RR_SERVER
 #define _ 0
 #define c 1
 #define C 4
@@ -509,25 +506,6 @@ uint32_t level_from_xp(double xp)
 #define X 52
 #define a 56
 #define A 60
-#else
-#define _ 0
-#define c 1
-#define C 1
-#define u 1
-#define U 1
-#define r 1
-#define R 1
-#define e 1
-#define E 1
-#define l 1
-#define L 1
-#define m 1
-#define M 1
-#define x 1
-#define X 1
-#define a 1
-#define A 1
-#endif
 
 #define RR_DEFINE_MAZE(name, size)                                             \
     struct rr_maze_grid RR_MAZE_##name[size][size];                            \

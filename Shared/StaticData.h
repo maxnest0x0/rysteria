@@ -244,7 +244,6 @@ struct rr_maze_grid
 {
 #ifdef RR_SERVER
     uint8_t (*spawn_function)();
-    float difficulty;
     uint32_t spawn_timer;
     uint32_t player_count;
     uint32_t grid_points;
@@ -252,6 +251,7 @@ struct rr_maze_grid
     float overload_factor;
 #endif
     uint8_t value;
+    float difficulty;
 };
 
 struct rr_spawn_zone

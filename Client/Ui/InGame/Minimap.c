@@ -36,21 +36,45 @@ static uint8_t previous_biome = 255;
         previous_biome = arena->biome;                                         \
         float s = floorf(this->abs_width / maze_dim);                          \
         rr_renderer_set_dimensions(renderer, s *maze_dim, s *maze_dim);        \
-        rr_renderer_set_fill(renderer, 0xffffffff);                            \
-        for (uint32_t x = 0; x < maze_dim; ++x)                                \
-            for (uint32_t y = 0; y < maze_dim; ++y)                            \
+        (renderer)->state.filter.color = 0xffffffff;                           \
+        for (int32_t x = 0; x < maze_dim; ++x)                                 \
+            for (int32_t y = 0; y < maze_dim; ++y)                             \
             {                                                                  \
                 uint8_t at = grid[y * maze_dim + x].value;                     \
+                uint8_t difficulty = grid[y * maze_dim + x].difficulty / 4;    \
                 if (at == 1)                                                   \
                 {                                                              \
+                    if (difficulty % 2 == 0)                                   \
+                        (renderer)->state.filter.amount =                      \
+                            (difficulty >= 4 && difficulty <= 8) ||            \
+                            difficulty == 12 ? 0.3 : 0.5;                      \
+                    rr_renderer_set_fill(                                      \
+                        renderer, RR_RARITY_COLORS[difficulty / 2]);           \
                     rr_renderer_begin_path(renderer);                          \
                     rr_renderer_fill_rect(renderer, x *s, y *s, s, s);         \
                 }                                                              \
                 else if (at != 0)                                              \
                 {                                                              \
+                    for (int8_t i = -1; i <= 1; ++i)                           \
+                        for (int8_t j = -1; j <= 1; ++j)                       \
+                    {                                                          \
+                        if (x + i < 0 || x + i >= maze_dim ||                  \
+                            y + j < 0 || y + j >= maze_dim)                    \
+                            continue;                                          \
+                        uint8_t potential =                                    \
+                            grid[(y + j) * maze_dim + (x + i)].difficulty / 4; \
+                        if (potential > difficulty)                            \
+                            difficulty = potential;                            \
+                    }                                                          \
                     uint8_t left = (at >> 1) & 1;                              \
                     uint8_t top = at & 1;                                      \
                     uint8_t inverse = (at >> 3) & 1;                           \
+                    if (difficulty % 2 == 0)                                   \
+                        (renderer)->state.filter.amount =                      \
+                            (difficulty >= 4 && difficulty <= 8) ||            \
+                            difficulty == 12 ? 0.3 : 0.5;                      \
+                    rr_renderer_set_fill(                                      \
+                        renderer, RR_RARITY_COLORS[difficulty / 2]);           \
                     rr_renderer_begin_path(renderer);                          \
                     rr_renderer_move_to(renderer, (x + inverse ^ left) * s,    \
                                         (y + inverse ^ top) * s);              \
@@ -66,6 +90,7 @@ static uint8_t previous_biome = 255;
                                             start_angle + M_PI / 2, 0);        \
                     rr_renderer_fill(renderer);                                \
                 }                                                              \
+                (renderer)->state.filter.amount = 0;                           \
             }                                                                  \
     }
 
@@ -84,8 +109,10 @@ static void minimap_on_render(struct rr_ui_element *this, struct rr_game *game)
     rr_renderer_scale(renderer, this->abs_width / minimap.width);
     rr_renderer_draw_image(renderer, &minimap);
     rr_renderer_scale(renderer, minimap.width / this->abs_width);
-    rr_renderer_set_global_alpha(renderer, 0.75 * renderer->state.global_alpha);
     rr_renderer_set_fill(renderer, 0xffff00ff);
+    renderer->state.filter.amount = 0.2;
+    rr_renderer_set_stroke(renderer, 0xffff00ff);
+    rr_renderer_set_line_width(renderer, 2);
     for (uint32_t i = RR_SQUAD_MEMBER_COUNT; i > 0; --i)
     {
         if (game->player_infos[i - 1] == RR_NULL_ENTITY)
@@ -101,7 +128,11 @@ static void minimap_on_render(struct rr_ui_element *this, struct rr_game *game)
             rr_simulation_get_physical(game->simulation,
                                        player_info->flower_id);
         if (i == 1)
+        {
+            rr_renderer_set_stroke(renderer, 0xff0080ff);
+            renderer->state.filter.amount = 0;
             rr_renderer_set_fill(renderer, 0xff0080ff);
+        }
         rr_renderer_begin_path(renderer);
         rr_renderer_arc(
             renderer,
@@ -109,8 +140,9 @@ static void minimap_on_render(struct rr_ui_element *this, struct rr_game *game)
                 (physical->lerp_x / (grid_size * maze_dim) - 0.5),
             this->abs_height *
                 (physical->lerp_y / (grid_size * maze_dim) - 0.5),
-            2.5);
+            4);
         rr_renderer_fill(renderer);
+        rr_renderer_stroke(renderer);
     }
 }
 
@@ -123,7 +155,7 @@ struct rr_ui_element *rr_ui_minimap_init(struct rr_game *game)
 {
     struct rr_ui_element *this = rr_ui_element_init();
 
-    this->abs_width = this->width = this->abs_height = this->height = 200;
+    this->abs_width = this->width = this->abs_height = this->height = 250;
     this->on_render = minimap_on_render;
     rr_renderer_init(&minimap);
     minimap.on_context_restore = minimap_redraw;
