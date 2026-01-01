@@ -1533,9 +1533,6 @@ static void server_tick(struct rr_server *this)
                 continue;
             }
             if (!client->dev && client->player_info != NULL &&
-                client->player_info->flower_id != RR_NULL_ENTITY &&
-                !is_dead_flower(&this->simulation,
-                                client->player_info->flower_id) &&
                 level_from_xp(client->experience) >= 3)
             {
                 if (++client->afk_ticks > 30 * 60 * 25)

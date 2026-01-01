@@ -71,19 +71,21 @@ struct rr_ui_element *rr_ui_anti_afk_container_init(struct rr_game *game)
     struct rr_ui_element *this =
         rr_ui_set_background(rr_ui_v_container_init(
             rr_ui_container_init(), 10, 10,
-            rr_ui_set_justify(rr_ui_text_init("AFK Challenge", 24, 0xffff4444), -1, -1),
+            rr_ui_set_justify(rr_ui_text_init("AFK Check", 24, 0xffff4444),
+                              -1, -1),
             rr_ui_set_justify(
                 rr_ui_h_container_init(rr_ui_container_init(), 0, 0,
                     rr_ui_text_init(
-                        "Decipher and send this in chat: ", 16, 0xffffffff),
-                    rr_ui_choose_element_init(
-                        rr_ui_element_init(),
-                        rr_ui_set_justify(
-                            rr_ui_dynamic_text_init(16, 0xffffffff,
-                                                    get_challenge_text),
-                        -1, -1),
-                        choose_const
-                    ),
+                        "If you are here, send this in chat: ", 16, 0xffffffff),
+                    rr_ui_text_init(game->afk_challenge, 16, 0xffffffff),
+                    // rr_ui_choose_element_init(
+                    //     rr_ui_element_init(),
+                    //     rr_ui_set_justify(
+                    //         rr_ui_dynamic_text_init(16, 0xffffffff,
+                    //                                 get_challenge_text),
+                    //     -1, -1),
+                    //     choose_const
+                    // ),
                     NULL),
             -1, -1),
             rr_ui_set_justify(rr_ui_text_init(

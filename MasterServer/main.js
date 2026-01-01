@@ -419,24 +419,24 @@ wss.on("connection", (ws, req) => {
         {
             case 0:
             {
-                const _uuid = decoder.ReadStringNT();
+                const uuid = decoder.ReadStringNT();
                 const token = decoder.ReadStringNT();
                 const code = decoder.ReadStringNT();
                 const nonce = decoder.ReadVarUint();
                 const pos = decoder.ReadUint8();
-                const uuid = _uuid || crypto.randomUUID();
                 log("attempt init", [uuid, token, code]);
                 try {
-                    let user = await (_uuid ? db_read_user : db_read_or_create_user)(uuid, SERVER_SECRET);
-                    let new_password = user ? hash(user.username + PASSWORD_SALT) : "";
-                    if (!user || !is_valid_uuid(uuid) || (_uuid && user.password === new_password && token !== user.password)) {
-                        log("player force disconnect", [uuid]);
-                        const encoder = new protocol.BinaryWriter();
-                        encoder.WriteUint8(2);
-                        encoder.WriteUint8(pos);
-                        encoder.WriteVarUint(nonce);
-                        ws.send(encoder.data.subarray(0, encoder.at));
-                        break;
+                    let user = await db_read_user(uuid, SERVER_SECRET);
+                    if (!user || !is_valid_uuid(uuid) ||
+                        (user.password === hash(user.username + PASSWORD_SALT) && token !== user.password)) {
+                        user = await db_read_or_create_user(crypto.randomUUID(), SERVER_SECRET);
+                        // log("player force disconnect", [uuid]);
+                        // const encoder = new protocol.BinaryWriter();
+                        // encoder.WriteUint8(2);
+                        // encoder.WriteUint8(pos);
+                        // encoder.WriteVarUint(nonce);
+                        // ws.send(encoder.data.subarray(0, encoder.at));
+                        // break;
                     }
                     let discord;
                     if (code) {
@@ -447,22 +447,15 @@ wss.on("connection", (ws, req) => {
                         }
                     }
                     if (discord) {
-                        const uuid_link = user.discord_id;
-                        const discord_link = database.links[discord];
-                        if (!uuid_link && !discord_link) {
+                        if (!user.discord_id && !database.links[discord]) {
                             user.discord_id = discord;
                             database.links[discord] = user.username;
                             log("discord link", [user.username, discord]);
-                            write_db_entry(user.username, user);
-                        } else if (discord_link && !uuid_link) {
-                            user = await db_read_or_create_user(discord_link, SERVER_SECRET);
-                            new_password = hash(user.username + PASSWORD_SALT);
-                        }
+                        } else if (database.links[discord])
+                            user = await db_read_or_create_user(database.links[discord], SERVER_SECRET);
                     }
-                    if (user.password != new_password) {
-                        user.password = new_password;
-                        write_db_entry(user.username, user);
-                    }
+                    user.password = hash(user.username + PASSWORD_SALT);
+                    write_db_entry(user.username, user);
                     connected_clients[user.username] = new GameClient(user, game_server.alias, nonce);
                     game_server.clients[pos] = user.username;
                     const encoder = new protocol.BinaryWriter();

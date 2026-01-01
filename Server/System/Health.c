@@ -279,7 +279,7 @@ static uint8_t damage_effect(struct rr_simulation *simulation, EntityIdx target,
         {
             struct rr_component_physical *physical =
                 rr_simulation_get_physical(simulation, target);
-            physical->pachy_stun_ticks = 250;
+            physical->pachy_stun_ticks = 125;
         }
     }
     else if (rr_simulation_has_petal(simulation, attacker))
