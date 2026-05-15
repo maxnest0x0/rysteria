@@ -653,9 +653,22 @@ static void petal_modifiers(struct rr_simulation *simulation,
                 heal = max_heal;
             health->gradually_healed += heal;
         }
+        if (data->id == rr_petal_id_blood_stinger)
+        {
+            float selfDamage = 0.075 * RR_PETAL_RARITY_SCALE[slot->rarity].self_damage;
+            rr_component_health_set_health(health, health->health - selfDamage);
+            health->health -= selfDamage;
+        }
         else if (data->id == rr_petal_id_berry)
         {
             to_rotate += (0.02 + 0.012 * slot->rarity);
+        }
+        else if (data->id == rr_petal_id_golden_leaf)
+        {
+            player_info->modifiers.reload_speed += 0.04 * (slot->rarity + 1);
+        }
+        else if (data->id == rr_petal_id_diamond_leaf)
+        {
             player_info->modifiers.reload_speed += 0.02 * (slot->rarity + 1);
         }
         else if (data->id == rr_petal_id_feather)
@@ -667,9 +680,7 @@ static void petal_modifiers(struct rr_simulation *simulation,
         else if (data->id == rr_petal_id_crest)
         {
             ++crest_count;
-            fov_bonus += (1 / (1 - 0.1 * slot->rarity) - 1) *
-                             crest_diminish_factor;
-            crest_diminish_factor *= 0.5;
+            RR_SET_IF_LESS(player_info->camera_fov, 1 - 0.05 * slot->rarity)
         }
         else if (data->id == rr_petal_id_droplet)
             ++rot_count;
@@ -962,8 +973,8 @@ static void rr_system_petal_reload_foreach_function(EntityIdx id,
                     rotation_pos - 1, outer, inner, data);
             }
         }
-        if (slot->id == rr_petal_id_bubble)
-            has_bubble = 1;
+        //if (slot->id == rr_petal_id_bubble)
+        //    has_bubble = 1;
         rr_component_player_info_set_slot_cd(player_info, outer, max_cd);
         rr_component_player_info_set_slot_hp(player_info, outer, min_hp);
     }

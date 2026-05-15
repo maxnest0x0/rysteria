@@ -468,13 +468,46 @@ static void crafting_xp_text_animate(struct rr_ui_element *this,
         data->text = "750 xp per craft";
         break;
     case rr_rarity_id_legendary:
-        data->text = "25k xp per craft";
+        data->text = "25 K xp per craft";
         break;
     case rr_rarity_id_mythic:
-        data->text = "1m xp per craft";
+        data->text = "1 M xp per craft";
         break;
     case rr_rarity_id_exotic:
-        data->text = "100m xp per craft";
+        data->text = "100 M xp per craft";
+        break;
+    case rr_rarity_id_ultimate:
+        data->text = "5 B xp per craft";
+        break;
+    case rr_rarity_id_quantum:
+        data->text = "75 B xp per craft";
+        break;
+    case rr_rarity_id_aurous:
+        data->text = "270 B xp per craft";
+        break;
+    case rr_rarity_id_eternal:
+        data->text = "800 B xp per craft";
+        break;
+    case rr_rarity_id_hyper:
+        data->text = "1.5 T xp per craft";
+        break;
+    case rr_rarity_id_sunshine:
+        data->text = "25 T xp per craft";
+        break;
+    case rr_rarity_id_nebula:
+        data->text = "150 T xp per craft";
+        break;
+    case rr_rarity_id_infinity:
+        data->text = "1 Qa xp per craft";
+        break;
+    case rr_rarity_id_calamity:
+        data->text = "8 Qa xp per craft";
+        break;
+    case rr_rarity_id_unique:
+        data->text = "60 Qa xp per craft";
+        break;
+    case rr_rarity_id_cosmic:
+        data->text = "900 Qa xp per craft";
         break;
     }
 }

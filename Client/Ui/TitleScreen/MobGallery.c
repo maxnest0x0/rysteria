@@ -161,8 +161,8 @@ static void mob_container_animate(struct rr_ui_element *this,
 struct rr_ui_element *rr_ui_mob_container_init()
 {
     struct rr_ui_element *this = rr_ui_2d_container_init(
-        rr_rarity_id_max, rr_mob_id_edmontosaurus + 1, 15, 15);
-    for (uint8_t id = 0; id <= rr_mob_id_edmontosaurus; ++id)
+        rr_rarity_id_max, rr_mob_id_lanternfly + 1, 15, 15);
+    for (uint8_t id = 0; id <= rr_mob_id_lanternfly; ++id)
         for (uint8_t rarity = 0; rarity < rr_rarity_id_max; ++rarity)
             rr_ui_container_add_element(this, mob_button_init(id, rarity));
     rr_ui_set_background(this, 0x00000000);

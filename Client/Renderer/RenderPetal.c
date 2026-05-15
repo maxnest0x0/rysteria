@@ -85,7 +85,19 @@ void rr_component_petal_render(EntityIdx entity, struct rr_game *game,
         particle->opacity = (0.3 + 0.2 * rr_frand()) *
                                 exotic_coeff * colorful_coeff;
         particle->disappearance = physical->on_title_screen ? 4 : 6;
-        particle->color = 0xffffffff;
+        if (petal->rarity == rr_rarity_id_ultimate) {particle->color = 0xffff00ff;}
+        if (petal->rarity == rr_rarity_id_quantum) {particle->color = 0xfface3df;}
+        if (petal->rarity == rr_rarity_id_aurous) {particle->color = 0xffd1ab38;}
+        if (petal->rarity == rr_rarity_id_eternal) {particle->color = 0xff8d9ac9;}
+        if (petal->rarity == rr_rarity_id_hyper) {particle->color = 0xff467330;}
+        if (petal->rarity == rr_rarity_id_sunshine) {particle->color = 0xffc29c5b;}
+        if (petal->rarity == rr_rarity_id_nebula) {particle->color = 0xff4914a6;}
+        if (petal->rarity == rr_rarity_id_infinity) {particle->color = 0xff3d3d3d;}
+        if (petal->rarity == rr_rarity_id_calamity) {particle->color = 0xff852121;}
+        if (petal->rarity == rr_rarity_id_unique) {particle->color = 0xffeeeeee;}
+        if (petal->rarity == rr_rarity_id_cosmic) {particle->color = 0xff692c9b;}
+        if (petal->rarity == rr_rarity_id_galactic) {particle->color = 0xffc0727d;}
+
         if (petal->id == rr_petal_id_fireball)
         {
             switch (rand() % 3)

@@ -93,55 +93,79 @@ enum rr_biome_id
 
 enum rr_rarity_id
 {
-    rr_rarity_id_common,
-    rr_rarity_id_unusual,
-    rr_rarity_id_rare,
-    rr_rarity_id_epic,
-    rr_rarity_id_legendary,
-    rr_rarity_id_mythic,
-    rr_rarity_id_exotic,
-    rr_rarity_id_ultimate,
-    rr_rarity_id_max
+    rr_rarity_id_common,     // 0
+    rr_rarity_id_unusual,    // 1
+    rr_rarity_id_rare,       // 2
+    rr_rarity_id_epic,       // 3
+    rr_rarity_id_legendary,  // 4
+    rr_rarity_id_mythic,     // 5
+    rr_rarity_id_exotic,     // 6
+    rr_rarity_id_ultimate,   // 7
+    rr_rarity_id_quantum,    // 8
+    rr_rarity_id_aurous,     // 9
+    rr_rarity_id_eternal,    // 10
+    rr_rarity_id_hyper,      // 11
+    rr_rarity_id_sunshine,   // 12
+    rr_rarity_id_nebula,     // 13
+    rr_rarity_id_infinity,   // 14
+    rr_rarity_id_calamity,   // 15
+    rr_rarity_id_unique,     // 16
+    rr_rarity_id_cosmic,     // 17
+    rr_rarity_id_galactic,   // 18
+    rr_rarity_id_max         // 19
 };
 
 enum rr_petal_id
 {
-    rr_petal_id_none,      // 0
-    rr_petal_id_basic,     // 1
-    rr_petal_id_pellet,    // 2
-    rr_petal_id_fossil,    // 3
-    rr_petal_id_stinger,   // 4
-    rr_petal_id_berry,     // 5
-    rr_petal_id_shell,     // 6
-    rr_petal_id_peas,      // 7
-    rr_petal_id_leaf,      // 8
-    rr_petal_id_egg,       // 9
-    rr_petal_id_magnet,    // 10
-    rr_petal_id_uranium,   // 11
-    rr_petal_id_feather,   // 12
-    rr_petal_id_azalea,    // 13
-    rr_petal_id_bone,      // 14
-    rr_petal_id_web,       // 15
-    rr_petal_id_seed,      // 16
-    rr_petal_id_gravel,    // 17
-    rr_petal_id_club,      // 18
-    rr_petal_id_crest,     // 19
-    rr_petal_id_droplet,   // 20
-    rr_petal_id_beak,      // 21
-    rr_petal_id_lightning, // 22
-    rr_petal_id_third_eye, // 23
-    rr_petal_id_nest,      // 24
-    rr_petal_id_fireball,  // 25
-    rr_petal_id_meat,      // 26
-    rr_petal_id_bubble,    // 27
-    rr_petal_id_meteor,    // 28
+    rr_petal_id_none,          // 0
+    rr_petal_id_basic,         // 1
+    rr_petal_id_pellet,        // 2
+    rr_petal_id_fossil,        // 3
+    rr_petal_id_stinger,       // 4
+    rr_petal_id_berry,         // 5
+    rr_petal_id_shell,         // 6
+    rr_petal_id_peas,          // 7
+    rr_petal_id_leaf,          // 8
+    rr_petal_id_egg,           // 9
+    rr_petal_id_magnet,        // 10
+    rr_petal_id_uranium,       // 11
+    rr_petal_id_feather,       // 12
+    rr_petal_id_azalea,        // 13
+    rr_petal_id_bone,          // 14
+    rr_petal_id_web,           // 15
+    rr_petal_id_seed,          // 16
+    rr_petal_id_gravel,        // 17
+    rr_petal_id_club,          // 18
+    rr_petal_id_crest,         // 19
+    rr_petal_id_droplet,       // 20
+    rr_petal_id_beak,          // 21
+    rr_petal_id_lightning,     // 22
+    rr_petal_id_third_eye,     // 23
+    rr_petal_id_nest,          // 24
+    rr_petal_id_fireball,      // 25
+    rr_petal_id_meat,          // 26
+    rr_petal_id_bubble,        // 27
+    rr_petal_id_meteor,        // 28
+    
 
-    rr_petal_id_mandible,  // 29
-    rr_petal_id_wax,       // 30
-    rr_petal_id_sand,      // 31
-    rr_petal_id_mint,      // 32
+    rr_petal_id_mandible,      // 29
+    rr_petal_id_wax,           // 30
+    rr_petal_id_sand,          // 31
+    rr_petal_id_mint,          // 32
 
-    rr_petal_id_max,       // 33
+    rr_petal_id_pearl,         // 33
+    rr_petal_id_rice,          // 34
+    rr_petal_id_sapphire,      // 35
+    rr_petal_id_ruby,          // 36
+    rr_petal_id_golden_leaf,   // 37
+    rr_petal_id_diamond_leaf,  // 38
+    rr_petal_id_emerald_leaf,  // 39
+    rr_petal_id_amethyst_leaf, // 40
+    rr_petal_id_diamond,       // 41
+    rr_petal_id_golden_meteor, // 42
+    rr_petal_id_blood_stinger, // 43
+
+    rr_petal_id_max,           // 44
 };
 
 enum rr_mob_id
@@ -215,6 +239,7 @@ struct rr_petal_rarity_scale
     float heal;
     float seed_cooldown;
     float web_radius;
+    float self_damage;
 };
 
 struct rr_mob_rarity_scale
@@ -226,13 +251,14 @@ struct rr_mob_rarity_scale
 
 extern struct rr_petal_data RR_PETAL_DATA[rr_petal_id_max];
 extern char const *RR_PETAL_NAMES[rr_petal_id_max];
+extern char const *RR_PETAL_NAMES_FULL[rr_petal_id_max];
 extern char const *RR_PETAL_DESCRIPTIONS[rr_petal_id_max];
 extern struct rr_mob_data RR_MOB_DATA[rr_mob_id_max];
 extern char const *RR_MOB_NAMES[rr_mob_id_max];
 extern struct rr_mob_rarity_scale RR_MOB_RARITY_SCALING[rr_rarity_id_max];
 extern struct rr_petal_rarity_scale RR_PETAL_RARITY_SCALE[rr_rarity_id_max];
 extern double RR_MOB_LOOT_RARITY_COEFFICIENTS[rr_rarity_id_max];
-extern double RR_DROP_RARITY_COEFFICIENTS[rr_rarity_id_exotic + 2];
+extern double RR_DROP_RARITY_COEFFICIENTS[rr_rarity_id_unique + 2];
 extern double RR_MOB_WAVE_RARITY_COEFFICIENTS[rr_rarity_id_max + 1];
 
 extern uint32_t RR_MOB_DIFFICULTY_COEFFICIENTS[rr_mob_id_max];
@@ -287,7 +313,7 @@ struct rr_maze_declaration
     extern struct rr_maze_grid RR_MAZE_##name[size][size];
 
 // RR_DECLARE_MAZE(HELL_CREEK, 54)
-RR_DECLARE_MAZE(HELL_CREEK, 80)
+RR_DECLARE_MAZE(HELL_CREEK, 160)
 RR_DECLARE_MAZE(BURROW, 4)
 
 extern struct rr_maze_declaration RR_MAZES[rr_biome_id_max];

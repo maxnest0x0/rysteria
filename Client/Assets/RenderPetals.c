@@ -2172,6 +2172,407 @@ void rr_renderer_draw_petal(struct rr_renderer *renderer, uint8_t id,
             rr_renderer_fill(renderer);
             rr_renderer_scale(renderer, 1 / 0.2f);
             break;
+        case rr_petal_id_pearl:
+            rr_renderer_set_stroke(renderer, 0xffcfcfcf);
+            rr_renderer_set_fill(renderer, 0xffffffff);
+            rr_renderer_set_line_width(renderer, 3.0f);
+            rr_renderer_begin_path(renderer);
+            rr_renderer_arc(renderer, 0.0f, 0.0f, 17.5f);
+            rr_renderer_fill(renderer);
+            rr_renderer_stroke(renderer);
+            break;
+        case rr_petal_id_rice:
+            rr_renderer_scale(renderer, 0.4);
+            rr_renderer_translate(renderer, -26.5, -12.5);
+            rr_renderer_set_fill(renderer, 0xffffffff);
+            rr_renderer_set_stroke(renderer, 0xffcfcfcf);
+            rr_renderer_set_line_width(renderer, 4.0f);
+            rr_renderer_set_line_join(renderer, 1.0f);
+            rr_renderer_set_line_cap(renderer, 1.0f);
+            rr_renderer_begin_path(renderer);
+            rr_renderer_move_to(renderer, 39.1162, 2.37012);
+            rr_renderer_bezier_curve_to(renderer, 42.5347, 1.70587, 45.1574, 1.77804, 47.6357, 3.87891);
+            rr_renderer_line_to(renderer, 47.875, 4.08887);
+            rr_renderer_bezier_curve_to(renderer, 49.4982, 5.5567, 50.771, 8.04982, 50.9727, 10.7334);
+            rr_renderer_bezier_curve_to(renderer, 51.163, 13.2673, 50.3986, 15.8916, 48.1299, 17.9814);
+            rr_renderer_line_to(renderer, 47.9053, 18.1816);
+            rr_renderer_bezier_curve_to(renderer, 46.2446, 19.6236, 43.3061, 20.8604, 39.4336, 21.7207);
+            rr_renderer_bezier_curve_to(renderer, 35.6205, 22.5678, 31.134, 23, 26.6016, 23);
+            rr_renderer_bezier_curve_to(renderer, 22.0695, 23, 17.5545, 22.5681, 13.6855, 21.7197);
+            rr_renderer_bezier_curve_to(renderer, 10.0085, 20.9134, 7.10781, 19.772, 5.29492, 18.4229);
+            rr_renderer_line_to(renderer, 4.94629, 18.1504);
+            rr_renderer_bezier_curve_to(renderer, 3.04385, 16.5789, 1.99995, 14.0296, 2, 11.292);
+            rr_renderer_bezier_curve_to(renderer, 2.00011, 8.72881, 2.91899, 6.20495, 4.65625, 4.43262);
+            rr_renderer_line_to(renderer, 5.01465, 4.08887);
+            rr_renderer_bezier_curve_to(renderer, 7.56401, 1.78369, 10.2446, 1.68443, 13.7734, 2.37012);
+            rr_renderer_bezier_curve_to(renderer, 15.6585, 2.7364, 17.3871, 3.2348, 19.6094, 3.73242);
+            rr_renderer_bezier_curve_to(renderer, 21.7135, 4.20357, 24.0075, 4.60542, 26.4443, 4.60547);
+            rr_renderer_bezier_curve_to(renderer, 28.8814, 4.60547, 31.1761, 4.2036, 33.2803, 3.73242);
+            rr_renderer_bezier_curve_to(renderer, 35.5026, 3.2348, 37.2312, 2.7364, 39.1162, 2.37012);
+            rr_renderer_fill(renderer);
+            rr_renderer_stroke(renderer);
+            break;
+        case rr_petal_id_sapphire:
+            rr_renderer_set_fill(renderer, 0xff53a9db);
+            rr_renderer_set_stroke(renderer, 0xff4490bd);
+            rr_renderer_set_line_cap(renderer, 1);
+            rr_renderer_set_line_join(renderer, 1);
+            rr_renderer_set_line_width(renderer, 3);
+            rr_renderer_begin_path(renderer);
+            rr_renderer_move_to(renderer, 0.00, -9.00);
+            rr_renderer_line_to(renderer, 9.00, 0.00);
+            rr_renderer_line_to(renderer, 0.00, 9.00);
+            rr_renderer_line_to(renderer, -9.00, 0.00);
+            rr_renderer_line_to(renderer, 0.00, -9.00);
+            rr_renderer_fill(renderer);
+            rr_renderer_stroke(renderer);
+            break;
+        case rr_petal_id_diamond: 
+            rr_renderer_set_fill(renderer, 0x9945bed1);
+            rr_renderer_set_stroke(renderer, 0x992c9aab);
+            rr_renderer_set_line_cap(renderer, 1);
+            rr_renderer_set_line_join(renderer, 1);
+            rr_renderer_set_line_width(renderer, 3);
+            rr_renderer_begin_path(renderer);
+            rr_renderer_move_to(renderer, 0.00, 9.00);
+            rr_renderer_line_to(renderer, -9.00, -4.00);
+            rr_renderer_line_to(renderer, -7.00, -8.00);
+            rr_renderer_line_to(renderer, 7.00, -8.00);
+            rr_renderer_line_to(renderer, 9.00, -4.00);
+            rr_renderer_line_to(renderer, 0.00, 9.00);
+            rr_renderer_fill(renderer);
+            rr_renderer_stroke(renderer);
+            break;
+        case rr_petal_id_ruby:
+            rr_renderer_set_fill(renderer, 0xffeb5b4b);
+            rr_renderer_set_stroke(renderer, 0xffb34230);
+            rr_renderer_set_line_cap(renderer, 1);
+            rr_renderer_set_line_join(renderer, 1);
+            rr_renderer_set_line_width(renderer, 3);
+            rr_renderer_begin_path(renderer);
+            rr_renderer_move_to(renderer, 0.00, -9.00);
+            rr_renderer_line_to(renderer, -10.00, 9.00);
+            rr_renderer_line_to(renderer, 10.00, 9.00);
+            rr_renderer_line_to(renderer, 0.00, -9.00);
+            /*
+            rr_renderer_move_to(renderer, 0.00, 9.00);
+            rr_renderer_line_to(renderer, 9.00, -9.00);
+            rr_renderer_line_to(renderer, -9.00, -9.00);
+            rr_renderer_line_to(renderer, 0.00, 9.00);
+            */
+            rr_renderer_fill(renderer);
+            rr_renderer_stroke(renderer);
+            break;
+        case rr_petal_id_golden_leaf:
+            rr_renderer_scale(renderer, 0.2);
+            rr_renderer_rotate(renderer, M_PI * 3 / 4);
+            rr_renderer_set_fill(renderer, 0xffd4cb4e);
+            rr_renderer_begin_path(renderer);
+            rr_renderer_move_to(renderer, -42.50, 42.73);
+            rr_renderer_bezier_curve_to(renderer, -66.06, 19.17, -66.06, -19.02,
+                                        -42.50, -42.58);
+            rr_renderer_bezier_curve_to(renderer, -31.19, -53.89, -15.85,
+                                        -60.24, 0.15, -60.24);
+            rr_renderer_bezier_curve_to(renderer, 16.15, -60.24, 31.49, -53.89,
+                                        42.80, -42.58);
+            rr_renderer_bezier_curve_to(renderer, 66.36, -19.02, 66.36, 19.17,
+                                        42.80, 42.73);
+            rr_renderer_bezier_curve_to(renderer, 19.25, 66.28, -18.94, 66.28,
+                                        -42.50, 42.73);
+            rr_renderer_fill(renderer);
+            rr_renderer_set_fill(renderer, 0xffd4cb4e);
+            rr_renderer_begin_path(renderer);
+            rr_renderer_move_to(renderer, -59.02, -30.14);
+            rr_renderer_bezier_curve_to(renderer, -67.01, -38.14, -67.01,
+                                        -51.09, -59.02, -59.09);
+            rr_renderer_bezier_curve_to(renderer, -55.18, -62.93, -49.97,
+                                        -65.08, -44.55, -65.08);
+            rr_renderer_bezier_curve_to(renderer, -39.12, -65.08, -33.91,
+                                        -62.93, -30.07, -59.09);
+            rr_renderer_bezier_curve_to(renderer, -22.08, -51.09, -22.08,
+                                        -38.14, -30.07, -30.14);
+            rr_renderer_bezier_curve_to(renderer, -38.07, -22.15, -51.03,
+                                        -22.15, -59.02, -30.14);
+            rr_renderer_fill(renderer);
+            rr_renderer_set_fill(renderer, 0xffd4cb4e);
+            rr_renderer_begin_path(renderer);
+            rr_renderer_move_to(renderer, 4.38, -59.34);
+            rr_renderer_line_to(renderer, -41.83, -64.86);
+            rr_renderer_line_to(renderer, -29.53, -48.03);
+            rr_renderer_fill(renderer);
+            rr_renderer_set_fill(renderer, 0xffe7f048);
+            rr_renderer_begin_path(renderer);
+            rr_renderer_move_to(renderer, 0.06, 42.80);
+            rr_renderer_bezier_curve_to(renderer, -23.49, 42.80, -42.58, 23.71,
+                                        -42.58, 0.16);
+            rr_renderer_quadratic_curve_to(renderer, -42.58, -23.57, -47.40,
+                                           -47.29);
+            rr_renderer_quadratic_curve_to(renderer, -23.67, -42.47, 0.06,
+                                           -42.47);
+            rr_renderer_bezier_curve_to(renderer, 23.61, -42.47, 42.69, -23.39,
+                                        42.69, 0.16);
+            rr_renderer_bezier_curve_to(renderer, 42.69, 23.71, 23.61, 42.80,
+                                        0.06, 42.80);
+            rr_renderer_fill(renderer);
+            rr_renderer_set_fill(renderer, 0xffd4cb4e);
+            rr_renderer_begin_path(renderer);
+            rr_renderer_move_to(renderer, -17.00, -3.60);
+            rr_renderer_bezier_curve_to(renderer, -20.72, -7.33, -20.72, -13.36,
+                                        -17.00, -17.08);
+            rr_renderer_bezier_curve_to(renderer, -15.22, -18.87, -12.79,
+                                        -19.87, -10.27, -19.87);
+            rr_renderer_bezier_curve_to(renderer, -7.74, -19.87, -5.32, -18.87,
+                                        -3.53, -17.08);
+            rr_renderer_line_to(renderer, 59.09, 45.54);
+            rr_renderer_bezier_curve_to(renderer, 62.81, 49.26, 62.81, 55.29,
+                                        59.09, 59.02);
+            rr_renderer_bezier_curve_to(renderer, 55.37, 62.74, 49.34, 62.74,
+                                        45.62, 59.02);
+            rr_renderer_fill(renderer);
+            rr_renderer_set_fill(renderer, 0xffd4cb4e);
+            rr_renderer_begin_path(renderer);
+            rr_renderer_move_to(renderer, -59.44, 4.49);
+            rr_renderer_line_to(renderer, -64.96, -41.73);
+            rr_renderer_line_to(renderer, -48.13, -29.42);
+            rr_renderer_fill(renderer);
+            rr_renderer_scale(renderer, 1 / 0.2);
+            break;
+        case rr_petal_id_diamond_leaf:
+            rr_renderer_scale(renderer, 0.2);
+            rr_renderer_rotate(renderer, M_PI * 3 / 4);
+            rr_renderer_set_fill(renderer, 0xff49cacc);
+            rr_renderer_begin_path(renderer);
+            rr_renderer_move_to(renderer, -42.50, 42.73);
+            rr_renderer_bezier_curve_to(renderer, -66.06, 19.17, -66.06, -19.02,
+                                        -42.50, -42.58);
+            rr_renderer_bezier_curve_to(renderer, -31.19, -53.89, -15.85,
+                                        -60.24, 0.15, -60.24);
+            rr_renderer_bezier_curve_to(renderer, 16.15, -60.24, 31.49, -53.89,
+                                        42.80, -42.58);
+            rr_renderer_bezier_curve_to(renderer, 66.36, -19.02, 66.36, 19.17,
+                                        42.80, 42.73);
+            rr_renderer_bezier_curve_to(renderer, 19.25, 66.28, -18.94, 66.28,
+                                        -42.50, 42.73);
+            rr_renderer_fill(renderer);
+            rr_renderer_set_fill(renderer, 0xff49cacc);
+            rr_renderer_begin_path(renderer);
+            rr_renderer_move_to(renderer, -59.02, -30.14);
+            rr_renderer_bezier_curve_to(renderer, -67.01, -38.14, -67.01,
+                                        -51.09, -59.02, -59.09);
+            rr_renderer_bezier_curve_to(renderer, -55.18, -62.93, -49.97,
+                                        -65.08, -44.55, -65.08);
+            rr_renderer_bezier_curve_to(renderer, -39.12, -65.08, -33.91,
+                                        -62.93, -30.07, -59.09);
+            rr_renderer_bezier_curve_to(renderer, -22.08, -51.09, -22.08,
+                                        -38.14, -30.07, -30.14);
+            rr_renderer_bezier_curve_to(renderer, -38.07, -22.15, -51.03,
+                                        -22.15, -59.02, -30.14);
+            rr_renderer_fill(renderer);
+            rr_renderer_set_fill(renderer, 0xff49cacc);
+            rr_renderer_begin_path(renderer);
+            rr_renderer_move_to(renderer, 4.38, -59.34);
+            rr_renderer_line_to(renderer, -41.83, -64.86);
+            rr_renderer_line_to(renderer, -29.53, -48.03);
+            rr_renderer_fill(renderer);
+            rr_renderer_set_fill(renderer, 0xff6ae3e6);
+            rr_renderer_begin_path(renderer);
+            rr_renderer_move_to(renderer, 0.06, 42.80);
+            rr_renderer_bezier_curve_to(renderer, -23.49, 42.80, -42.58, 23.71,
+                                        -42.58, 0.16);
+            rr_renderer_quadratic_curve_to(renderer, -42.58, -23.57, -47.40,
+                                           -47.29);
+            rr_renderer_quadratic_curve_to(renderer, -23.67, -42.47, 0.06,
+                                           -42.47);
+            rr_renderer_bezier_curve_to(renderer, 23.61, -42.47, 42.69, -23.39,
+                                        42.69, 0.16);
+            rr_renderer_bezier_curve_to(renderer, 42.69, 23.71, 23.61, 42.80,
+                                        0.06, 42.80);
+            rr_renderer_fill(renderer);
+            rr_renderer_set_fill(renderer, 0xff49cacc);
+            rr_renderer_begin_path(renderer);
+            rr_renderer_move_to(renderer, -17.00, -3.60);
+            rr_renderer_bezier_curve_to(renderer, -20.72, -7.33, -20.72, -13.36,
+                                        -17.00, -17.08);
+            rr_renderer_bezier_curve_to(renderer, -15.22, -18.87, -12.79,
+                                        -19.87, -10.27, -19.87);
+            rr_renderer_bezier_curve_to(renderer, -7.74, -19.87, -5.32, -18.87,
+                                        -3.53, -17.08);
+            rr_renderer_line_to(renderer, 59.09, 45.54);
+            rr_renderer_bezier_curve_to(renderer, 62.81, 49.26, 62.81, 55.29,
+                                        59.09, 59.02);
+            rr_renderer_bezier_curve_to(renderer, 55.37, 62.74, 49.34, 62.74,
+                                        45.62, 59.02);
+            rr_renderer_fill(renderer);
+            rr_renderer_set_fill(renderer, 0xff49cacc);
+            rr_renderer_begin_path(renderer);
+            rr_renderer_move_to(renderer, -59.44, 4.49);
+            rr_renderer_line_to(renderer, -64.96, -41.73);
+            rr_renderer_line_to(renderer, -48.13, -29.42);
+            rr_renderer_fill(renderer);
+            rr_renderer_scale(renderer, 1 / 0.2);
+            break;
+        case rr_petal_id_emerald_leaf:
+            rr_renderer_scale(renderer, 0.2);
+            rr_renderer_rotate(renderer, M_PI * 3 / 4);
+            rr_renderer_set_fill(renderer, 0xff88e38a);
+            rr_renderer_begin_path(renderer);
+            rr_renderer_move_to(renderer, -42.50, 42.73);
+            rr_renderer_bezier_curve_to(renderer, -66.06, 19.17, -66.06, -19.02,
+                                        -42.50, -42.58);
+            rr_renderer_bezier_curve_to(renderer, -31.19, -53.89, -15.85,
+                                        -60.24, 0.15, -60.24);
+            rr_renderer_bezier_curve_to(renderer, 16.15, -60.24, 31.49, -53.89,
+                                        42.80, -42.58);
+            rr_renderer_bezier_curve_to(renderer, 66.36, -19.02, 66.36, 19.17,
+                                        42.80, 42.73);
+            rr_renderer_bezier_curve_to(renderer, 19.25, 66.28, -18.94, 66.28,
+                                        -42.50, 42.73);
+            rr_renderer_fill(renderer);
+            rr_renderer_set_fill(renderer, 0xff88e38a);
+            rr_renderer_begin_path(renderer);
+            rr_renderer_move_to(renderer, -59.02, -30.14);
+            rr_renderer_bezier_curve_to(renderer, -67.01, -38.14, -67.01,
+                                        -51.09, -59.02, -59.09);
+            rr_renderer_bezier_curve_to(renderer, -55.18, -62.93, -49.97,
+                                        -65.08, -44.55, -65.08);
+            rr_renderer_bezier_curve_to(renderer, -39.12, -65.08, -33.91,
+                                        -62.93, -30.07, -59.09);
+            rr_renderer_bezier_curve_to(renderer, -22.08, -51.09, -22.08,
+                                        -38.14, -30.07, -30.14);
+            rr_renderer_bezier_curve_to(renderer, -38.07, -22.15, -51.03,
+                                        -22.15, -59.02, -30.14);
+            rr_renderer_fill(renderer);
+            rr_renderer_set_fill(renderer, 0xff88e38a);
+            rr_renderer_begin_path(renderer);
+            rr_renderer_move_to(renderer, 4.38, -59.34);
+            rr_renderer_line_to(renderer, -41.83, -64.86);
+            rr_renderer_line_to(renderer, -29.53, -48.03);
+            rr_renderer_fill(renderer);
+            rr_renderer_set_fill(renderer, 0xffa3f7a5);
+            rr_renderer_begin_path(renderer);
+            rr_renderer_move_to(renderer, 0.06, 42.80);
+            rr_renderer_bezier_curve_to(renderer, -23.49, 42.80, -42.58, 23.71,
+                                        -42.58, 0.16);
+            rr_renderer_quadratic_curve_to(renderer, -42.58, -23.57, -47.40,
+                                           -47.29);
+            rr_renderer_quadratic_curve_to(renderer, -23.67, -42.47, 0.06,
+                                           -42.47);
+            rr_renderer_bezier_curve_to(renderer, 23.61, -42.47, 42.69, -23.39,
+                                        42.69, 0.16);
+            rr_renderer_bezier_curve_to(renderer, 42.69, 23.71, 23.61, 42.80,
+                                        0.06, 42.80);
+            rr_renderer_fill(renderer);
+            rr_renderer_set_fill(renderer, 0xff88e38a);
+            rr_renderer_begin_path(renderer);
+            rr_renderer_move_to(renderer, -17.00, -3.60);
+            rr_renderer_bezier_curve_to(renderer, -20.72, -7.33, -20.72, -13.36,
+                                        -17.00, -17.08);
+            rr_renderer_bezier_curve_to(renderer, -15.22, -18.87, -12.79,
+                                        -19.87, -10.27, -19.87);
+            rr_renderer_bezier_curve_to(renderer, -7.74, -19.87, -5.32, -18.87,
+                                        -3.53, -17.08);
+            rr_renderer_line_to(renderer, 59.09, 45.54);
+            rr_renderer_bezier_curve_to(renderer, 62.81, 49.26, 62.81, 55.29,
+                                        59.09, 59.02);
+            rr_renderer_bezier_curve_to(renderer, 55.37, 62.74, 49.34, 62.74,
+                                        45.62, 59.02);
+            rr_renderer_fill(renderer);
+            rr_renderer_set_fill(renderer, 0xff88e38a);
+            rr_renderer_begin_path(renderer);
+            rr_renderer_move_to(renderer, -59.44, 4.49);
+            rr_renderer_line_to(renderer, -64.96, -41.73);
+            rr_renderer_line_to(renderer, -48.13, -29.42);
+            rr_renderer_fill(renderer);
+            rr_renderer_scale(renderer, 1 / 0.2);
+            break;
+        case rr_petal_id_amethyst_leaf:
+            rr_renderer_scale(renderer, 0.2);
+            rr_renderer_rotate(renderer, M_PI * 3 / 4);
+            rr_renderer_set_fill(renderer, 0xffa647cc);
+            rr_renderer_begin_path(renderer);
+            rr_renderer_move_to(renderer, -42.50, 42.73);
+            rr_renderer_bezier_curve_to(renderer, -66.06, 19.17, -66.06, -19.02,
+                                        -42.50, -42.58);
+            rr_renderer_bezier_curve_to(renderer, -31.19, -53.89, -15.85,
+                                        -60.24, 0.15, -60.24);
+            rr_renderer_bezier_curve_to(renderer, 16.15, -60.24, 31.49, -53.89,
+                                        42.80, -42.58);
+            rr_renderer_bezier_curve_to(renderer, 66.36, -19.02, 66.36, 19.17,
+                                        42.80, 42.73);
+            rr_renderer_bezier_curve_to(renderer, 19.25, 66.28, -18.94, 66.28,
+                                        -42.50, 42.73);
+            rr_renderer_fill(renderer);
+            rr_renderer_set_fill(renderer, 0xffa647cc);
+            rr_renderer_begin_path(renderer);
+            rr_renderer_move_to(renderer, -59.02, -30.14);
+            rr_renderer_bezier_curve_to(renderer, -67.01, -38.14, -67.01,
+                                        -51.09, -59.02, -59.09);
+            rr_renderer_bezier_curve_to(renderer, -55.18, -62.93, -49.97,
+                                        -65.08, -44.55, -65.08);
+            rr_renderer_bezier_curve_to(renderer, -39.12, -65.08, -33.91,
+                                        -62.93, -30.07, -59.09);
+            rr_renderer_bezier_curve_to(renderer, -22.08, -51.09, -22.08,
+                                        -38.14, -30.07, -30.14);
+            rr_renderer_bezier_curve_to(renderer, -38.07, -22.15, -51.03,
+                                        -22.15, -59.02, -30.14);
+            rr_renderer_fill(renderer);
+            rr_renderer_set_fill(renderer, 0xffa647cc);
+            rr_renderer_begin_path(renderer);
+            rr_renderer_move_to(renderer, 4.38, -59.34);
+            rr_renderer_line_to(renderer, -41.83, -64.86);
+            rr_renderer_line_to(renderer, -29.53, -48.03);
+            rr_renderer_fill(renderer);
+            rr_renderer_set_fill(renderer, 0xffbe5fe3);
+            rr_renderer_begin_path(renderer);
+            rr_renderer_move_to(renderer, 0.06, 42.80);
+            rr_renderer_bezier_curve_to(renderer, -23.49, 42.80, -42.58, 23.71,
+                                        -42.58, 0.16);
+            rr_renderer_quadratic_curve_to(renderer, -42.58, -23.57, -47.40,
+                                           -47.29);
+            rr_renderer_quadratic_curve_to(renderer, -23.67, -42.47, 0.06,
+                                           -42.47);
+            rr_renderer_bezier_curve_to(renderer, 23.61, -42.47, 42.69, -23.39,
+                                        42.69, 0.16);
+            rr_renderer_bezier_curve_to(renderer, 42.69, 23.71, 23.61, 42.80,
+                                        0.06, 42.80);
+            rr_renderer_fill(renderer);
+            rr_renderer_set_fill(renderer, 0xffa647cc);
+            rr_renderer_begin_path(renderer);
+            rr_renderer_move_to(renderer, -17.00, -3.60);
+            rr_renderer_bezier_curve_to(renderer, -20.72, -7.33, -20.72, -13.36,
+                                        -17.00, -17.08);
+            rr_renderer_bezier_curve_to(renderer, -15.22, -18.87, -12.79,
+                                        -19.87, -10.27, -19.87);
+            rr_renderer_bezier_curve_to(renderer, -7.74, -19.87, -5.32, -18.87,
+                                        -3.53, -17.08);
+            rr_renderer_line_to(renderer, 59.09, 45.54);
+            rr_renderer_bezier_curve_to(renderer, 62.81, 49.26, 62.81, 55.29,
+                                        59.09, 59.02);
+            rr_renderer_bezier_curve_to(renderer, 55.37, 62.74, 49.34, 62.74,
+                                        45.62, 59.02);
+            rr_renderer_fill(renderer);
+            rr_renderer_set_fill(renderer, 0xffa647cc);
+            rr_renderer_begin_path(renderer);
+            rr_renderer_move_to(renderer, -59.44, 4.49);
+            rr_renderer_line_to(renderer, -64.96, -41.73);
+            rr_renderer_line_to(renderer, -48.13, -29.42);
+            rr_renderer_fill(renderer);
+            rr_renderer_scale(renderer, 1 / 0.2);
+            break;
+        case rr_petal_id_blood_stinger:
+            rr_renderer_set_fill(renderer, 0xff9a1010);
+            rr_renderer_set_stroke(renderer, 0xff7e0d0d);
+            rr_renderer_set_line_width(renderer, 3.0f);
+            rr_renderer_set_line_join(renderer, 1.0f);
+            rr_renderer_set_line_cap(renderer, 1.0f);
+            rr_renderer_begin_path(renderer);
+            rr_renderer_move_to(renderer, 7.00, 0.00);
+            rr_renderer_line_to(renderer, -3.50, 6.06);
+            rr_renderer_line_to(renderer, -3.50, -6.06);
+            rr_renderer_line_to(renderer, 7.00, 0.00);
+            rr_renderer_fill(renderer);
+            rr_renderer_stroke(renderer);
+            break;
         default:
             break;
         }
@@ -2191,6 +2592,14 @@ void rr_renderer_draw_static_petal(struct rr_renderer *renderer, uint8_t id,
         if (id == rr_petal_id_shell)
             rr_renderer_rotate(renderer, 1.0f);
         else if (id == rr_petal_id_leaf)
+            rr_renderer_rotate(renderer, -1.0f);
+        else if (id == rr_petal_id_golden_leaf)
+            rr_renderer_rotate(renderer, -1.0f);
+        else if (id == rr_petal_id_diamond_leaf)
+            rr_renderer_rotate(renderer, -1.0f);
+        else if (id == rr_petal_id_emerald_leaf)
+            rr_renderer_rotate(renderer, -1.0f);
+        else if (id == rr_petal_id_amethyst_leaf)
             rr_renderer_rotate(renderer, -1.0f);
         else if (id == rr_petal_id_magnet)
             rr_renderer_rotate(renderer, -1.0f);
@@ -2237,6 +2646,8 @@ void rr_renderer_draw_static_petal(struct rr_renderer *renderer, uint8_t id,
             else if (id == rr_petal_id_leaf)
                 rr_renderer_rotate(renderer, -1.0f);
             else if (id == rr_petal_id_stinger && rarity >= rr_rarity_id_exotic)
+                rr_renderer_rotate(renderer, M_PI);
+            else if (id == rr_petal_id_blood_stinger && rarity >= rr_rarity_id_exotic)
                 rr_renderer_rotate(renderer, M_PI);
             else if (id == rr_petal_id_wax)
                 rr_renderer_rotate(renderer, 0.3f);

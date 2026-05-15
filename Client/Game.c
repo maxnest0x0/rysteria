@@ -475,7 +475,9 @@ void rr_game_init(struct rr_game *this)
                 rr_ui_v_container_init(rr_ui_container_init(), 10, 20,
                     rr_ui_v_container_init(rr_ui_container_init(), 0, 10,
                         rr_ui_v_container_init(rr_ui_container_init(), 0, 10,
-                            rr_ui_text_init("Rysteria", 96, 0xffffffff),
+                            rr_ui_text_init("Mivsteria", 96, 0xffffffff),
+                            rr_ui_text_init("Test Server", 20, 0xffffffff),
+                            rr_ui_text_init("Game By мив 8962 | Test Server By Tested", 20, 0xffffffff),
                             rr_ui_h_container_init(
                                 rr_ui_container_init(), 0, 20,
                                 rr_ui_link_toggle(
@@ -943,10 +945,8 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
                     this->squad.squad_members[i].level = level;
                     sprintf(this->squad.squad_members[i].level_text,
                             "%u", level);
-                    rr_sprintf(this->squad.squad_members[i].health_text,
-                               health);
-                    rr_sprintf(this->squad.squad_members[i].damage_text,
-                               damage);
+                    rr_sprintf(this->squad.squad_members[i].health_text, health);
+                    rr_sprintf(this->squad.squad_members[i].damage_text, damage);
                 }
                 proto_bug_read_string(&encoder,
                                       this->squad.squad_members[i].nickname, 16,
