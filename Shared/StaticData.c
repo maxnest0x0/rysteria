@@ -227,7 +227,7 @@ struct rr_mob_data RR_MOB_DATA[rr_mob_id_max] = {
     {rr_mob_id_ant,                rr_rarity_id_common,    rr_rarity_id_galactic,   10, 10,  20.0f, rr_rarity_id_common, rr_rarity_id_common,  rr_rarity_id_rare,     {{rr_petal_id_pellet,   0.1},{rr_petal_id_leaf,           0.1},{rr_petal_id_mandible,           0.05},{rr_petal_id_rice,          0.5}}},
     {rr_mob_id_hornet,             rr_rarity_id_common,    rr_rarity_id_galactic,   28, 25,  25.0f, rr_rarity_id_common, rr_rarity_id_common,  rr_rarity_id_common,   {{rr_petal_id_stinger,  0.1},{rr_petal_id_crest,         0.05}}},
     {rr_mob_id_dragonfly,          rr_rarity_id_common,    rr_rarity_id_galactic,   20, 10,  25.0f, rr_rarity_id_common, rr_rarity_id_common,  rr_rarity_id_unusual,  {{rr_petal_id_pellet,   0.1},{rr_petal_id_magnet,        0.05}}},
-    {rr_mob_id_honeybee,           rr_rarity_id_common,    rr_rarity_id_galactic,   12, 25,  15.0f, rr_rarity_id_common, rr_rarity_id_common,  rr_rarity_id_max,      {{rr_petal_id_wax,     0.05},{rr_petal_id_stinger,        0.1},{rr_petal_id_blood_stinger,      0.03}}},
+    {rr_mob_id_honeybee,           rr_rarity_id_common,    rr_rarity_id_galactic,   12, 25,  15.0f, rr_rarity_id_common, rr_rarity_id_common,  rr_rarity_id_max,      {{rr_petal_id_wax,    0.075},{rr_petal_id_stinger,      0.075},{rr_petal_id_blood_stinger,     0.025}}},
     {rr_mob_id_beehive,            rr_rarity_id_common,    rr_rarity_id_galactic,    0,  0,  45.0f, rr_rarity_id_common, rr_rarity_id_common,  rr_rarity_id_max,      {{rr_petal_id_wax,     0.05},{rr_petal_id_azalea,        0.05}}},
     {rr_mob_id_spider,             rr_rarity_id_common,    rr_rarity_id_galactic,   20, 25,  25.0f, rr_rarity_id_common, rr_rarity_id_common,  rr_rarity_id_unusual,  {{rr_petal_id_web,      0.1},{rr_petal_id_third_eye,     0.01}}},
     {rr_mob_id_house_centipede,    rr_rarity_id_common,    rr_rarity_id_galactic,   25, 10,  19.0f, rr_rarity_id_common, rr_rarity_id_common,  rr_rarity_id_aurous,   {{rr_petal_id_peas,     0.1},{rr_petal_id_sand,          0.05}}},
@@ -319,49 +319,49 @@ double RR_GARDEN_MOB_ID_RARITY_COEFFICIENTS[rr_mob_id_max] = {
 };
 
 struct rr_petal_rarity_scale RR_PETAL_RARITY_SCALE[rr_rarity_id_max] = {
-//   heal                    seed reload  web size   self damage           petal size
-    {1,                      480,         45,        1.1,                  10.0           }, // rr_rarity_id_common,
-    {1.8,                    240,         60,        1.98,                 10.0           }, // rr_rarity_id_unusual,
-    {3.5,                    120,         75,        3.85,                 10.0           }, // rr_rarity_id_rare,
-    {6.8,                    60,          100,       7.48,                 10.0           }, // rr_rarity_id_epic,
-    {12.5,                   30,          125,       13.75,                10.0           }, // rr_rarity_id_legendary,
-    {24.5,                   15,          150,       26.95,                10.0           }, // rr_rarity_id_mythic,
-    {60,                     7.5,         200,       66,                   10.0           }, // rr_rarity_id_exotic,
-    {180,                    5.0,         250,       198,                  10.0           }, // rr_rarity_id_ultimate,
-    {180*6,                  4.0,         300,       198*5,                15.0           }, // rr_rarity_id_quantum,
-    {180*36,                 3.0,         325,       198*25,               17.0           }, // rr_rarity_id_aurous,
-    {180*36*6,               2.0,         350,       198*625,              19.0           }, // rr_rarity_id_eternal,
-    {180*36*36,              1.8,         375,       198*625*5,            21.0           }, // rr_rarity_id_hyper,
-    {180*36*36*6,            1.6,         400,       198*625*25,           23.0           }, // rr_rarity_id_sunshine,
-    {180*36*36*36,           1.4,         450,       198*625*625,          25.0           }, // rr_rarity_id_nebula,
-    {180*36*36*36*6,         1.2,         475,       198*625*625*5,        27.0           }, // rr_rarity_id_infinity,
-    {180*36*36*36*36,        1.0,         500,       198*625*625*25,       29.0           }, // rr_rarity_id_calamity,
-    {180*36*36*36*36*6,      0.8,         525,       198*625*625*625,      31.0           }, // rr_rarity_id_unique,
-    {180*36*36*36*36*36,     0.4,         550,       198*625*625*625*5,    33.0           }, // rr_rarity_id_cosmic,
-    {180*36*36*36*36*36*6,   0.1,         575,       198*625*625*625*25,   35.0           }, // rr_rarity_id_galactic
+//   heal                    seed reload  web size   self damage       petal size
+    {1,                      480,         45,        1.1,              10.0           }, // rr_rarity_id_common,
+    {1.8,                    240,         60,        1.98,             10.0           }, // rr_rarity_id_unusual,
+    {3.5,                    120,         75,        3.85,             10.0           }, // rr_rarity_id_rare,
+    {6.8,                    60,          100,       7.48,             10.0           }, // rr_rarity_id_epic,
+    {12.5,                   30,          125,       13.75,            10.0           }, // rr_rarity_id_legendary,
+    {24.5,                   15,          150,       26.95,            10.0           }, // rr_rarity_id_mythic,
+    {60,                     7.5,         200,       66,               10.0           }, // rr_rarity_id_exotic,
+    {180.0,                  5.0,         250,       198.0,            10.0           }, // rr_rarity_id_ultimate,
+    {180.0*6,                4.0,         300,       198.0*3,          15.0           }, // rr_rarity_id_quantum,
+    {180.0*36,               3.0,         325,       198.0*9,          17.0           }, // rr_rarity_id_aurous,
+    {180.0*36*6,             2.0,         350,       198.0*27,         19.0           }, // rr_rarity_id_eternal,
+    {180.0*36*36,            1.8,         375,       198.0*81,         21.0           }, // rr_rarity_id_hyper,
+    {180.0*36*36*6,          1.6,         400,       198.0*81*3,       23.0           }, // rr_rarity_id_sunshine,
+    {180.0*36*36*36,         1.4,         450,       198.0*81*9,       25.0           }, // rr_rarity_id_nebula,
+    {180.0*36*36*36*6,       1.2,         475,       198.0*81*27,      27.0           }, // rr_rarity_id_infinity,
+    {180.0*36*36*36*36,      1.0,         500,       198.0*81*81,      29.0           }, // rr_rarity_id_calamity,
+    {180.0*36*36*36*36*6,    0.8,         525,       198.0*81*81*3,    31.0           }, // rr_rarity_id_unique,
+    {180.0*36*36*36*36*36,   0.4,         550,       198.0*81*81*9,    33.0           }, // rr_rarity_id_cosmic,
+    {180.0*36*36*36*36*36*6, 0.1,         575,       198.0*81*81*81,   35.0           }, // rr_rarity_id_galactic
 };
 
 struct rr_mob_rarity_scale RR_MOB_RARITY_SCALING[rr_rarity_id_max] = {
-//  {hp,                    dmg,             size                       },
-    {1.0,                   1.0,             1.0                        },
-    {2.4,                   1.7,             1.2                        },
-    {6.0,                   2.9,             1.5                        }, 
-    {14.4,                  5.0,             2.0                        },
-    {40.0,                  8.5,             2.8                        },
-    {192.0,                 14.5,            4.0                        },
-    {2560.0,                24.6,            5.5                        }, // base rarity   base mult     hp mult  dmg mult  size mult
-    {11946.2,               42.0,            7.0                        }, // ulti          ulti          x1.00    x1.00     x1.00
-    {11946.2*3,             42.0*3,          7.5                        }, // quantum       ulti          x3.00    x3.00     +0.50
-    {11946.2*12,            42.0*9,          8.0                        }, // aurous        quantum       x4.00    x3.00     +0.50
-    {11946.2*60,            42.0*27,         9.0                        }, // eternal       aurous        x5.00    x3.00     +1.00
-    {11946.2*360,           42.0*81,         10.0                       }, // hyper         eternal       x6.00    x3.00     +1.00
-    {11946.2*2160,          42.0*81*3,       11.0                       }, // sunshine      hyper         x6.00    x3.00     +1.00
-    {11946.2*2160,          42.0*81*9,       12.0                       }, // nebula        sunshine      x8.00    x3.00     +1.00
-    {11946.2*2160*8,        42.0*81*27,      13.0                       }, // infinity      nebula        x8.00    x3.00     +1.00
-    {11946.2*2160*64,       42.0*81*81,      14.0                       }, // calamity      infinity      x8.00    x3.00     +1.00
-    {11946.2*2160*512,      42.0*81*81*3,    15.0                       }, // unique        calamity      x8.00    x3.00     +1.00
-    {11946.2*2160*4096,     42.0*81*81*9,    16.0                       }, // cosmic        unique        x8.00    x3.00     +1.00
-    {11946.2*2160*4096*35,  42.0*81*81*81,   17.0                       }, // galactic      cosmic        x35.0    x9.00     +1.00
+//  {hp,                    dmg,                      size           },
+    {1.0,                   1.0,                      1.0            },
+    {2.4,                   1.7,                      1.2            },
+    {6.0,                   2.9,                      1.5            }, 
+    {14.4,                  5.0,                      2.0            },
+    {40.0,                  8.5,                      2.8            },
+    {192.0,                 14.5,                     4.0            },
+    {2560.0,                24.6,                     5.5            }, // base rarity   base mult     hp mult  dmg mult  size mult
+    {11946.2,               42.0,                     7.0            }, // ulti          ulti          x1.00    x1.00     x1.00
+    {11946.2*3,             42.0*5,                   7.5            }, // quantum       ulti          x3.00    x5.00     +0.50
+    {11946.2*12,            42.0*25,                  8.0            }, // aurous        quantum       x4.00    x5.00     +0.50
+    {11946.2*60,            42.0*625,                 9.0            }, // eternal       aurous        x5.00    x5.00     +1.00
+    {11946.2*600,           42.0*625*5,               10.0           }, // hyper         eternal       x10.0    x5.00     +1.00
+    {11946.2*6000,          42.0*625*25,              11.0           }, // sunshine      hyper         x10.0    x5.00     +1.00
+    {11946.2*60000,         42.0*625*625,             12.0           }, // nebula        sunshine      x10.0    x5.00     +1.00
+    {11946.2*600000,        42.0*625*625*5,           13.0           }, // infinity      nebula        x10.0    x5.00     +1.00
+    {11946.2*6000000,       42.0*625*625*25,          14.0           }, // calamity      infinity      x10.0    x5.00     +1.00
+    {11946.2*60000000,      42.0*625*625*625,         15.0           }, // unique        calamity      x10.0    x5.00     +1.00
+    {11946.2*600000000,     42.0*625*625*625*25,      16.0           }, // cosmic        unique        x10.0    x5.00     +1.00
+    {11946.2*21000000000,   42.0*625*625*625*625*5,   17.0           }, // galactic      cosmic        x35.0    x25.00    +1.00
 };
 // clang-format on
 
