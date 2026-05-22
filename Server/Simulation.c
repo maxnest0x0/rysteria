@@ -232,7 +232,8 @@ static void spawn_mob(struct rr_simulation *this, uint32_t grid_x,
                     id != rr_mob_id_triceratops &&
                     id != rr_mob_id_fern &&
                     id != rr_mob_id_tree &&
-                    id != rr_mob_id_meteor)
+                    id != rr_mob_id_meteor &&
+                    id != rr_mob_id_tower)
                     break;
             }
     }

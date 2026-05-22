@@ -164,8 +164,10 @@ enum rr_petal_id
     rr_petal_id_diamond,       // 41
     rr_petal_id_golden_meteor, // 42
     rr_petal_id_blood_stinger, // 43
+    rr_petal_id_rock,          // 44
+    rr_petal_id_fish_egg,      // 45
 
-    rr_petal_id_max,           // 44
+    rr_petal_id_max,           // 46
 };
 
 enum rr_mob_id
@@ -191,8 +193,10 @@ enum rr_mob_id
     rr_mob_id_spider,             // 17
     rr_mob_id_house_centipede,    // 18
     rr_mob_id_lanternfly,         // 19
+    rr_mob_id_tower,              // 20
+    rr_mob_id_king_mackarel,      // 21
 
-    rr_mob_id_max,                // 20
+    rr_mob_id_max,                // 22
 };
 
 struct rr_petal_base_stat_scale
@@ -218,7 +222,7 @@ struct rr_mob_data
     uint8_t ai_passive_rarity;
     uint8_t ai_neutral_rarity;
     uint8_t ai_aggro_rarity;
-    struct rr_loot_data loot[4];
+    struct rr_loot_data loot[6];
 };
 
 struct rr_petal_data
@@ -240,6 +244,7 @@ struct rr_petal_rarity_scale
     float seed_cooldown;
     float web_radius;
     float self_damage;
+    float size;
 };
 
 struct rr_mob_rarity_scale

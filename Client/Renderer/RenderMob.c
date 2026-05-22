@@ -40,7 +40,7 @@ void rr_component_mob_render(EntityIdx entity, struct rr_game *game,
             rr_simulation_get_relations(simulation,
                                         game->player_info->flower_id)->team,
             rr_simulation_get_relations(simulation, entity)->team);
-    if ((mob->id == rr_mob_id_trex || mob->id == rr_mob_id_meteor) &&
+    if ((mob->id == rr_mob_id_trex || mob->id == rr_mob_id_meteor || mob->id == rr_mob_id_king_mackarel) &&
         is_friendly)
         rr_renderer_add_color_filter(renderer, 0xffffff63, 0.3);
     uint8_t has_arena = rr_simulation_has_arena(simulation, entity);

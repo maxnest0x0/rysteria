@@ -44,6 +44,8 @@ set(SRCS
     Assets/Mob/Fern.c
     Assets/Mob/Meteor.c
     Assets/Mob/Tree.c
+    Assets/Mob/Tower.c
+    Assets/Mob/KingMackarel.c
     Assets/Tile/Garden.c
     Assets/Tile/HellCreek.c
     Assets/Tile/Ocean.c

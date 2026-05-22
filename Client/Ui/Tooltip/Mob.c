@@ -139,7 +139,7 @@ struct rr_ui_element *rr_ui_mob_tooltip_init(uint8_t id, uint8_t rarity)
                       -1, 0));
     }
     rr_ui_container_add_element(this, rr_ui_static_space_init(10));
-    for (uint8_t i = 0; i < 4; ++i)
+    for (uint8_t i = 0; i < 6; ++i)
     {
         if (RR_MOB_DATA[id].loot[i].id == 0)
             break;

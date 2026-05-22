@@ -940,7 +940,7 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
                 uint32_t level = proto_bug_read_varuint(&encoder, "level");
                 if (this->squad.squad_members[i].level != level)
                 {
-                    float health = 200 * pow(1.0256, level - 1);
+                    float health = 100 * pow(1.0512, level - 1);/*pow(1.0256, level - 1);*/
                     float damage = 0.1 * health;
                     this->squad.squad_members[i].level = level;
                     sprintf(this->squad.squad_members[i].level_text,
@@ -1076,7 +1076,7 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
                     uint32_t level = proto_bug_read_varuint(&encoder, "level");
                     if (squad->squad_members[i].level != level)
                     {
-                        float health = 200 * pow(1.0256, level - 1);
+                        float health = 100 * pow(1.0512, level - 1);/*pow(1.0256, level - 1);*/
                         float damage = 0.1 * health;
                         squad->squad_members[i].level = level;
                         sprintf(squad->squad_members[i].level_text,

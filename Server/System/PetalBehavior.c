@@ -78,8 +78,11 @@ static void uranium_damage(EntityIdx target, void *_captures)
         return;
     struct rr_component_ai *ai = rr_simulation_get_ai(simulation, target);
     struct rr_component_mob *mob = rr_simulation_get_mob(simulation, target);
-    if (mob->player_spawned == 0 && mob->id != rr_mob_id_fern &&
-        mob->id != rr_mob_id_tree && mob->id != rr_mob_id_meteor)
+    if (mob->player_spawned == 0 &&
+        mob->id != rr_mob_id_fern &&
+        mob->id != rr_mob_id_tree &&
+        mob->id != rr_mob_id_meteor &&
+        mob->id != rr_mob_id_tower )
     {
         ai->ai_type = rr_ai_type_aggro;
         if (ai->aggro_range < radius + target_physical->radius)
@@ -402,7 +405,7 @@ static void system_flower_petal_movement_logic(
             if (player_info->input & 1)
             {
                 rr_vector_from_polar(&physical->acceleration, 7.5f, curr_angle);
-                rr_vector_from_polar(&physical->velocity, 50.0f, curr_angle);
+                rr_vector_from_polar(&physical->velocity, 25.0f, curr_angle);
             }
             petal->effect_delay = 20;
             break;
@@ -532,7 +535,7 @@ static void system_flower_petal_movement_logic(
                 if (flower_physical->bubbling_to_death)
                     break;
                 if (flower_physical->bubbling)
-                    flower_physical->bubbling_to_death = 1;
+                    flower_physical->bubbling_to_death = 0;
                 flower_physical->bubbling = 1;
                 if (flower_physical->bubbling_to_death)
                 {
@@ -547,7 +550,9 @@ static void system_flower_petal_movement_logic(
         }
         default:
             break;
+        //case rr_petal_id_ruby
         }
+            
     }
     else if (!petal->detached)
         --petal->effect_delay;
@@ -655,9 +660,9 @@ static void petal_modifiers(struct rr_simulation *simulation,
         }
         if (data->id == rr_petal_id_blood_stinger)
         {
-            float selfDamage = 0.075 * RR_PETAL_RARITY_SCALE[slot->rarity].self_damage;
-            rr_component_health_set_health(health, health->health - selfDamage);
-            health->health -= selfDamage;
+            float selfDamage = 0.075 * RR_PETAL_RARITY_SCALE[slot->rarity].self_damage; 
+            health->health -= selfDamage; 
+            rr_component_health_set_health(health, health->health); 
         }
         else if (data->id == rr_petal_id_berry)
         {
@@ -665,11 +670,15 @@ static void petal_modifiers(struct rr_simulation *simulation,
         }
         else if (data->id == rr_petal_id_golden_leaf)
         {
-            player_info->modifiers.reload_speed += 0.04 * (slot->rarity + 1);
+            player_info->modifiers.reload_speed += 0.045 * (slot->rarity + 1);
         }
         else if (data->id == rr_petal_id_diamond_leaf)
         {
             player_info->modifiers.reload_speed += 0.02 * (slot->rarity + 1);
+        }
+        else if (data->id == rr_petal_id_emerald_leaf)
+        {
+            player_info->modifiers.reload_speed += 0.03 * (slot->rarity + 1);
         }
         else if (data->id == rr_petal_id_feather)
         {
@@ -680,7 +689,7 @@ static void petal_modifiers(struct rr_simulation *simulation,
         else if (data->id == rr_petal_id_crest)
         {
             ++crest_count;
-            RR_SET_IF_LESS(player_info->camera_fov, 1 - 0.05 * slot->rarity)
+            RR_SET_IF_LESS(player_info->camera_fov, 1 - 0.075 * slot->rarity)
         }
         else if (data->id == rr_petal_id_droplet)
             ++rot_count;
@@ -718,9 +727,9 @@ static void petal_modifiers(struct rr_simulation *simulation,
     rr_component_flower_set_third_eye_count(flower, third_eye_count);
     player_info->global_rotation +=
         to_rotate * ((rot_count % 3) ? (rot_count % 3 == 2) ? 0 : -1 : 1);
-    rr_component_player_info_set_camera_fov(
+    /*rr_component_player_info_set_camera_fov(
         player_info, RR_BASE_FOV /
-                     (player_info->client->dev_cheats.fov_percent + fov_bonus));
+                     (player_info->client->dev_cheats.fov_percent + fov_bonus));*/
 }
 
 static void
@@ -738,6 +747,11 @@ system_egg_hatching_logic(struct rr_simulation *simulation,
     {
         m_id = rr_mob_id_trex;
         m_rar = petal->rarity >= 1 ? petal->rarity - 1 : 0;
+    }
+    else if (petal->id == rr_petal_id_fish_egg)
+    {
+        m_id = rr_mob_id_king_mackarel;
+        m_rar = petal->rarity >= 1 ? petal->rarity : 0;
     }
     else if (petal->id == rr_petal_id_meteor)
     {
@@ -757,7 +771,7 @@ system_egg_hatching_logic(struct rr_simulation *simulation,
     rr_component_relations_set_team(mob_relations, relations->team);
     rr_component_relations_set_owner(mob_relations, player_info->flower_id);
     rr_component_relations_update_root_owner(simulation, mob_relations);
-    if (m_id == rr_mob_id_trex)
+    if (m_id == rr_mob_id_trex || m_id == rr_mob_id_king_mackarel)
     {
         mob_relations->nest = relations->nest;
         rr_simulation_get_ai(simulation, mob_id)->ai_type = rr_ai_type_aggro;
@@ -948,6 +962,27 @@ static void rr_system_petal_reload_foreach_function(EntityIdx id,
                     continue;
                 }
                 if (data->id == rr_petal_id_egg)
+                {
+                    system_nest_egg_choosing_logic(simulation, player_info,
+                                                   p_petal->entity_hash);
+                    if (rr_simulation_has_petal(simulation, p_petal->entity_hash))
+                    {
+                        if (rr_simulation_get_relations(simulation,
+                                p_petal->entity_hash)->nest != RR_NULL_ENTITY)
+                            system_nest_egg_movement_logic(simulation,
+                                                           p_petal->entity_hash);
+                        system_egg_hatching_logic(simulation, player_info, p_petal);
+                    }
+                }
+                if (!rr_simulation_has_petal(simulation, p_petal->entity_hash) ||
+                    rr_simulation_get_relations(simulation,
+                        p_petal->entity_hash)->nest != RR_NULL_ENTITY)
+                {
+                    if (--clump_count == 0)
+                        --rotation_pos;
+                    continue;
+                }
+                if (data->id == rr_petal_id_fish_egg)
                 {
                     system_nest_egg_choosing_logic(simulation, player_info,
                                                    p_petal->entity_hash);

@@ -694,7 +694,7 @@ struct rr_ui_element *rr_ui_crafting_container_init(struct rr_game *game)
 {
     struct rr_ui_element *this =
         rr_ui_2d_container_init(rr_rarity_id_max, 6, 15, 15);
-    for (uint8_t id = 1; id <= rr_petal_id_meteor; ++id)
+    for (uint8_t id = 1; id <= rr_petal_id_max - 1; ++id)
         for (uint8_t rarity = 0; rarity < rr_rarity_id_max; ++rarity)
             rr_ui_container_add_element(
                 this, crafting_inventory_button_init(id, rarity));

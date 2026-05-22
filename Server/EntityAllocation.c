@@ -236,6 +236,7 @@ EntityIdx rr_simulation_alloc_mob(struct rr_simulation *this,
         ai->ai_type = rr_ai_type_neutral;
     if (rarity_id >= mob_data->ai_aggro_rarity)
         ai->ai_type = rr_ai_type_aggro;
+    // NEED TO DO SMTH WITH BEEHIVE!!!!!!!!!
     if (mob_id == rr_mob_id_beehive)
     {
         struct rr_component_arena *arena =
@@ -281,7 +282,7 @@ EntityIdx rr_simulation_alloc_mob(struct rr_simulation *this,
             rr_vector_from_polar(&extension, -physical->radius * 2,
                                  physical->angle);
             EntityIdx new_entity = RR_NULL_ENTITY;
-            for (uint64_t i = 0; i < 5; ++i)
+            for (uint64_t i = 0; i < 7; ++i)
             {
                 new_entity = rr_simulation_alloc_mob_non_recursive(
                     this, arena_id, physical->x + extension.x * (i + 1),

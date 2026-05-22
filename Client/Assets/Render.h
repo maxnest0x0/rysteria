@@ -44,6 +44,7 @@ void rr_fern_draw(struct rr_renderer *);
 void rr_tree_draw(struct rr_renderer *);
 void rr_meteor_draw(struct rr_renderer *);
 void rr_beehive_draw(struct rr_renderer *);
+void rr_tower_draw(struct rr_renderer *);
 
 void rr_pachycephalosaurus_head_draw(struct rr_renderer *);
 void rr_pachycephalosaurus_body_draw(struct rr_renderer *);
@@ -101,6 +102,12 @@ void rr_spider_leg_draw(struct rr_renderer *);
 void rr_house_centipede_body_draw(struct rr_renderer *);
 void rr_house_centipede_head_draw(struct rr_renderer *);
 void rr_house_centipede_leg_draw(struct rr_renderer *);
+
+void rr_king_mackarel_body_draw(struct rr_renderer *renderer);
+void rr_king_mackarel_fin1_draw(struct rr_renderer *renderer);
+void rr_king_mackarel_fin2_draw(struct rr_renderer *renderer);
+void rr_king_mackarel_head_draw(struct rr_renderer *renderer);
+void rr_king_mackarel_tail_draw(struct rr_renderer *renderer);
 
 void rr_hc_tile_1_draw(struct rr_renderer *);
 void rr_hc_tile_2_draw(struct rr_renderer *);

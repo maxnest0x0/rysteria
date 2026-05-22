@@ -410,6 +410,115 @@ static void tick_ai_aggro_pteranodon(EntityIdx entity,
     }
 }
 
+static void tick_ai_aggro_tower(EntityIdx entity,
+                                     struct rr_simulation *simulation)
+{
+    struct rr_component_ai *ai = rr_simulation_get_ai(simulation, entity);
+    struct rr_component_physical *physical =
+        rr_simulation_get_physical(simulation, entity);
+
+    if (ai->target_entity == RR_NULL_ENTITY)
+        ai->target_entity = rr_simulation_find_nearest_enemy(
+            simulation, entity, 1550, NULL, no_filter);
+    if (rr_simulation_entity_alive(simulation, ai->target_entity) &&
+        (ai->ai_state != rr_ai_state_attacking &&
+         ai->ai_state != rr_ai_state_fireball_shoot_delay))
+    {
+        ai->ai_state = rr_ai_state_attacking;
+        ai->ticks_until_next_action = 50;
+    }
+
+    switch (ai->ai_state)
+    {
+    case rr_ai_state_idle:
+        tick_idle(entity, simulation);
+        break;
+
+    case rr_ai_state_attacking:
+    {
+        struct rr_component_physical *physical2 =
+            rr_simulation_get_physical(simulation, ai->target_entity);
+
+        struct rr_vector delta = {physical2->x, physical2->y};
+        struct rr_vector target_pos = {physical->x, physical->y};
+        rr_vector_sub(&delta, &target_pos);
+        struct rr_vector prediction =
+            predict(delta, physical2->velocity,
+                    ai->has_prediction * 20); // make this less op
+        rr_component_physical_set_angle(physical, rr_vector_theta(&prediction));
+        float distance = rr_vector_get_magnitude(&delta);
+        if (distance > 500)
+        {
+            struct rr_vector accel;
+            rr_vector_from_polar(&accel, RR_PLAYER_SPEED, physical->angle);
+            rr_vector_add(&physical->acceleration, &accel);
+            ai->ticks_until_next_action = 2;
+        }
+        else
+        {
+            ai->ai_state = rr_ai_state_fireball_shoot_delay;
+            ai->ticks_until_next_action = 50 + rr_frand() * 50;
+        }
+        break;
+    }
+    case rr_ai_state_fireball_shoot_delay:
+    {
+        struct rr_component_physical *physical2 =
+            rr_simulation_get_physical(simulation, ai->target_entity);
+
+        struct rr_vector delta = {physical2->x, physical2->y};
+        struct rr_vector target_pos = {physical->x, physical->y};
+        rr_vector_sub(&delta, &target_pos);
+        struct rr_vector prediction =
+            predict(delta, physical2->velocity,
+                    ai->has_prediction * 20); // make this less op
+        rr_component_physical_set_angle(physical, rr_vector_theta(&prediction));
+        if (ai->ticks_until_next_action == 0)
+        {
+            ai->ai_state = rr_ai_state_attacking;
+            ai->ticks_until_next_action = rand() % 25 + 38;
+
+            struct rr_component_mob *mob =
+                rr_simulation_get_mob(simulation, entity);
+            // spawn a fireball
+            EntityIdx petal_id = rr_simulation_alloc_petal(
+                simulation, physical->arena, physical->x, physical->y,
+                rr_petal_id_fireball, mob->rarity, mob->parent_id);
+            struct rr_component_physical *physical2 =
+                rr_simulation_get_physical(simulation, petal_id);
+            struct rr_component_health *health =
+                rr_simulation_get_health(simulation, petal_id);
+            rr_component_physical_set_angle(physical2, physical->angle);
+            rr_component_physical_set_radius(
+                physical2, 11 * RR_MOB_RARITY_SCALING[mob->rarity].radius);
+            physical2->friction = 0.f;
+            physical2->mass = 17.5f;
+            physical2->bearing_angle = physical->angle;
+            rr_vector_from_polar(&physical2->acceleration, RR_PLAYER_SPEED * 2,
+                                 physical->angle);
+
+            rr_component_petal_set_detached(
+                rr_simulation_get_petal(simulation, petal_id), 1);
+
+            rr_component_health_set_max_health(
+                health, 10 * RR_MOB_RARITY_SCALING[mob->rarity].health);
+            rr_component_health_set_health(health, health->max_health);
+            health->damage = 10 * RR_MOB_RARITY_SCALING[mob->rarity].damage;
+            rr_simulation_get_petal(simulation, petal_id)->effect_delay = 50;
+
+            struct rr_vector recoil;
+
+            rr_vector_from_polar(&recoil, -RR_PLAYER_SPEED * 0.5,
+                                 physical->angle); // recoil
+            rr_vector_add(&physical->acceleration, &recoil);
+        }
+        break;
+    }
+    default:
+        break;
+    }
+}
+
 static void tick_ai_aggro_pachycephalosaurus(EntityIdx entity,
                                              struct rr_simulation *simulation)
 {
@@ -906,6 +1015,9 @@ static void system_for_each(EntityIdx entity, void *simulation)
     {
     case rr_mob_id_fern:
     case rr_mob_id_tree:
+        break;
+    case rr_mob_id_tower:
+        //tick_ai_aggro_tower(entity, this);
         break;
     case rr_mob_id_ant:
     case rr_mob_id_ornithomimus:

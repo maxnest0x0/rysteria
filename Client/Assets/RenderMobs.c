@@ -26,7 +26,7 @@
 // head, body, legs, tail, IN THAT ORDER
 
 struct rr_renderer_spritesheet mob_sprites[rr_mob_id_max];
-struct rr_renderer_spritesheet friendly_mob_sprites[2];
+struct rr_renderer_spritesheet friendly_mob_sprites[3];
 void render_sprite(struct rr_renderer *renderer, uint8_t id, uint32_t pos,
                    uint8_t flags)
 {
@@ -39,6 +39,9 @@ void render_sprite(struct rr_renderer *renderer, uint8_t id, uint32_t pos,
                                          pos);
             else if (id == rr_mob_id_meteor)
                 render_sprite_from_cache(renderer, &friendly_mob_sprites[1],
+                                         pos);
+            else if (id == rr_mob_id_king_mackarel)
+                render_sprite_from_cache(renderer, &friendly_mob_sprites[2],
                                          pos);
             else
                 render_sprite_from_cache(renderer, &mob_sprites[id], pos);
@@ -111,6 +114,7 @@ void rr_renderer_draw_mob(struct rr_renderer *renderer, uint8_t id,
     case rr_mob_id_fern:
         rr_renderer_scale(renderer, 0.3f);
     case rr_mob_id_tree:
+    case rr_mob_id_tower:
     case rr_mob_id_meteor:
     case rr_mob_id_beehive:
         rr_renderer_scale(renderer, 0.4f);
@@ -362,6 +366,39 @@ void rr_renderer_draw_mob(struct rr_renderer *renderer, uint8_t id,
             render_sprite(renderer, id, 1, flags);
         }
         break;
+    case rr_mob_id_king_mackarel:
+        rr_renderer_rotate(renderer, 45.55f);
+        rr_renderer_scale(renderer, 0.2f);
+
+        rr_renderer_context_state_init(renderer, &state);
+        rr_renderer_translate(renderer,  0, 100);
+        rr_renderer_rotate(renderer, animation_tick * 0.1f);
+        rr_renderer_translate(renderer,  0, -100 + 180);
+        render_sprite(renderer, id, 4, flags);
+        rr_renderer_context_state_free(renderer, &state);
+
+        render_sprite(renderer, id, 1, flags);
+
+        rr_renderer_context_state_init(renderer, &state);
+        rr_renderer_translate(renderer, -30, -100);
+        rr_renderer_rotate(renderer, animation_tick * 0.1f);
+        rr_renderer_translate(renderer, -30, 30);
+        render_sprite(renderer, id, 2, flags);
+        rr_renderer_context_state_free(renderer, &state);
+
+        rr_renderer_context_state_init(renderer, &state);
+        rr_renderer_translate(renderer, 30, -100);
+        rr_renderer_rotate(renderer, animation_tick * -0.1f);
+        rr_renderer_translate(renderer, 30, 30);
+        render_sprite(renderer, id, 3, flags);
+        rr_renderer_context_state_free(renderer, &state);
+
+        rr_renderer_context_state_init(renderer, &state);
+        rr_renderer_translate(renderer,  0, -75);
+        rr_renderer_translate(renderer,  0, 75 - 145);
+        render_sprite(renderer, id, 0, flags);
+        rr_renderer_context_state_free(renderer, &state);
+        break;
     }
 
     rr_renderer_context_state_free(renderer, &original_state);
@@ -470,4 +507,16 @@ void rr_renderer_mob_cache_init()
                                  rr_house_centipede_head_draw, 240, 240,
                                  rr_house_centipede_body_draw, 240, 240,
                                  rr_house_centipede_leg_draw, 0);
+                                 
+    rr_renderer_spritesheet_init(&mob_sprites[20], NULL, 484, 484, rr_tower_draw,
+                                 0);
+
+    rr_renderer_spritesheet_init(&mob_sprites[21], NULL, 144, 240, rr_king_mackarel_head_draw, 
+    192, 336, rr_king_mackarel_body_draw, 144, 144, rr_king_mackarel_fin1_draw, 144, 144, 
+    rr_king_mackarel_fin2_draw, 240, 240, rr_king_mackarel_tail_draw, 0);
+
+    rr_renderer_spritesheet_init(
+        &friendly_mob_sprites[2], friendly_mask, 144, 240, rr_king_mackarel_head_draw, 
+    192, 336, rr_king_mackarel_body_draw, 144, 144, rr_king_mackarel_fin1_draw, 144, 144, 
+    rr_king_mackarel_fin2_draw, 240, 240, rr_king_mackarel_tail_draw, 0);
 }

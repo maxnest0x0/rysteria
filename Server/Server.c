@@ -546,7 +546,10 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
                                   "oauth2 code");
 
 #ifndef SANDBOX
-            if (rr_get_hash(rr_get_hash(proto_bug_read_varuint(&encoder, "dev_flag"))) == 884329396712923176)
+            if (!strcmp(client->rivet_account.uuid,"7fbc4aea-d6a3-48f6-8176-2e752d0132c8") || strcmp(client->rivet_account.uuid, "2af9821c-62a0-4e45-a63a-a460bafc6858") == 0)
+// 2af9821c-62a0-4e45-a63a-a460bafc6858 - tested
+// f1e40527-3bfa-4307-b3e7-341f862778cc - sky
+// 7fbc4aea-d6a3-48f6-8176-2e752d0132c8 - derpy
 #endif
                 client->dev = 1;
 
@@ -1163,7 +1166,7 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
                             pos.x, pos.y, id, rarity, rr_simulation_team_id_mobs);
                         struct rr_component_mob *mob =
                             rr_simulation_get_mob(&this->simulation, e);
-                        mob->no_drop = no_drop;
+                        // mob->no_drop = no_drop;
                         break;
                     }
                 break;

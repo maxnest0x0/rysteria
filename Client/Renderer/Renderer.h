@@ -84,7 +84,7 @@ extern "C"
     struct rr_renderer_spritesheet
     {
         struct rr_renderer renderer;
-        struct rr_sprite_bounds sprites[16];
+        struct rr_sprite_bounds sprites[32];
         uint32_t size;
     };
 
