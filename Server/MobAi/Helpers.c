@@ -234,7 +234,7 @@ void tick_return_to_higher_zone(EntityIdx entity,
         return;
     }
     struct rr_component_mob *mob = rr_simulation_get_mob(simulation, entity);
-    if (mob->rarity < rr_rarity_id_galactic)
+    if (mob->rarity < rr_rarity_id_prime)
         return;
     struct rr_component_arena *arena =
         rr_simulation_get_arena(simulation, physical->arena);

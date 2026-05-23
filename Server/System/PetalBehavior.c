@@ -1127,7 +1127,7 @@ static void system_petal_misc_logic(EntityIdx id, void *_simulation)
                     rr_simulation_add_health(simulation, nest_id);
                 uint8_t stats_rarity = nest->rarity > 0 ? nest->rarity - 1 : 0;
                 rr_component_health_set_max_health(
-                    nest_health, 150 * RR_MOB_RARITY_SCALING[stats_rarity].health);
+                    nest_health, 150 * pow((RR_MOB_RARITY_SCALING[stats_rarity].health), 1.075));
                 rr_component_health_set_health(nest_health, nest_health->max_health);
                 nest_health->damage = 0;
                 nest_health->damage_reduction =

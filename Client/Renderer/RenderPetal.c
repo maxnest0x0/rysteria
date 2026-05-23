@@ -97,6 +97,8 @@ void rr_component_petal_render(EntityIdx entity, struct rr_game *game,
         if (petal->rarity == rr_rarity_id_unique) {particle->color = 0xffeeeeee;}
         if (petal->rarity == rr_rarity_id_cosmic) {particle->color = 0xff692c9b;}
         if (petal->rarity == rr_rarity_id_galactic) {particle->color = 0xffc0727d;}
+        if (petal->rarity == rr_rarity_id_ethereal) {particle->color = 0xff692c9b;}
+        if (petal->rarity == rr_rarity_id_prime) {particle->color = 0xffc0727d;}
 
         if (petal->id == rr_petal_id_fireball)
         {

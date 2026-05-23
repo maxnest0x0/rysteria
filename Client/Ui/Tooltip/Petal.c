@@ -472,8 +472,8 @@ struct rr_ui_element *rr_ui_petal_tooltip_init(uint8_t id, uint8_t rarity)
     else if (id == rr_petal_id_beak)
     {
         char *extra = malloc((sizeof *extra) * 8);
-        sprintf(extra, "%.1fs",
-                1 + sqrtf(RR_PETAL_RARITY_SCALE[rarity].heal) / 3);
+        sprintf(extra, "%.1fs", 1 + sqrtf(RR_PETAL_RARITY_SCALE[rarity].heal) / (sqrtf(RR_PETAL_RARITY_SCALE[rarity - 1].heal) / 2));
+                
         rr_ui_container_add_element(
             this,
             rr_ui_set_justify(rr_ui_h_container_init(
@@ -537,7 +537,7 @@ struct rr_ui_element *rr_ui_petal_tooltip_init(uint8_t id, uint8_t rarity)
     {
         uint8_t stats_rarity = rarity > 0 ? rarity - 1 : 0;
         char *extra = malloc((sizeof *extra) * 8);
-        rr_sprintf(extra, 150 * RR_MOB_RARITY_SCALING[stats_rarity].health);
+        rr_sprintf(extra, 150 * pow((RR_MOB_RARITY_SCALING[stats_rarity].health), 1.075));
         rr_ui_container_add_element(
             this, rr_ui_set_justify(
                       rr_ui_h_container_init(

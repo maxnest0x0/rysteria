@@ -304,10 +304,13 @@ static uint8_t damage_effect(struct rr_simulation *simulation, EntityIdx target,
         {
             struct rr_component_physical *physical =
                 rr_simulation_get_physical(simulation, target);
-            physical->stun_ticks =
-                25 *
-                (1 + sqrtf(RR_PETAL_RARITY_SCALE[petal->rarity].heal) / 3) *
-                (1 - physical->slow_resist);
+            physical->stun_ticks = 25 * (1 + sqrtf(RR_PETAL_RARITY_SCALE[petal->rarity].heal) / (sqrtf(RR_PETAL_RARITY_SCALE[petal->rarity - 1].heal) / 2))/* * (1 - physical->slow_resist)*/;
+        }
+        else if (petal->id == rr_petal_id_sapphire)
+        {
+            struct rr_component_physical *physical =
+                rr_simulation_get_physical(simulation, target);
+            physical->stun_ticks = 1.0e+300;
         }
         else if (petal->id == rr_petal_id_lightning)
         {

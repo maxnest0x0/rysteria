@@ -305,7 +305,7 @@ static struct rr_ui_element *summon_mob_rarity_slider_init(struct rr_game *game)
                 NULL),
             rr_ui_text_init(game->dev_cheats.summon_mob_rarity_text, 16, 0xffffffff),
             NULL);
-    game->dev_cheats.summon_mob_rarity = (float)rr_rarity_id_galactic / rr_rarity_id_max;
+    game->dev_cheats.summon_mob_rarity = (float)rr_rarity_id_prime / rr_rarity_id_max;
     element->animate = summon_mob_rarity_slider_animate;
     return element;
 }
