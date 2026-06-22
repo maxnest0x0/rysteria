@@ -165,6 +165,7 @@ uint64_t rr_get_rand() { return g_random_seed = rr_get_hash(g_random_seed); }
 
 void rr_encrypt(uint8_t *start, uint64_t size, uint64_t key)
 {
+    return; // disable crypto
     uint8_t *clone = malloc(size);
     memcpy(clone, start, size);
     uint64_t cipher_key[4];

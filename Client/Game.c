@@ -845,6 +845,7 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
             rr_particle_manager_clear(&this->default_particle_manager);
             rr_particle_manager_clear(&this->foreground_particle_manager);
         }
+        memset(&this->crafting_data, 0, sizeof this->crafting_data);
         this->simulation_ready = 0;
         this->socket.recieved_first_packet = 0;
         break;
@@ -1826,7 +1827,7 @@ void rr_game_tick(struct rr_game *this, float delta)
     }
     if (this->cache.hide_ui && this->simulation_ready)
         this->menu_open = 0;
-    if (!this->block_fov_adjustment)
+    if (!this->block_fov_adjustment && this->player_info != NULL)
         this->player_info->fov_adjustment =
             rr_fclamp(this->player_info->fov_adjustment -
             this->input_data->scroll_delta * 0.001, 0, 1);

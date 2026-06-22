@@ -140,10 +140,13 @@ struct rr_ui_element *rr_ui_chat_bar_init(struct rr_game *game)
     struct rr_ui_element *text2 = rr_ui_text_init(buf, 14, 0xffffffff);
     struct rr_ui_element *inner = rr_ui_multi_choose_element_init(
         chat_bar_choose,
-        rr_ui_flex_container_init(
-            rr_ui_text_init("[Global]", 14, 0xffffffff),
-            input,
-            10
+        rr_ui_v_container_init(rr_ui_container_init(), 0, 0,
+            rr_ui_flex_container_init(
+                rr_ui_text_init("[Global]", 14, 0xffffffff),
+                input,
+                10
+            ),
+            NULL
         ),
         text1,
         text2,

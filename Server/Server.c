@@ -386,7 +386,6 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
                              sizeof "could not get xff header" - 1);
             return -1;
         }
-        puts(xff);
         for (uint64_t i = 0; i < RR_MAX_CLIENT_COUNT; i++)
             if (!rr_bitset_get_bit(this->clients_in_use, i))
             {

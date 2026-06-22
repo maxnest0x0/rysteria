@@ -46,6 +46,7 @@ size_t write_callback(void *contents, size_t size, size_t nmemb, void *userp)
     return realsize;
 }
 
+/*
 void rr_api_get_password(char const *token, void *captures)
 {
 #ifdef __EMSCRIPTEN__
@@ -64,6 +65,7 @@ void rr_api_get_password(char const *token, void *captures)
         RR_BASE_API_URL, token, captures);
 #endif
 }
+*/
 
 void rr_api_get_server_alias(char const *param_1, void *game)
 {

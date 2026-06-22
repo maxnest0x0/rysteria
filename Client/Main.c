@@ -78,6 +78,8 @@ void rr_key_event(struct rr_game *this, uint8_t type, uint32_t which,
     troll_skids
     if (repeat)
         return;
+    if (this->input_data == NULL)
+        return;
     if (type == 1)
     {
         rr_bitset_set(this->input_data->keys_pressed, which);
@@ -97,6 +99,8 @@ void rr_mouse_event(struct rr_game *this, float x, float y, uint8_t state,
                     uint8_t button, uint8_t trusted)
 {
     troll_skids
+    if (this->input_data == NULL)
+        return;
     this->input_data->mouse_x = x;
     this->input_data->mouse_y = y;
     this->input_data->mouse_state = state;
@@ -116,6 +120,8 @@ void rr_touch_event(struct rr_game *this, float x, float y, uint8_t state,
                     uint8_t identifier, uint8_t trusted)
 {
     troll_skids
+    if (this->input_data == NULL)
+        return;
     struct rr_input_touch *touch = &this->input_data->touches[identifier % 16];
     touch->touch_x = x;
     touch->touch_y = y;
@@ -126,6 +132,8 @@ void rr_touch_event(struct rr_game *this, float x, float y, uint8_t state,
 void rr_wheel_event(struct rr_game *this, float delta, uint8_t trusted)
 {
     troll_skids
+    if (this->input_data == NULL)
+        return;
     this->input_data->scroll_delta = delta;
 }
 
@@ -134,6 +142,11 @@ void rr_paste_event(struct rr_game *this, char *buf, uint8_t trusted)
     if (!trusted)
         free(buf);
     troll_skids
+    if (this->input_data == NULL)
+    {
+        free(buf);
+        return;
+    }
     if (this->input_data->clipboard != NULL)
         free(this->input_data->clipboard);
     this->input_data->clipboard = buf;
@@ -156,6 +169,8 @@ static void release_key(uint64_t i, void *captures)
 void rr_focus_event(struct rr_game *this, uint8_t type, uint8_t trusted)
 {
     troll_skids
+    if (this->input_data == NULL)
+        return;
     if (type == 1)
     {
         this->input_data->mouse_buttons_up_this_tick |=
@@ -340,16 +355,17 @@ void rr_main_loop(struct rr_game *this)
             Module.start = 0;
             requestAnimationFrame(loop);
         },
-        this, &this->input_data->mouse_x, &this->input_data->mouse_state);
+        this);
 #endif
 }
 
 void rr_renderer_main_loop(struct rr_game *this, float delta, float width,
                            float height, float device_pixel_ratio)
 {
+    if (this->renderer == NULL)
+        return;
     float a = height / 1080;
     float b = width / 1920;
-
     float scale = (this->renderer->scale = b < a ? a : b) * device_pixel_ratio;
     this->renderer->width = width;
     this->renderer->height = height;

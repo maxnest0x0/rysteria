@@ -116,6 +116,9 @@ static struct rr_ui_element *collected_button_init(uint8_t id, uint8_t rarity)
 static uint8_t loot_container_should_show(struct rr_ui_element *this,
                                           struct rr_game *game)
 {
+    if (game->player_info == NULL ||
+        game->player_info->collected_this_run == NULL)
+        return 0;
     for (uint16_t i = 0; i < rr_petal_id_max * rr_rarity_id_max; ++i)
         if (game->player_info->collected_this_run[i] != 0)
             return !game->cache.hide_ui && game->simulation_ready &&

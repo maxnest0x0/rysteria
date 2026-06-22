@@ -30,6 +30,8 @@ static void system_for_each_function(EntityIdx entity, void *_captures)
         rr_simulation_get_arena(this, physical->arena);
     struct rr_component_relations *relations =
         rr_simulation_get_relations(this, entity);
+    if (!rr_simulation_entity_alive(this, relations->owner))
+        return;
     struct rr_component_player_info *player_info =
         rr_simulation_get_player_info(this, relations->owner);
     if (player_info->client->disconnected)

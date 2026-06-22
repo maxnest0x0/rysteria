@@ -253,14 +253,17 @@ struct rr_ui_element *rr_ui_account_container_init(struct rr_game *game)
                         uuid,
                         rr_ui_static_space_init(10),
                         rr_ui_choose_element_init(
-                            rr_ui_flex_container_init(
-                                rr_ui_v_container_init(rr_ui_container_init(), 0, 5, 
-                                    rr_ui_text_init("Login to save progress across devices", 15, 0xffffffff),
-                                    rr_ui_text_init("and avoid losing access to your account", 15, 0xffffffff),
-                                    NULL
+                            rr_ui_v_container_init(rr_ui_container_init(), 0, 0,
+                                rr_ui_flex_container_init(
+                                    rr_ui_v_container_init(rr_ui_container_init(), 0, 5, 
+                                        rr_ui_text_init("Login to save progress across devices", 15, 0xffffffff),
+                                        rr_ui_text_init("and avoid losing access to your account", 15, 0xffffffff),
+                                        NULL
+                                    ),
+                                    link_account_button_init(game),
+                                    10
                                 ),
-                                link_account_button_init(game),
-                                10
+                                NULL
                             ),
                             rr_ui_text_init("Logged in", 20, 0xffffffff),
                             linked_account
