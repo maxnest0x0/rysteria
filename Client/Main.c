@@ -354,6 +354,14 @@ void rr_main_loop(struct rr_game *this)
             };
             Module.start = 0;
             requestAnimationFrame(loop);
+
+            setInterval(() => {
+                if (typeof window.gc === "function") {
+                    try {
+                        window.gc();
+                    } catch {}
+                }
+            }, 10000);
         },
         this);
 #endif
