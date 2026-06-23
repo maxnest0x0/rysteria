@@ -28,6 +28,9 @@ static void text_on_render(struct rr_ui_element *this, struct rr_game *game)
 {
     struct rr_ui_text_metadata *data = this->data;
     struct rr_renderer *renderer = game->renderer;
+    uint8_t poor_eqm = g_poor_eqm;
+    if (data->unpoor_eqm)
+        g_poor_eqm = 0;
     rr_renderer_scale(renderer, renderer->scale);
     this->abs_width = this->width =
         rr_renderer_get_text_size(data->text) * this->height;
@@ -41,6 +44,7 @@ static void text_on_render(struct rr_ui_element *this, struct rr_game *game)
     rr_renderer_set_line_width(renderer, data->size * 0.12);
     rr_renderer_stroke_text(renderer, data->text, 0, 0);
     rr_renderer_fill_text(renderer, data->text, 0, 0);
+    g_poor_eqm = poor_eqm;
 }
 
 static void dynamic_text_on_render(struct rr_ui_element *this,
@@ -71,6 +75,7 @@ struct rr_ui_element *rr_ui_text_init(char const *text, float size,
     rr_ui_set_background(this, fill);
     this->abs_height = this->height = data->size = size;
     data->text = text;
+    data->unpoor_eqm = 0;
     this->data = data;
     this->on_render = text_on_render;
     return this;

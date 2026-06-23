@@ -46,6 +46,7 @@ struct rr_ui_text_metadata
 {
     char const *text;
     float size;
+    uint8_t unpoor_eqm;
     void *data;
 };
 

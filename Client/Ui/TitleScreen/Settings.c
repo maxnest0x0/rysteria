@@ -218,8 +218,10 @@ static void poor_eqm_toggle_on_event(struct rr_ui_element *this,
                                      struct rr_game *game)
 {
     if (game->input_data->mouse_buttons_up_this_tick & 1)
+    {
         *((uint8_t *)this->data) ^= 1;
-    rr_renderer_text_cache_redraw(NULL);
+        rr_renderer_text_cache_redraw(NULL);
+    }
     game->cursor = rr_game_cursor_pointer;
 }
 

@@ -106,9 +106,12 @@ static uint8_t chat_should_show(struct rr_ui_element *this,
 static struct rr_ui_element *rr_ui_chat_text_init(struct rr_game_chat_message
 *message)
 {
+    struct rr_ui_element *this = rr_ui_text_init(message->text, 16, 0xffffffff);
+    struct rr_ui_text_metadata *data = this->data;
+    data->unpoor_eqm = 1;
     return rr_ui_set_justify(
         rr_ui_h_container_init(rr_ui_container_init(), 0, 10,
-            rr_ui_text_init(message->text, 16, 0xffffffff),
+            this,
             NULL
         ),
     -1, -1);
