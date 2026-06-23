@@ -1326,6 +1326,9 @@ static int api_lws_callback(struct lws *ws, enum lws_callback_reasons reason,
                     continue;
                 if (client->dev || this->clients[j].dev)
                     continue;
+                if (client->rivet_account.name[0] != 0 ||
+                    this->clients[j].rivet_account.name[0] != 0)
+                    continue;
                 if (strcmp(client->rivet_account.uuid,
                            this->clients[j].rivet_account.uuid) == 0)
                     continue;
