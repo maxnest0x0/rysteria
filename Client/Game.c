@@ -1981,10 +1981,10 @@ void rr_game_connect_socket(struct rr_game *this)
     rr_websocket_init(&this->socket);
     this->socket.user_data = this;
     char url[128];
-    if (server->ws_url != NULL && strlen(server->ws_url) < sizeof url)
-        strcpy(url, server->ws_url);
+    if (server->ws_url != NULL)
+        rr_dom_get_socket_url(server->port, server->ws_url, url);
     else
-        rr_dom_get_socket_url(url);
+        return;
     rr_websocket_connect_to(&this->socket, url);
     // rr_websocket_connect_to(&this->socket, "45.79.197.197", 1234, 0);
 #endif

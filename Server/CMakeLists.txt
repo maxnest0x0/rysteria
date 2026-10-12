@@ -106,10 +106,6 @@ if(PVP)
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DPVP")
 endif()
 
-if(RYSTERIA)
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DRYSTERIA")
-endif()
-
 add_executable(rrolf-server ${SRCS})
 
 if (WINDOWS)

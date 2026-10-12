@@ -557,11 +557,13 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
                                   "rivet uuid");
             proto_bug_read_string(&encoder, client->rivet_account.code, 100,
                                   "oauth2 code");
+
 #ifndef SANDBOX
             if (rr_get_hash(rr_get_hash(proto_bug_read_varuint(&encoder, "dev_flag"))) == 15010855733518987480u &&
                 strcmp(client->rivet_account.uuid, "742450b4-e376-4548-9944-cc1e19a071ae") == 0)
 #endif
-            {
+                client->dev = 1;
+
 #ifdef RIVET_BUILD
             struct connected_captures *captures = malloc(sizeof *captures);
             captures->client = client;
@@ -571,7 +573,6 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
             pthread_create(&thread, NULL, rivet_connected_endpoint, captures);
             pthread_detach(thread);
 #endif
-            }
             // printf("<rr_server::socket_verified::%s>\n",
             //        client->rivet_account.uuid);
             struct rr_binary_encoder encoder;

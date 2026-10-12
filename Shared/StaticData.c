@@ -645,33 +645,24 @@ struct rr_maze_declaration RR_MAZES[rr_biome_id_max] = {
         {1,  37, 2, 2, 1,  38, 100}, // 7
         {4,  24, 2, 2, 5,  25, 100}, // 8
     }},
-    {MAZE_ENTRY(PVP, 1024), 6,
+    {MAZE_ENTRY(PVP, 1024), 6, {
         {27, 14, 3, 3, 29, 16,  1},  // 0
         {17, 10, 3, 3, 18, 11, 20},  // 1
         {25,  2, 3, 3, 26,  3, 40},  // 2
         { 5,  8, 3, 3,  6,  9, 60},  // 3
         { 9, 30, 3, 3, 10, 31, 80},  // 4
         {31, 35, 3, 3, 32, 36, 100}, // 5
-    },
+    }},
     {MAZE_ENTRY(HELL_CREEK, 1024), 0},
     {MAZE_ENTRY(BURROW, 512), 0},
 };
 
-#ifdef RYSTERIA
 struct rr_biome_server RR_BIOME_SERVERS[rr_biome_id_max] = {
-    {"wss://rysteria.pro/default",   1234,   "Hell Creek"}, // hell creek
-    {"wss://rysteria.pro/pvp",       1235,          "pvp"}, // pvp
-    {NULL,                              0,           NULL}, // garden, doesn't have a server
-    {NULL,                              0,           NULL},  // beehive, lives inside other arenas
+    {"default",   1234,   "Hell Creek"}, // hell creek
+    {"pvp",       1235,          "pvp"}, // pvp
+    {NULL,           0,           NULL}, // garden, doesn't have a server
+    {NULL,           0,           NULL}, // beehive, lives inside other arenas
 };
-#else
-struct rr_biome_server RR_BIOME_SERVERS[rr_biome_id_max] = {
-    {"ws://localhost:1234", 1234, "Hell Creek"}, // hell creek
-    {"ws://localhost:1235", 1235, "pvp"},        // pvp
-    {NULL,                  0,    NULL},         // garden, doesn't have a server
-    {NULL,                  0,    NULL},         // beehive, lives inside other arenas
-};
-#endif
 
 uint8_t RR_GLOBAL_BIOME = rr_biome_id_hell_creek;
 

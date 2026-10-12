@@ -34,11 +34,27 @@
             "problemMatcher": []
         },
         {
-            "label": "Game Server",
+            "label": "Default Server",
             "type": "shell",
-            "command": "until ./rrolf-server; do sleep 1; done",
+            "command": "until ../build-default/rrolf-server; do sleep 1; done",
             "options": {
-                "cwd": "${workspaceFolder}/Server/build"
+                "cwd": "${workspaceFolder}/Server/build-default"
+            },
+            "isBackground": true,
+            "runOptions": {
+                "runOn": "folderOpen"
+            },
+            "presentation": {
+                "panel": "dedicated"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "PvP Server",
+            "type": "shell",
+            "command": "until ../build-pvp/rrolf-server; do sleep 1; done",
+            "options": {
+                "cwd": "${workspaceFolder}/Server/build-pvp"
             },
             "isBackground": true,
             "runOptions": {
@@ -66,11 +82,27 @@
             "problemMatcher": []
         },
         {
-            "label": "Server Build",
+            "label": "Default Build",
             "type": "shell",
-            "command": "make -j$(nproc) && (killall rrolf-server || true)",
+            "command": "make -j$(nproc) && (pkill -fx ../build-default/rrolf-server || true)",
             "options": {
-                "cwd": "${workspaceFolder}/Server/build"
+                "cwd": "${workspaceFolder}/Server/build-default"
+            },
+            "group": "build",
+            "runOptions": {
+                "runOn": "folderOpen"
+            },
+            "presentation": {
+                "panel": "dedicated"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "PvP Build",
+            "type": "shell",
+            "command": "make -j$(nproc) && (pkill -fx ../build-pvp/rrolf-server || true)",
+            "options": {
+                "cwd": "${workspaceFolder}/Server/build-pvp"
             },
             "group": "build",
             "runOptions": {
@@ -85,7 +117,8 @@
             "label": "Build All",
             "dependsOn": [
                 "Client Build",
-                "Server Build"
+                "Default Build",
+                "PvP Build"
             ],
             "group": {
                 "kind": "build",
