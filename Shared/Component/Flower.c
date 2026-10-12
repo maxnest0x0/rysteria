@@ -136,7 +136,7 @@ void rr_component_flower_set_dead(struct rr_component_flower *this,
             }
             rr_pvp_bank_points(simulation->server,
                                player_info->client->rivet_account.uuid,
-                               player_info->client->pvp_points);
+                               player_info->client->pvp_points / 4);
             player_info->client->pvp_points = 0;
             for (uint8_t squad = 0; squad < RR_SQUAD_COUNT; ++squad)
             {

@@ -434,31 +434,10 @@ const wss = new WSS.Server({server});
 const game_servers = {};
 const connected_clients = {};
 
-function kick_from_other_servers(username, new_server)
-{
-    const previous = connected_clients[username];
-    if (!previous || previous.server === new_server.alias)
-        return;
-    const old_server = game_servers[previous.server];
-    if (!old_server)
-        return;
-    const pos = old_server.clients.indexOf(username);
-    if (pos === -1)
-        return; // already left that server
-    log("kick from old server", [username, old_server.alias, new_server.alias]);
-    const encoder = new protocol.BinaryWriter();
-    encoder.WriteUint8(2); // force disconnect: slot, then the nonce to make sure it's the same connection
-    encoder.WriteUint8(pos);
-    encoder.WriteVarUint(previous.nonce);
-    old_server.ws.send(encoder.data.subarray(0, encoder.at));
-    old_server.clients[pos] = 0;
-}
-
 wss.on("connection", (ws, req) => {
     if (req.url !== `/api/${SERVER_SECRET}`)
        return ws.close();
     const game_server = new GameServer();
-    game_server.ws = ws;
     game_server[game_server.alias] = game_server;
     ws.on('message', async (message) => {
         const data = new Uint8Array(message);
@@ -504,7 +483,6 @@ wss.on("connection", (ws, req) => {
                     }
                     user.password = hash(user.username + PASSWORD_SALT);
                     write_db_entry(user.username, user);
-                    kick_from_other_servers(user.username, game_server);
                     connected_clients[user.username] = new GameClient(user, game_server.alias, nonce, await discord_name(user.discord_id));
                     game_server.clients[pos] = user.username;
                     const encoder = new protocol.BinaryWriter();

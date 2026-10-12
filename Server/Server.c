@@ -449,7 +449,9 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
             if (client->verified)
             {
                 rr_pvp_bank_points(this, client->rivet_account.uuid,
-                                   client->pvp_points);
+                                   client->pending_kick
+                                       ? client->pvp_points / 4
+                                       : client->pvp_points);
                 client->pvp_points = 0;
             }
 #endif
@@ -1404,6 +1406,12 @@ static int api_lws_callback(struct lws *ws, enum lws_callback_reasons reason,
                     if (rr_bitset_get_bit(drop->picked_up_by, j))
                         rr_bitset_set(drop->picked_up_by, i);
                 }
+#ifdef PVP
+                client->pvp_points = this->clients[j].pvp_points;
+                this->clients[j].pvp_points = 0;
+                client->pvp_points +=
+                    rr_pvp_claim_points(this, client->rivet_account.uuid);
+#endif
                 client->squad_pos = this->clients[j].squad_pos;
                 client->squad = this->clients[j].squad;
                 client->in_squad = this->clients[j].in_squad;
@@ -1556,7 +1564,7 @@ void rr_pvp_bank_points(struct rr_server *this, char const *uuid,
     strncpy(slot->uuid, uuid, sizeof slot->uuid - 1);
     slot->uuid[sizeof slot->uuid - 1] = 0;
     slot->points = points;
-    slot->expire_tick = this->pvp_tick + 30 * 60 * 25;
+    slot->expire_tick = this->pvp_tick + 60 * 25;
     slot->in_use = 1;
 }
 
@@ -1570,7 +1578,7 @@ uint64_t rr_pvp_claim_points(struct rr_server *this, char const *uuid)
             slot->in_use = 0;
             if (slot->expire_tick < this->pvp_tick)
                 return 0;
-            return slot->points / 4;
+            return slot->points;
         }
     }
     return 0;
