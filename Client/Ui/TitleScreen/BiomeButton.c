@@ -50,7 +50,7 @@ static void biome_button_on_render(struct rr_ui_element *this,
     struct rr_renderer *renderer = game->renderer;
     if (game->focused == this)
         renderer->state.filter.amount = 0.2;
-    if (game->connect_biome == data->pos)
+    if (game->selected_biome == data->pos)
         renderer->state.filter.amount = 0.4;
 
     this->abs_width =

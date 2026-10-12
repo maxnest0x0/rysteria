@@ -827,7 +827,7 @@ void rr_game_init(struct rr_game *this)
     rr_game_cache_load(this);
     if (this->cache.last_biome < rr_biome_id_garden &&
         RR_BIOME_SERVERS[this->cache.last_biome].port != 0)
-        this->connect_biome = this->cache.last_biome;
+        this->selected_biome = this->cache.last_biome;
     rr_dom_set_text("_0x4346", this->cache.nickname);
     this->ticks_until_text_cache = 24;
     this->is_mobile = rr_dom_test_mobile();
@@ -1963,7 +1963,7 @@ void rr_game_connect_socket(struct rr_game *this)
     this->simulation_ready = 0;
     this->socket_pending = 1;
 
-    struct rr_biome_server const *server = &RR_BIOME_SERVERS[this->connect_biome];
+    struct rr_biome_server const *server = &RR_BIOME_SERVERS[this->selected_biome];
 #ifdef RIVET_BUILD
     rr_rivet_lobbies_find(this, NULL, server->rivet_game_mode);
 #else
@@ -1983,9 +1983,9 @@ void rr_game_select_biome(struct rr_game *this, uint8_t biome)
 {
     if (biome >= rr_biome_id_garden || RR_BIOME_SERVERS[biome].port == 0)
         return;
-    if (this->connect_biome == biome)
+    if (this->selected_biome == biome)
         return;
-    this->connect_biome = biome;
+    this->selected_biome = biome;
     this->cache.last_biome = biome;
     rr_websocket_disconnect(&this->socket, this);
     this->socket_ready = 0;

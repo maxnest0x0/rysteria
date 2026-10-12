@@ -92,17 +92,17 @@ static void region_join_button_on_event(struct rr_ui_element *this,
         case 0:
             rr_rivet_lobbies_find(
                 game, NULL,
-                RR_BIOME_SERVERS[game->connect_biome].rivet_game_mode);
+                RR_BIOME_SERVERS[game->selected_biome].rivet_game_mode);
             break;
         case 1:
             rr_rivet_lobbies_find(
                 game, "lnd-atl",
-                RR_BIOME_SERVERS[game->connect_biome].rivet_game_mode);
+                RR_BIOME_SERVERS[game->selected_biome].rivet_game_mode);
             break;
         case 2:
             rr_rivet_lobbies_find(
                 game, "lnd-fra",
-                RR_BIOME_SERVERS[game->connect_biome].rivet_game_mode);
+                RR_BIOME_SERVERS[game->selected_biome].rivet_game_mode);
             break;
         }
 #endif
