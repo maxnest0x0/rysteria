@@ -129,15 +129,12 @@ void rr_component_flower_set_dead(struct rr_component_flower *this,
                 if (killer_info->client != NULL &&
                     killer_info->client != player_info->client)
                 {
-                    uint64_t stolen = player_info->client->pvp_points * 3 / 4;
-                    killer_info->client->pvp_points += stolen;
-                    player_info->client->pvp_points -= stolen;
+                    killer_info->client->pvp_points +=
+                        player_info->client->pvp_points / 2;
                 }
             }
-            rr_pvp_bank_points(simulation->server,
-                               player_info->client->rivet_account.uuid,
-                               player_info->client->pvp_points / 4);
-            player_info->client->pvp_points = 0;
+            player_info->client->pvp_points =
+                player_info->client->pvp_points / 2;
             for (uint8_t squad = 0; squad < RR_SQUAD_COUNT; ++squad)
             {
                 if (health->squad_damage_counter[squad] <=

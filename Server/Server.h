@@ -34,17 +34,6 @@ struct lws;
 struct rr_server;
 struct rr_squad_member;
 
-#ifdef PVP
-#define RR_PVP_BANKED_POINTS_MAX 64
-struct rr_pvp_banked_points
-{
-    char uuid[500];
-    uint64_t points;
-    uint32_t expire_tick;
-    uint8_t in_use;
-};
-#endif
-
 struct rr_server
 {
     struct rr_simulation simulation;
@@ -58,14 +47,8 @@ struct rr_server
     char server_alias[16];
 #ifdef PVP
     uint32_t pvp_tick;
-    struct rr_pvp_banked_points pvp_banked_points[RR_PVP_BANKED_POINTS_MAX];
 #endif
 };
-
-#ifdef PVP
-void rr_pvp_bank_points(struct rr_server *, char const *uuid, uint64_t points);
-uint64_t rr_pvp_claim_points(struct rr_server *, char const *uuid);
-#endif
 
 void rr_server_init(struct rr_server *);
 void rr_server_free(struct rr_server *);

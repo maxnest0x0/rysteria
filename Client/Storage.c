@@ -164,6 +164,7 @@ void rr_game_cache_data(struct rr_game *this)
     rr_binary_encoder_write_float64(&encoder, this->cache.experience);
     rr_binary_encoder_write_uint8(&encoder, this->cache.disable_leave_hotkey);
     rr_binary_encoder_write_varuint(&encoder, this->dev_flag);
+    rr_binary_encoder_write_uint8(&encoder, this->cache.last_biome);
     rr_local_storage_store_bytes("rrolf_account_data", encoder.start,
                                  encoder.at - encoder.start);
 }
@@ -185,4 +186,5 @@ void rr_game_cache_load(struct rr_game *this)
     this->cache.disable_leave_hotkey =
         rr_binary_encoder_read_uint8(&decoder) & 1;
     this->dev_flag = rr_binary_encoder_read_varuint(&decoder);
+    this->cache.last_biome = rr_binary_encoder_read_uint8(&decoder);
 }

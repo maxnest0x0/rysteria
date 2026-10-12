@@ -54,10 +54,6 @@ void rr_server_client_create_flower(struct rr_server_client *this)
         return;
     if (this->player_info->flower_id != RR_NULL_ENTITY)
         return;
-#ifdef PVP
-    this->pvp_points +=
-        rr_pvp_claim_points(this->server, this->rivet_account.uuid);
-#endif
     struct rr_simulation *simulation = &this->server->simulation;
     EntityIdx p =
         rr_simulation_alloc_player(simulation, 1, this->player_info->parent_id);

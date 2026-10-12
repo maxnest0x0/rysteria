@@ -445,16 +445,6 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
             client->player_accel_y = 0;
             if (client->player_info != NULL)
                 client->player_info->input = 0;
-#ifdef PVP
-            if (client->verified)
-            {
-                rr_pvp_bank_points(this, client->rivet_account.uuid,
-                                   client->pending_kick
-                                       ? client->pvp_points / 4
-                                       : client->pvp_points);
-                client->pvp_points = 0;
-            }
-#endif
             if (client->verified == 0 || client->pending_kick)
             {
                 rr_bitset_unset(this->clients_in_use, i);
@@ -1409,8 +1399,6 @@ static int api_lws_callback(struct lws *ws, enum lws_callback_reasons reason,
 #ifdef PVP
                 client->pvp_points = this->clients[j].pvp_points;
                 this->clients[j].pvp_points = 0;
-                client->pvp_points +=
-                    rr_pvp_claim_points(this, client->rivet_account.uuid);
 #endif
                 client->squad_pos = this->clients[j].squad_pos;
                 client->squad = this->clients[j].squad;
@@ -1531,58 +1519,6 @@ struct rr_leaderboard_sort_entry
     uint8_t client_index;
     uint64_t points;
 };
-
-void rr_pvp_bank_points(struct rr_server *this, char const *uuid,
-                        uint64_t points)
-{
-    if (points == 0 || uuid[0] == 0)
-        return;
-    struct rr_pvp_banked_points *slot = NULL;
-    for (uint32_t i = 0; i < RR_PVP_BANKED_POINTS_MAX; ++i)
-    {
-        if (this->pvp_banked_points[i].in_use &&
-            strcmp(this->pvp_banked_points[i].uuid, uuid) == 0)
-        {
-            slot = &this->pvp_banked_points[i];
-            break;
-        }
-    }
-    if (slot == NULL)
-        for (uint32_t i = 0; i < RR_PVP_BANKED_POINTS_MAX; ++i)
-            if (!this->pvp_banked_points[i].in_use)
-            {
-                slot = &this->pvp_banked_points[i];
-                break;
-            }
-    if (slot == NULL)
-    {
-        slot = &this->pvp_banked_points[0];
-        for (uint32_t i = 1; i < RR_PVP_BANKED_POINTS_MAX; ++i)
-            if (this->pvp_banked_points[i].expire_tick < slot->expire_tick)
-                slot = &this->pvp_banked_points[i];
-    }
-    strncpy(slot->uuid, uuid, sizeof slot->uuid - 1);
-    slot->uuid[sizeof slot->uuid - 1] = 0;
-    slot->points = points;
-    slot->expire_tick = this->pvp_tick + 60 * 25;
-    slot->in_use = 1;
-}
-
-uint64_t rr_pvp_claim_points(struct rr_server *this, char const *uuid)
-{
-    for (uint32_t i = 0; i < RR_PVP_BANKED_POINTS_MAX; ++i)
-    {
-        struct rr_pvp_banked_points *slot = &this->pvp_banked_points[i];
-        if (slot->in_use && strcmp(slot->uuid, uuid) == 0)
-        {
-            slot->in_use = 0;
-            if (slot->expire_tick < this->pvp_tick)
-                return 0;
-            return slot->points;
-        }
-    }
-    return 0;
-}
 #endif
 
 static void server_tick(struct rr_server *this)

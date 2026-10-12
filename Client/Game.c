@@ -825,13 +825,9 @@ void rr_game_init(struct rr_game *this)
 
     rr_assets_init(this);
     rr_game_cache_load(this);
-    {
-        uint32_t len = rr_local_storage_get_string("rr_last_biome");
-        if (len == 1 && storage_buf1[0] >= '0' &&
-            storage_buf1[0] - '0' < rr_biome_id_garden &&
-            RR_BIOME_SERVERS[storage_buf1[0] - '0'].port != 0)
-            this->connect_biome = storage_buf1[0] - '0';
-    }
+    if (this->cache.last_biome < rr_biome_id_garden &&
+        RR_BIOME_SERVERS[this->cache.last_biome].port != 0)
+        this->connect_biome = this->cache.last_biome;
     rr_dom_set_text("_0x4346", this->cache.nickname);
     this->ticks_until_text_cache = 24;
     this->is_mobile = rr_dom_test_mobile();
@@ -2004,10 +2000,7 @@ void rr_game_select_biome(struct rr_game *this, uint8_t biome)
     if (this->connect_biome == biome)
         return;
     this->connect_biome = biome;
-    {
-        char saved[2] = {'0' + biome, 0};
-        rr_local_storage_store_string("rr_last_biome", saved);
-    }
+    this->cache.last_biome = biome;
     rr_game_drop_socket(this);
     this->socket_ready = 0;
     this->simulation_ready = 0;
