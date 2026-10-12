@@ -1956,23 +1956,9 @@ void rr_game_tick(struct rr_game *this, float delta)
     this->input_data->prev_mouse_y = this->input_data->mouse_y;
 }
 
-// throws away the current connection, if there is one. this is what keeps a
-// client on only one server: every new connection starts by calling this
-static void rr_game_drop_socket(struct rr_game *this)
-{
-    rr_websocket_detach(&this->socket);
-    // the same cleanup that runs when the server closes on us, which also
-    // flags an error, so put the flag back to how it was
-    uint8_t socket_error = this->socket_error;
-    rr_game_websocket_on_event_function(rr_websocket_event_type_close, NULL,
-                                        this, 0);
-    this->socket_error = socket_error;
-    this->joined_squad = 0;
-}
-
 void rr_game_connect_socket(struct rr_game *this)
 {
-    rr_game_drop_socket(this);
+    rr_websocket_disconnect(&this->socket, this);
     this->socket_ready = 0;
     this->simulation_ready = 0;
     this->socket_pending = 1;
@@ -2001,7 +1987,7 @@ void rr_game_select_biome(struct rr_game *this, uint8_t biome)
         return;
     this->connect_biome = biome;
     this->cache.last_biome = biome;
-    rr_game_drop_socket(this);
+    rr_websocket_disconnect(&this->socket, this);
     this->socket_ready = 0;
     this->simulation_ready = 0;
     this->socket_pending = 0;
@@ -2025,7 +2011,7 @@ void rr_rivet_lobby_on_find(char *s, char *token, uint16_t port, void *_game)
         game->socket_ready = 0;
         return;
     }
-    rr_game_drop_socket(game);
+    rr_websocket_disconnect(&game->socket, game);
     rr_websocket_init(&game->socket);
     game->socket.user_data = game;
     game->socket_pending = 1;

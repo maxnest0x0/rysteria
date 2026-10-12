@@ -153,22 +153,6 @@ void rr_websocket_disconnect(struct rr_websocket *this, struct rr_game *game)
     game->joined_squad = 0;
 }
 
-void rr_websocket_detach(struct rr_websocket *this)
-{
-#ifdef __EMSCRIPTEN__
-    EM_ASM({
-        if (Module.socket)
-        {
-            Module.socket.onopen = null;
-            Module.socket.onclose = null;
-            Module.socket.onmessage = null;
-            if (Module.socket.readyState < 2)
-                Module.socket.close();
-        }
-    });
-#endif
-}
-
 void rr_websocket_queue_send(struct rr_websocket *this, uint32_t length)
 {
     if (at >= 8192)
