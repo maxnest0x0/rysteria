@@ -825,9 +825,9 @@ void rr_game_init(struct rr_game *this)
 
     rr_assets_init(this);
     rr_game_cache_load(this);
-    if (this->cache.last_biome < rr_biome_id_garden &&
-        RR_BIOME_SERVERS[this->cache.last_biome].port != 0)
-        this->selected_biome = this->cache.last_biome;
+    if (this->selected_biome >= rr_biome_id_garden ||
+        RR_BIOME_SERVERS[this->selected_biome].port == 0)
+        this->selected_biome = 0;
     rr_dom_set_text("_0x4346", this->cache.nickname);
     this->ticks_until_text_cache = 24;
     this->is_mobile = rr_dom_test_mobile();
@@ -1986,7 +1986,6 @@ void rr_game_select_biome(struct rr_game *this, uint8_t biome)
     if (this->selected_biome == biome)
         return;
     this->selected_biome = biome;
-    this->cache.last_biome = biome;
     rr_websocket_disconnect(&this->socket, this);
     this->socket_ready = 0;
     this->simulation_ready = 0;

@@ -107,7 +107,6 @@ struct rr_game_cache
     uint8_t show_loot;
     uint8_t disable_leave_hotkey;
     uint8_t show_leaderboard;
-    uint8_t last_biome;
     char nickname[128];
 };
 
