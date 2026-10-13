@@ -88,7 +88,7 @@ static void rr_server_client_create_player_info(struct rr_server *server,
             &server->simulation,
             rr_simulation_alloc_entity(&server->simulation));
     player_info->client = client;
-    player_info->squad = client->squad;
+    rr_component_player_info_set_squad(player_info, client->squad);
     struct rr_squad_member *member = player_info->squad_member =
         rr_squad_get_client_slot(server, client);
     rr_component_player_info_set_squad_pos(player_info, client->squad_pos);
@@ -268,7 +268,8 @@ void rr_server_client_broadcast_update(struct rr_server_client *this)
     proto_bug_write_uint8(&encoder, squad->expose_code, "expose_code");
     proto_bug_write_uint8(&encoder, RR_GLOBAL_BIOME, "biome");
     char joined_code[16];
-    sprintf(joined_code, "%s-%s", server->server_alias, squad->squad_code);
+    sprintf(joined_code, "%s-%s", RR_BIOME_SERVERS[RR_GLOBAL_BIOME].rivet_game_mode,
+            squad->squad_code);
     proto_bug_write_string(&encoder, joined_code, 16, "squad code");
     proto_bug_write_varuint(&encoder, this->afk_ticks, "afk_ticks");
     if (this->afk_ticks > RR_AFK_WARNING)
@@ -1728,7 +1729,8 @@ static void server_tick(struct rr_server *this)
                 char joined_code[16];
                 if (client->dev || squad->expose_code ||
                     (client->in_squad && client->squad == s))
-                    sprintf(joined_code, "%s-%s", this->server_alias,
+                    sprintf(joined_code, "%s-%s",
+                            RR_BIOME_SERVERS[RR_GLOBAL_BIOME].rivet_game_mode,
                             squad->squad_code);
                 else
                     strcpy(joined_code, "(private)");

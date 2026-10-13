@@ -658,7 +658,7 @@ struct rr_maze_declaration RR_MAZES[rr_biome_id_max] = {
 };
 
 struct rr_biome_server RR_BIOME_SERVERS[rr_biome_id_max] = {
-    {"default",   1234,   "Hell Creek"}, // hell creek
+    {"default",   1234,           "hc"}, // hell creek
     {"pvp",       1235,          "pvp"}, // pvp
     {NULL,           0,           NULL}, // garden, doesn't have a server
     {NULL,           0,           NULL}, // beehive, lives inside other arenas
