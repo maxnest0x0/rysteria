@@ -1529,41 +1529,35 @@ static void server_tick(struct rr_server *this)
     rr_simulation_tick(&this->simulation);
 
 #ifdef PVP
-    uint8_t lb_broadcast = 0;
     uint8_t lb_top_n = 0;
     struct rr_leaderboard_sort_entry lb_sorted[RR_MAX_CLIENT_COUNT];
     uint32_t lb_rank_by_client[RR_MAX_CLIENT_COUNT] = {0};
-    ++this->pvp_tick;
-    lb_broadcast = (this->pvp_tick % 25) == 0;
-    if (lb_broadcast)
+    uint32_t lb_count = 0;
+    for (uint64_t i = 0; i < RR_MAX_CLIENT_COUNT; ++i)
     {
-        uint32_t lb_count = 0;
-        for (uint64_t i = 0; i < RR_MAX_CLIENT_COUNT; ++i)
-        {
-            if (!rr_bitset_get(this->clients_in_use, i))
-                continue;
-            struct rr_server_client *c = &this->clients[i];
-            if (!c->verified || !c->in_squad || c->disconnected)
-                continue;
-            lb_sorted[lb_count].client_index = i;
-            lb_sorted[lb_count].points = c->pvp_points;
-            ++lb_count;
-        }
-        for (uint32_t a = 1; a < lb_count; ++a)
-        {
-            struct rr_leaderboard_sort_entry tmp = lb_sorted[a];
-            uint32_t b = a;
-            while (b > 0 && lb_sorted[b - 1].points < tmp.points)
-            {
-                lb_sorted[b] = lb_sorted[b - 1];
-                --b;
-            }
-            lb_sorted[b] = tmp;
-        }
-        for (uint32_t a = 0; a < lb_count; ++a)
-            lb_rank_by_client[lb_sorted[a].client_index] = a + 1;
-        lb_top_n = lb_count < 10 ? lb_count : 10;
+        if (!rr_bitset_get(this->clients_in_use, i))
+            continue;
+        struct rr_server_client *c = &this->clients[i];
+        if (!c->verified || !c->in_squad || c->disconnected)
+            continue;
+        lb_sorted[lb_count].client_index = i;
+        lb_sorted[lb_count].points = c->pvp_points;
+        ++lb_count;
     }
+    for (uint32_t a = 1; a < lb_count; ++a)
+    {
+        struct rr_leaderboard_sort_entry tmp = lb_sorted[a];
+        uint32_t b = a;
+        while (b > 0 && lb_sorted[b - 1].points < tmp.points)
+        {
+            lb_sorted[b] = lb_sorted[b - 1];
+            --b;
+        }
+        lb_sorted[b] = tmp;
+    }
+    for (uint32_t a = 0; a < lb_count; ++a)
+        lb_rank_by_client[lb_sorted[a].client_index] = a + 1;
+    lb_top_n = lb_count < 10 ? lb_count : 10;
 #endif
     for (uint64_t i = 0; i < RR_MAX_CLIENT_COUNT; ++i)
     {
@@ -1739,33 +1733,30 @@ static void server_tick(struct rr_server *this)
             rr_server_client_write_message(client, encoder.start,
                                            encoder.current - encoder.start);
 #ifdef PVP
-            if (lb_broadcast)
+            struct proto_bug lb_encoder;
+            proto_bug_init(&lb_encoder, outgoing_message);
+            proto_bug_write_uint8(&lb_encoder, rr_clientbound_leaderboard_update,
+                                  "header");
+            proto_bug_write_uint8(&lb_encoder, lb_top_n, "leaderboard count");
+            for (uint8_t a = 0; a < lb_top_n; ++a)
             {
-                struct proto_bug lb_encoder;
-                proto_bug_init(&lb_encoder, outgoing_message);
-                proto_bug_write_uint8(&lb_encoder, rr_clientbound_leaderboard_update,
-                                      "header");
-                proto_bug_write_uint8(&lb_encoder, lb_top_n, "leaderboard count");
-                for (uint8_t a = 0; a < lb_top_n; ++a)
-                {
-                    struct rr_server_client *entry_client =
-                        &this->clients[lb_sorted[a].client_index];
-                    proto_bug_write_string(
-                        &lb_encoder,
-                        this->squads[entry_client->squad]
-                            .members[entry_client->squad_pos]
-                            .nickname,
-                        16, "nickname");
-                    proto_bug_write_varuint(&lb_encoder, lb_sorted[a].points,
-                                            "points");
-                }
-                proto_bug_write_varuint(&lb_encoder, lb_rank_by_client[i],
-                                        "own rank");
-                proto_bug_write_varuint(&lb_encoder, client->pvp_points,
-                                        "own points");
-                rr_server_client_write_message(
-                    client, lb_encoder.start, lb_encoder.current - lb_encoder.start);
+                struct rr_server_client *entry_client =
+                    &this->clients[lb_sorted[a].client_index];
+                proto_bug_write_string(
+                    &lb_encoder,
+                    this->squads[entry_client->squad]
+                        .members[entry_client->squad_pos]
+                        .nickname,
+                    16, "nickname");
+                proto_bug_write_varuint(&lb_encoder, lb_sorted[a].points,
+                                        "points");
             }
+            proto_bug_write_varuint(&lb_encoder, lb_rank_by_client[i],
+                                    "own rank");
+            proto_bug_write_varuint(&lb_encoder, client->pvp_points,
+                                    "own points");
+            rr_server_client_write_message(
+                client, lb_encoder.start, lb_encoder.current - lb_encoder.start);
 #endif
         }
     }

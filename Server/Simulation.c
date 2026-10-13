@@ -251,7 +251,7 @@ static void spawn_mob(struct rr_simulation *this, uint32_t grid_x,
                     break;
             }
     }
-#ifdef rr_biome_id_pvp
+#ifdef PVP
     else if (RR_GLOBAL_BIOME == rr_biome_id_pvp)
     {
         if(grid->skip)

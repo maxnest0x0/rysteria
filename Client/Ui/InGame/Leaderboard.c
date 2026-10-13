@@ -77,19 +77,14 @@ static struct rr_ui_element *leaderboard_row_init(uint8_t rank)
 static uint8_t leaderboard_own_row_should_show(struct rr_ui_element *this,
                                                struct rr_game *game)
 {
-    return game->leaderboard_own_rank == 0 ||
-           game->leaderboard_own_rank > RR_LEADERBOARD_ROWS;
+    return game->leaderboard_own_rank > RR_LEADERBOARD_ROWS;
 }
 
 static void leaderboard_own_row_on_render(struct rr_ui_element *this,
                                           struct rr_game *game)
 {
     char rank_text[12];
-    if (game->leaderboard_own_rank == 0)
-        snprintf(rank_text, sizeof rank_text, "-");
-    else
-        snprintf(rank_text, sizeof rank_text, "#%u",
-                 game->leaderboard_own_rank);
+    snprintf(rank_text, sizeof rank_text, "#%u", game->leaderboard_own_rank);
     leaderboard_row_draw(this, game->renderer, rank_text, "You",
                          game->leaderboard_own_points, 0xffdde27a);
 }
