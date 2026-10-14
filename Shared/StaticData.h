@@ -17,7 +17,6 @@
 #pragma once
 
 #include <stdint.h>
-#include <stdbool.h>
 
 #include <Shared/Entity.h>
 
@@ -235,12 +234,11 @@ extern char const *RR_MOB_NAMES[rr_mob_id_max];
 extern struct rr_mob_rarity_scale RR_MOB_RARITY_SCALING[rr_rarity_id_max];
 extern struct rr_petal_rarity_scale RR_PETAL_RARITY_SCALE[rr_rarity_id_max];
 extern double RR_MOB_LOOT_RARITY_COEFFICIENTS[rr_rarity_id_max];
-extern double RR_DROP_RARITY_COEFFICIENTS[rr_rarity_id_max + 1];
+extern double RR_DROP_RARITY_COEFFICIENTS[rr_rarity_id_max];
 extern double RR_MOB_WAVE_RARITY_COEFFICIENTS[rr_rarity_id_max + 1];
 
 extern uint32_t RR_MOB_DIFFICULTY_COEFFICIENTS[rr_mob_id_max];
 extern double RR_HELL_CREEK_MOB_ID_RARITY_COEFFICIENTS[rr_mob_id_max];
-extern double RR_PVP_MOB_ID_RARITY_COEFFICIENTS[rr_mob_id_max];
 extern double RR_GARDEN_MOB_ID_RARITY_COEFFICIENTS[rr_mob_id_max];
 
 extern uint32_t RR_RARITY_COLORS[rr_rarity_id_max];
@@ -259,9 +257,6 @@ struct rr_maze_grid
     uint32_t grid_points;
     float local_difficulty;
     float overload_factor;
-#endif
-#ifdef PVP
-    bool skip;
 #endif
     uint8_t value;
     float difficulty;

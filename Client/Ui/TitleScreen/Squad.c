@@ -675,24 +675,22 @@ static void join_code_on_event(struct rr_ui_element *this, struct rr_game *game)
                 ++code;
             }
             if (biome == rr_biome_id_max)
-                game->socket_error = 3;
+                code[0] = 0;
             else
-            {
                 rr_game_select_biome(game, biome);
-                struct proto_bug encoder2;
-                proto_bug_init(&encoder2, RR_OUTGOING_PACKET);
-                proto_bug_write_uint8(&encoder2, game->socket.quick_verification,
-                                      "qv");
-                proto_bug_write_uint8(&encoder2, rr_serverbound_squad_join,
-                                      "header");
-                proto_bug_write_uint8(&encoder2, 1, "join type");
-                proto_bug_write_string(&encoder2, code, 7, "connect link");
+            struct proto_bug encoder2;
+            proto_bug_init(&encoder2, RR_OUTGOING_PACKET);
+            proto_bug_write_uint8(&encoder2, game->socket.quick_verification,
+                                  "qv");
+            proto_bug_write_uint8(&encoder2, rr_serverbound_squad_join,
+                                  "header");
+            proto_bug_write_uint8(&encoder2, 1, "join type");
+            proto_bug_write_string(&encoder2, code, 7, "connect link");
 
-                rr_websocket_queue_send(&game->socket,
-                                        encoder2.current - encoder2.start);
-                game->connect_code[0] = 0;
-                rr_dom_set_text("_0x4347", "");
-            }
+            rr_websocket_queue_send(&game->socket,
+                                    encoder2.current - encoder2.start);
+            game->connect_code[0] = 0;
+            rr_dom_set_text("_0x4347", "");
         }
         game->cursor = rr_game_cursor_pointer;
         data->clickable = 1;

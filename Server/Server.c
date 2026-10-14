@@ -386,12 +386,10 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
         char xff[100];
         if (lws_hdr_copy(ws, xff, 100, WSI_TOKEN_X_FORWARDED_FOR) <= 0)
         {
-            {
-                lws_close_reason(ws, LWS_CLOSE_STATUS_GOINGAWAY,
-                                 (uint8_t *)"could not get xff header",
-                                 sizeof "could not get xff header" - 1);
-                return -1;
-            }
+            lws_close_reason(ws, LWS_CLOSE_STATUS_GOINGAWAY,
+                             (uint8_t *)"could not get xff header",
+                             sizeof "could not get xff header" - 1);
+            return -1;
         }
         for (uint64_t i = 0; i < RR_MAX_CLIENT_COUNT; i++)
             if (!rr_bitset_get_bit(this->clients_in_use, i))
@@ -1399,7 +1397,6 @@ static int api_lws_callback(struct lws *ws, enum lws_callback_reasons reason,
                 }
 #ifdef PVP
                 client->pvp_points = this->clients[j].pvp_points;
-                this->clients[j].pvp_points = 0;
 #endif
                 client->squad_pos = this->clients[j].squad_pos;
                 client->squad = this->clients[j].squad;
@@ -1538,7 +1535,7 @@ static void server_tick(struct rr_server *this)
         if (!rr_bitset_get(this->clients_in_use, i))
             continue;
         struct rr_server_client *c = &this->clients[i];
-        if (!c->verified || !c->in_squad || c->disconnected)
+        if (c->player_info == NULL)
             continue;
         lb_sorted[lb_count].client_index = i;
         lb_sorted[lb_count].points = c->pvp_points;

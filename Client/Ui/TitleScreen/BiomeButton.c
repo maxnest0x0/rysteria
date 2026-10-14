@@ -36,11 +36,11 @@ struct biome_button_metadata
 static void biome_button_on_event(struct rr_ui_element *this,
                                   struct rr_game *game)
 {
+    struct biome_button_metadata *data = this->data;
     if (game->input_data->mouse_buttons_up_this_tick & 1)
-    {
-        struct biome_button_metadata *data = this->data;
         rr_game_select_biome(game, data->pos);
-    }
+    if (game->selected_biome != data->pos)
+        game->cursor = rr_game_cursor_pointer;
 }
 
 static void biome_button_on_render(struct rr_ui_element *this,

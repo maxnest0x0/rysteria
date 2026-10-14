@@ -186,21 +186,6 @@ double RR_HELL_CREEK_MOB_ID_RARITY_COEFFICIENTS[rr_mob_id_max] = {
     25,   //edmo
 };
 
-double RR_PVP_MOB_ID_RARITY_COEFFICIENTS[rr_mob_id_max] = {
-    50,   //tric
-    100,  //trex
-    15,   //fern
-    0.25, //tree
-    75,   //pter
-    50,   //dako
-    25,   //pachy
-    40,   //ornith
-    25,   //anky
-    1,    //meteor
-    75,   //quetz
-    25,   //edmo
-};
-
 double RR_GARDEN_MOB_ID_RARITY_COEFFICIENTS[rr_mob_id_max] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 10};
 
 struct rr_petal_rarity_scale RR_PETAL_RARITY_SCALE[rr_rarity_id_max] = {
@@ -236,13 +221,13 @@ char const *RR_RARITY_NAMES[rr_rarity_id_max] = {
 
 #ifdef PVP
 uint64_t RR_PVP_POINTS_PER_RARITY[rr_rarity_id_max] = {
-    20, 100, 1000, 10000, 150000, 2250000, 45000000, 450000000};
+    20, 100, 1000, 10000, 150000, 2250000, 45000000, 900000000};
 #endif
 
 double RR_MOB_WAVE_RARITY_COEFFICIENTS[rr_rarity_id_max + 1] = {
     0, 1, 6, 10, 15, 25, 160, 1200, 250};
 
-double RR_DROP_RARITY_COEFFICIENTS[rr_rarity_id_max + 1] = {
+double RR_DROP_RARITY_COEFFICIENTS[rr_rarity_id_max] = {
     0, 1, 8, 15, 40, 150, 500, 2500};
 double RR_MOB_LOOT_RARITY_COEFFICIENTS[rr_rarity_id_max] = {2.5, 4,  6,   15,
                                                             35,  50, 125, 150};
@@ -283,8 +268,6 @@ static void init_game_coefficients()
     {
         RR_HELL_CREEK_MOB_ID_RARITY_COEFFICIENTS[mob] +=
             RR_HELL_CREEK_MOB_ID_RARITY_COEFFICIENTS[mob - 1];
-        RR_PVP_MOB_ID_RARITY_COEFFICIENTS[mob] +=
-            RR_PVP_MOB_ID_RARITY_COEFFICIENTS[mob - 1];
         RR_GARDEN_MOB_ID_RARITY_COEFFICIENTS[mob] +=
             RR_GARDEN_MOB_ID_RARITY_COEFFICIENTS[mob - 1];
     }
@@ -292,8 +275,6 @@ static void init_game_coefficients()
     {
         RR_HELL_CREEK_MOB_ID_RARITY_COEFFICIENTS[mob] /=
             RR_HELL_CREEK_MOB_ID_RARITY_COEFFICIENTS[rr_mob_id_max - 1];
-        RR_PVP_MOB_ID_RARITY_COEFFICIENTS[mob] /=
-            RR_PVP_MOB_ID_RARITY_COEFFICIENTS[rr_mob_id_max - 1];
         RR_GARDEN_MOB_ID_RARITY_COEFFICIENTS[mob] /=
             RR_GARDEN_MOB_ID_RARITY_COEFFICIENTS[rr_mob_id_max - 1];
     }
@@ -581,8 +562,6 @@ RR_DEFINE_MAZE(HELL_CREEK, 80) = {
 {_,L,L,L,L,L,L,L,L,_,m,m,m,_,_,_,M,_,_,M,M,M,M,M,_,_,M,_,_,_,x,x,x,x,X,X,X,X,X,_}, // 38
 {_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_}, // 39
 };
-// clang-format on
-// the pvp map, made in the map editor and turned into this by scripts/import-map.py
 RR_DEFINE_MAZE(PVP, 80) = {
 //                     11  13  15  17  19  21  23  25  27  29  31  33  35  37  39
 // 1 2 3 4 5 6 7 8 9 10  12  14  16  18  20  22  24  26  28  30  32  34  36  38
@@ -627,6 +606,7 @@ RR_DEFINE_MAZE(PVP, 80) = {
 {_,_,_,_,_,_,_,e,e,e,e,e,e,e,e,_,_,_,_,E,E,E,E,E,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_}, // 38
 {_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_}, // 39
 };
+// clang-format on
 RR_DEFINE_MAZE(BURROW, 4) = {{1, 1}, {0, 1}};
 
 #define MAZE_ENTRY(MAZE, GRID_SIZE)                                            \

@@ -345,7 +345,7 @@ struct rr_ui_element *rr_ui_settings_container_init(struct rr_game *game)
                                 rr_ui_container_init(), 0, 10,
                                 rr_ui_toggle_box_init(
                                     &game->cache.show_leaderboard),
-                                rr_ui_text_init("Show pvp leaderboard", 15,
+                                rr_ui_text_init("Show PvP leaderboard", 15,
                                                 0xffffffff),
                                 NULL),
                                 rr_ui_text_init("[B]", 15, 0xffffffff),

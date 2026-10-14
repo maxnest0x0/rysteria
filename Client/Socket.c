@@ -28,6 +28,7 @@
 #endif
 
 #include <Shared/Crypto.h>
+#include <Shared/MagicNumber.h>
 
 uint8_t RR_OUTGOING_PACKET[1024 * 16];
 static uint8_t incoming_data[1024 * 512];
@@ -83,6 +84,7 @@ void rr_websocket_connect_to(struct rr_websocket *this, char const *link)
 {
     puts("<rr_websocket::server_connect>");
     this->recieved_first_packet = 0;
+    this->quick_verification = rr_get_hash(RR_SECRET8);
 #ifdef __EMSCRIPTEN__
     EM_ASM(
         {
@@ -144,7 +146,13 @@ void rr_websocket_disconnect(struct rr_websocket *this, struct rr_game *game)
 #ifdef __EMSCRIPTEN__
     EM_ASM({
         if (Module.socket)
-            Module.socket.close();
+        {
+            Module.socket.onopen = null;
+            Module.socket.onclose = null;
+            Module.socket.onmessage = null;
+            if (Module.socket.readyState < 2)
+                Module.socket.close();
+        }
     });
 #else
 #endif

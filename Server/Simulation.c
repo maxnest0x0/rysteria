@@ -61,7 +61,6 @@ static void set_special_zone(uint8_t biome, uint8_t (*fun)(), uint32_t x,
 
 #define ALL_MOBS 255
 #define DIFFICULT_MOBS 254
-#define NO_MOBS 253
 
 uint8_t fern_tree_zone()
 {
@@ -132,44 +131,32 @@ struct zone
 #define ZONE_POSITION_COUNT 14
 
 static struct zone zone_positions[ZONE_POSITION_COUNT] = {
-    {29, 26, 3,  2, fern_tree_zone},
-    {13, 19, 3,  2, pter_meteor_zone},
-    {3,  32, 5,  5, trice_dako_zone},
-    {7,  1,  4,  4, trex_anky_zone},
-    {8,  21, 4,  3, edmo_zone},
-    {19, 33, 5,  2, tree_zone},
-    {16, 35, 11, 4, tree_zone},
-    {7,  24, 4,  3, trex_zone},
-    {33, 3,  5,  5, quetz_zone},
-    {4,  9,  4,  4, fern_pachy_zone},
-    {7,  5,  4,  5, fern_pachy_zone},
-    {32, 7,  2,  2, anky_zone},
-    {32, 9,  5,  2, anky_zone},
-    {26, 6,  3,  4, pter_edmo_zone},
-};
-
-#define PVP_ZONE_POSITION_COUNT 1
-
-static struct zone pvp_zone_positions[PVP_ZONE_POSITION_COUNT] = {
+    {29, 26, 3,  2, fern_tree_zone},   // 0
+    {13, 19, 3,  2, pter_meteor_zone}, // 1
+    {3,  32, 5,  5, trice_dako_zone},  // 2
+    {7,  1,  4,  4, trex_anky_zone},   // 3
+    {8,  21, 4,  3, edmo_zone},        // 4
+    {19, 33, 5,  2, tree_zone},        // 5
+    {16, 35, 11, 4, tree_zone},        // 6
+    {7,  24, 4,  3, trex_zone},        // 7
+    {33, 3,  5,  5, quetz_zone},       // 8
+    {4,  9,  4,  4, fern_pachy_zone},  // 9
+    {7,  5,  4,  5, fern_pachy_zone},  // 10
+    {32, 7,  2,  2, anky_zone},        // 11
+    {32, 9,  5,  2, anky_zone},        // 12
+    {26, 6,  3,  4, pter_edmo_zone},   // 13
 };
 
 static void set_spawn_zones()
 {
-    struct zone *zones = zone_positions;
-    uint64_t count = ZONE_POSITION_COUNT;
-    uint8_t biome = rr_biome_id_hell_creek;
-    if (RR_GLOBAL_BIOME == rr_biome_id_pvp)
+#ifndef PVP
+    for (uint64_t i = 0; i < ZONE_POSITION_COUNT; i++)
     {
-        zones = pvp_zone_positions;
-        count = PVP_ZONE_POSITION_COUNT;
-        biome = rr_biome_id_pvp;
+        struct zone zone = zone_positions[i];
+        set_special_zone(rr_biome_id_hell_creek, zone.spawn_func, zone.x, zone.y,
+                         zone.w, zone.h);
     }
-    for (uint64_t i = 0; i < count; i++)
-    {
-        struct zone zone = zones[i];
-        set_special_zone(biome, zone.spawn_func, zone.x, zone.y, zone.w,
-                         zone.h);
-    }
+#endif
 }
 
 void rr_simulation_init(struct rr_simulation *this)
@@ -251,24 +238,8 @@ static void spawn_mob(struct rr_simulation *this, uint32_t grid_x,
                     break;
             }
     }
-#ifdef PVP
-    else if (RR_GLOBAL_BIOME == rr_biome_id_pvp)
-    {
-        if(grid->skip)
-            grid->spawn_timer = 0;
-        else
-            id = get_spawn_id(RR_GLOBAL_BIOME, grid);
-        grid->skip = !grid->skip;
-        return;
-    }
-#endif
     else
         id = get_spawn_id(RR_GLOBAL_BIOME, grid);
-    if (id == NO_MOBS)
-    {
-        grid->spawn_timer = 0;
-        return;
-    }
     uint8_t rarity =
         get_spawn_rarity(grid->difficulty + grid->local_difficulty * 0);
     if (!should_spawn_at(id, rarity))
@@ -372,7 +343,12 @@ static void despawn_mob(EntityIdx entity, void *_simulation)
 static float get_max_points(struct rr_simulation *this,
                             struct rr_maze_grid *grid)
 {
-    return 2 * (0.2 + (grid->player_count) * 1.2) *
+#ifndef PVP
+    float coeff = 2;
+#else
+    float coeff = 0.2;
+#endif
+    return coeff * (0.2 + (grid->player_count) * 1.2) *
            powf(1.1, grid->overload_factor);
 }
 static int tick_grid(struct rr_simulation *this, struct rr_maze_grid *grid,

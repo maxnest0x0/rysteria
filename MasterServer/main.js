@@ -30,16 +30,15 @@ const port = 55554;
 const namespace = "/api";
 
 const DIRECTORY_SECRET = "a92pd3nf29d38tny9pr34dn3d908ntgb";
-const PASSWORD_SALT = process.env["PASSWORD_SALT"] || "";
 const CLOUD_TOKEN = "cloud.eyJ0eXAiOiJKV1QiLCJhbGciOiJFZERTQSJ9.CKOM_-XtMRCjtLqo-DAaEgoQjUflOmYrT3Sv5ckk4-Nk0yIWOhQKEgoQ6l7BiqssS-iYCw6PaqKKnA.Pgw_qDBaugBIFd7ilYcbbm_6yPNDeqreiDi1VBkKX84ER7CXvS-8abNuRhKtU_hDtgT9Sd4a7JWN68fdLnEKCA";
 const NAMESPACE_ID = "04cfba67-e965-4899-bcb9-b7497cc6863b";
 const SERVER_SECRET = "ad904nf3adrgnariwpanyf3qap8unri4t9b384wna3g34ytgdr4bwtvd4y";
 
+const REDIRECT_URI = "https://rysteria.pro/";
 const CLIENT_ID = "1453525695228678349";
-const OAUTH_REDIRECT_URI = process.env["OAUTH_REDIRECT_URI"] || "https://rysteria.pro";
 const CLIENT_SECRET = process.env["CLIENT_SECRET"] || "";
 const BOT_TOKEN = process.env["BOT_TOKEN"] || "";
-const MAX_PETAL_COUNT = 28;
+const PASSWORD_SALT = process.env["PASSWORD_SALT"] || "";
 
 if (!PASSWORD_SALT || !CLIENT_SECRET || !BOT_TOKEN)
     console.warn("missing .env");
@@ -300,7 +299,7 @@ async function discord_oauth2(code) {
         body: new URLSearchParams({
             "grant_type": "authorization_code",
             "code": code,
-            "redirect_uri": OAUTH_REDIRECT_URI,
+            "redirect_uri": REDIRECT_URI,
             "client_id": CLIENT_ID,
             "client_secret": CLIENT_SECRET
         })

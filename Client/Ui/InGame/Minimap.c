@@ -109,6 +109,7 @@ static void minimap_on_render(struct rr_ui_element *this, struct rr_game *game)
     rr_renderer_scale(renderer, this->abs_width / minimap.width);
     rr_renderer_draw_image(renderer, &minimap);
     rr_renderer_scale(renderer, minimap.width / this->abs_width);
+    rr_renderer_set_line_width(renderer, 2);
     if (arena->biome == rr_biome_id_pvp)
     {
         rr_renderer_set_fill(renderer, 0xffff0000);
@@ -145,7 +146,6 @@ static void minimap_on_render(struct rr_ui_element *this, struct rr_game *game)
     renderer->state.filter.amount = 0.2;
     rr_renderer_set_stroke(renderer, 0xffff00ff);
     renderer->state.filter.amount = 0;
-    rr_renderer_set_line_width(renderer, 2);
     for (uint32_t i = RR_SQUAD_MEMBER_COUNT; i > 0; --i)
     {
         if (game->player_infos[i - 1] == RR_NULL_ENTITY)

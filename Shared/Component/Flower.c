@@ -109,39 +109,46 @@ void rr_component_flower_set_dead(struct rr_component_flower *this,
 #ifdef PVP
         if (arena->pvp)
         {
-            uint8_t drop_rarity = this->level / 15;
-            if (drop_rarity > rr_rarity_id_epic)
-                drop_rarity = rr_rarity_id_epic;
-            for (uint8_t r = rr_rarity_id_unusual; r <= rr_rarity_id_mythic;
-                 ++r)
-                if (player_info->client->pvp_points >=
-                    RR_PVP_POINTS_PER_RARITY[r])
-                    ++drop_rarity;
-            if (drop_rarity > rr_rarity_id_mythic)
-                drop_rarity = rr_rarity_id_mythic;
-
             if (rr_simulation_entity_alive(simulation, health->last_attacker) &&
                 rr_simulation_has_player_info(simulation, health->last_attacker))
             {
                 struct rr_component_player_info *killer_info =
                     rr_simulation_get_player_info(simulation,
                                                   health->last_attacker);
-                if (killer_info->client != NULL &&
-                    killer_info->client != player_info->client)
-                {
+                if (killer_info->client != player_info->client)
                     killer_info->client->pvp_points +=
                         player_info->client->pvp_points / 2;
-                }
             }
-            player_info->client->pvp_points =
-                player_info->client->pvp_points / 2;
+            player_info->client->pvp_points /= 2;
+
+            uint8_t drop_rarity = rr_rarity_id_max;
+            for (uint8_t r = 0; r <= rr_rarity_id_mythic; ++r)
+                if (player_info->client->pvp_points >=
+                    RR_PVP_POINTS_PER_RARITY[r])
+                    drop_rarity = r;
+            if (drop_rarity == rr_rarity_id_max)
+                return;
+            EntityIdx drop_id = rr_simulation_alloc_entity(simulation);
+            struct rr_component_drop *drop =
+                rr_simulation_add_drop(simulation, drop_id);
+            rr_component_drop_set_id(drop, rr_petal_id_basic);
+            rr_component_drop_set_rarity(drop, drop_rarity);
+            drop->ticks_until_despawn = 25 * 10 * (drop->rarity + 1);
+            struct rr_component_physical *drop_physical =
+                rr_simulation_add_physical(simulation, drop_id);
+            rr_component_physical_set_x(drop_physical, physical->x);
+            rr_component_physical_set_y(drop_physical, physical->y);
+            rr_component_physical_set_radius(drop_physical, 20);
+            drop_physical->arena = physical->arena;
+            struct rr_component_relations *drop_relations =
+                rr_simulation_add_relations(simulation, drop_id);
+            rr_component_relations_set_team(drop_relations,
+                                            rr_simulation_team_id_players);
             for (uint8_t squad = 0; squad < RR_SQUAD_COUNT; ++squad)
             {
                 if (health->squad_damage_counter[squad] <=
                     health->max_health * 0.2)
                     continue;
-                uint8_t eligible[RR_BITSET_ROUND(RR_MAX_CLIENT_COUNT)] = {0};
-                uint8_t any_eligible = 0;
                 for (uint8_t pos = 0; pos < RR_SQUAD_MEMBER_COUNT; ++pos)
                 {
                     struct rr_squad_member *member =
@@ -149,32 +156,12 @@ void rr_component_flower_set_dead(struct rr_component_flower *this,
                     if (member->in_use == 0)
                         continue;
                     int32_t level_diff =
-                        (int32_t)this->level - (int32_t)member->level;
-                    if (abs(level_diff) > 20)
+                        (int32_t)member->level - (int32_t)this->level;
+                    if (level_diff > 20)
                         continue;
                     uint8_t i = member->client - simulation->server->clients;
-                    rr_bitset_set(eligible, i);
-                    any_eligible = 1;
+                    rr_bitset_set(drop->can_be_picked_up_by, i);
                 }
-                if (!any_eligible)
-                    continue;
-                EntityIdx drop_id = rr_simulation_alloc_entity(simulation);
-                struct rr_component_drop *drop =
-                    rr_simulation_add_drop(simulation, drop_id);
-                rr_component_drop_set_id(drop, rr_petal_id_basic);
-                rr_component_drop_set_rarity(drop, drop_rarity);
-                drop->ticks_until_despawn = 25 * 10 * (drop->rarity + 1);
-                memcpy(drop->can_be_picked_up_by, eligible, sizeof eligible);
-                struct rr_component_physical *drop_physical =
-                    rr_simulation_add_physical(simulation, drop_id);
-                rr_component_physical_set_x(drop_physical, physical->x);
-                rr_component_physical_set_y(drop_physical, physical->y);
-                rr_component_physical_set_radius(drop_physical, 20);
-                drop_physical->arena = physical->arena;
-                struct rr_component_relations *drop_relations =
-                    rr_simulation_add_relations(simulation, drop_id);
-                rr_component_relations_set_team(drop_relations,
-                                                rr_simulation_team_id_players);
             }
         }
 #endif

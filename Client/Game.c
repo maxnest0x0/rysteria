@@ -411,7 +411,6 @@ void rr_game_init(struct rr_game *this)
     strcpy(this->rivet_account.token, "");
     strcpy(this->rivet_account.code, "");
     strcpy(this->rivet_account.uuid, "");
-    rr_discord_oauth2_init(this);
 
     // clang-format off
     rr_ui_container_add_element(
@@ -502,7 +501,7 @@ void rr_game_init(struct rr_game *this)
                             rr_ui_flex_container_init(
                                 rr_ui_h_container_init(rr_ui_container_init(), 0, 10,
                                     rr_ui_biome_button_init("Hell Creek", 0xffff0000, rr_biome_id_hell_creek),
-                                    rr_ui_biome_button_init("PVP", 0xff3a6ee0, rr_biome_id_pvp),
+                                    rr_ui_biome_button_init("PvP", 0xff3a6ee0, rr_biome_id_pvp),
                                     NULL
                                 ),
                                 rr_ui_h_container_init(rr_ui_container_init(), 0, 10,
@@ -833,6 +832,7 @@ void rr_game_init(struct rr_game *this)
     this->is_mobile = rr_dom_test_mobile();
     this->slots_unlocked =
         RR_SLOT_COUNT_FROM_LEVEL(level_from_xp(this->cache.experience));
+    rr_discord_oauth2_init(this);
 }
 
 void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
@@ -1986,7 +1986,7 @@ void rr_game_select_biome(struct rr_game *this, uint8_t biome)
     if (this->selected_biome == biome)
         return;
     this->selected_biome = biome;
-    rr_websocket_disconnect(&this->socket, this);
+    rr_game_connect_socket(this);
     this->socket_ready = 0;
     this->simulation_ready = 0;
     this->socket_pending = 0;
