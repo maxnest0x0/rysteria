@@ -106,15 +106,11 @@ static void grid_filter_candidates(struct rr_simulation *this,
         return;
     if (rr_simulation_has_petal(this, entity1) &&
         rr_simulation_get_petal(this, entity1)->detached == 0 &&
-        rr_simulation_entity_alive(this,
-            rr_simulation_get_relations(this, entity1)->owner) &&
         rr_simulation_get_physical(this,
             rr_simulation_get_relations(this, entity1)->owner)->bubbling)
         return;
     if (rr_simulation_has_petal(this, entity2) &&
         rr_simulation_get_petal(this, entity2)->detached == 0 &&
-        rr_simulation_entity_alive(this,
-            rr_simulation_get_relations(this, entity2)->owner) &&
         rr_simulation_get_physical(this,
             rr_simulation_get_relations(this, entity2)->owner)->bubbling)
         return;
