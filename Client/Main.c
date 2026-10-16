@@ -197,11 +197,7 @@ void rr_main_loop(struct rr_game *this)
             Module.canvas = document.createElement("canvas");
             Module.canvas.id = "canvas";
             Module.canvas.oncontextmenu = function() { return false; };
-            // on crazygames logging in or out reloads the page, which this
-            // prompt would interrupt
-            const platform = window["rrolfPlatform"];
-            if (!platform || platform["mode"] === "web")
-                window.onbeforeunload = function(e) { return "Are you sure?"; };
+            window.onbeforeunload = function(e) { return "Are you sure?"; };
             document.body.appendChild(Module.canvas);
             Module.ctxs = [Module.canvas.getContext('2d')];
             Module.availableCtxs =

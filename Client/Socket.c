@@ -159,7 +159,6 @@ void rr_websocket_disconnect(struct rr_websocket *this, struct rr_game *game)
     game->socket_ready = 0;
     game->simulation_ready = 0;
     game->joined_squad = 0;
-    game->account_ready = 0;
 }
 
 void rr_websocket_queue_send(struct rr_websocket *this, uint32_t length)

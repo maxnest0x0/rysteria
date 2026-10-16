@@ -513,7 +513,6 @@ uint32_t level_from_xp(double xp)
 #define X 52
 #define a 56
 #define A 60
-#define H 100
 
 #define RR_DEFINE_MAZE(name, size)                                             \
     struct rr_maze_grid RR_MAZE_##name[size][size];                            \
@@ -588,8 +587,8 @@ RR_DEFINE_MAZE(PVP, 80) = {
 {_,R,R,R,R,R,_,R,R,_,R,R,R,R,R,R,_,u,_,u,_,_,_,C,C,C,C,_,_,L,L,L,L,L,L,L,L,L,L,_}, // 19
 {_,R,R,R,R,R,R,R,R,R,R,R,R,R,R,R,_,u,_,_,_,C,C,C,C,C,_,_,L,L,_,_,L,L,L,L,L,L,L,_}, // 20
 {_,e,R,R,R,R,R,R,R,R,R,R,R,R,R,R,_,u,C,C,C,C,C,C,_,_,_,L,L,L,L,_,L,L,L,L,L,L,L,_}, // 21
-{_,e,e,R,R,R,R,R,R,R,R,R,R,e,e,e,_,u,_,_,_,_,_,H,_,m,_,L,L,L,L,_,_,L,L,L,L,L,L,_}, // 22
-{_,e,e,e,R,R,R,R,R,R,R,R,e,e,e,e,_,u,_,_,_,_,_,H,H,m,L,L,L,L,L,L,_,L,L,L,L,L,L,_}, // 23
+{_,e,e,R,R,R,R,R,R,R,R,R,R,e,e,e,_,u,_,_,_,_,_,_,_,m,_,L,L,L,L,_,_,L,L,L,L,L,L,_}, // 22
+{_,e,e,e,R,R,R,R,R,R,R,R,e,e,e,e,_,u,_,_,_,_,_,A,_,m,L,L,L,L,L,L,_,L,L,L,L,L,L,_}, // 23
 {_,e,e,e,e,R,R,R,R,R,R,e,e,e,e,e,_,u,_,_,u,u,_,_,_,m,_,L,L,L,L,L,_,L,L,L,L,L,L,_}, // 24
 {_,_,e,e,e,e,R,R,R,R,e,e,e,e,e,e,_,u,_,u,u,u,u,u,_,_,_,L,L,L,L,L,_,_,_,l,_,_,L,_}, // 25
 {_,_,_,e,e,e,e,e,e,e,e,e,e,e,e,e,_,u,u,u,u,u,u,u,u,u,_,L,L,L,_,_,_,l,l,l,l,_,L,_}, // 26

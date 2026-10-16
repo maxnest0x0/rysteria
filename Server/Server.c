@@ -548,9 +548,6 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
                                   "rivet uuid");
             proto_bug_read_string(&encoder, client->rivet_account.code, 100,
                                   "oauth2 code");
-            proto_bug_read_string(&encoder, client->rivet_account.cg_token,
-                                  sizeof client->rivet_account.cg_token,
-                                  "crazygames token");
 
 #ifndef SANDBOX
             if (rr_get_hash(rr_get_hash(proto_bug_read_varuint(&encoder, "dev_flag"))) == 15010855733518987480u &&
@@ -578,8 +575,6 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
                                               client->rivet_account.token);
             rr_binary_encoder_write_nt_string(&encoder,
                                               client->rivet_account.code);
-            rr_binary_encoder_write_nt_string(&encoder,
-                                              client->rivet_account.cg_token);
             rr_binary_encoder_write_varuint(&encoder, client->nonce);
             rr_binary_encoder_write_uint8(&encoder, i);
             lws_write(this->api_client, encoder.start,
@@ -1339,13 +1334,8 @@ static int api_lws_callback(struct lws *ws, enum lws_callback_reasons reason,
                     continue;
                 if (client->dev || this->clients[j].dev)
                     continue;
-                // players with a linked account (Discord or CrazyGames) are
-                // not kicked for sharing an address, friends at the same
-                // home or school have to be able to play together
                 if (client->rivet_account.name[0] != 0 ||
-                    this->clients[j].rivet_account.name[0] != 0 ||
-                    client->rivet_account.cg_id[0] != 0 ||
-                    this->clients[j].rivet_account.cg_id[0] != 0)
+                    this->clients[j].rivet_account.name[0] != 0)
                     continue;
                 if (strcmp(client->rivet_account.uuid,
                            this->clients[j].rivet_account.uuid) == 0)

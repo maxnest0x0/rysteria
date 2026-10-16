@@ -34,7 +34,6 @@ class GameClient
         encoder.WriteStringNT(user.password);
         encoder.WriteStringNT(this.name);
         encoder.WriteStringNT(user.discord_id);
-        encoder.WriteStringNT(user.cg_id || "");
         encoder.WriteFloat64(user.xp);
         encoder.WriteUint8(user.checkpoint.hell_creek);
         encoder.WriteUint8(user.checkpoint.pvp);

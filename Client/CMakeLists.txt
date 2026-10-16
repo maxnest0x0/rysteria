@@ -54,7 +54,6 @@ set(SRCS
     Assets/RenderRarityBackground.c
     Assets/RenderText.c
     DOM.c
-    Filter.c
     Particle.c
     Renderer/Common.c
     Renderer/RenderArena.c
@@ -87,14 +86,12 @@ set(SRCS
     Ui/TitleScreen/Account.c
     Ui/TitleScreen/BiomeButton.c
     Ui/TitleScreen/Crafting.c
-    Ui/TitleScreen/CrazyGames.c
     Ui/TitleScreen/DevSquadPanel.c
     Ui/TitleScreen/Discord.c
     Ui/TitleScreen/Fullscreen.c
     Ui/TitleScreen/Gardn.c
     Ui/TitleScreen/Github.c
     Ui/TitleScreen/Inventory.c
-    Ui/TitleScreen/Legal.c
     Ui/TitleScreen/LevelBar.c
     Ui/TitleScreen/MobGallery.c
     Ui/TitleScreen/Settings.c
@@ -111,7 +108,6 @@ set(SRCS
     Main.c
     Mobile.c
     Oauth2.c
-    Platform.c
     Simulation.c
     Socket.c
     Storage.c
@@ -158,7 +154,7 @@ endif()
 if (WASM_BUILD)
     set(CMAKE_C_COMPILER "emcc")
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DWASM_BUILD")
-    add_link_options(--closure=1 -sINITIAL_MEMORY=33554432 -sNO_EXIT_RUNTIME=1 -sEXPORTED_FUNCTIONS=_malloc,_free,_rr_discord_oauth2_on_log_in,_rr_crazygames_on_link,_rr_rivet_lobby_on_find,_rr_renderer_main_loop,_main,_rr_key_event,_rr_mouse_event,_rr_touch_event,_rr_wheel_event,_rr_paste_event,_rr_context_event,_rr_focus_event,_rr_on_socket_event_emscripten)
+    add_link_options(--closure=1 -sINITIAL_MEMORY=33554432 -sNO_EXIT_RUNTIME=1 -sEXPORTED_FUNCTIONS=_malloc,_free,_rr_discord_oauth2_on_log_in,_rr_rivet_lobby_on_find,_rr_renderer_main_loop,_main,_rr_key_event,_rr_mouse_event,_rr_touch_event,_rr_wheel_event,_rr_paste_event,_rr_context_event,_rr_focus_event,_rr_on_socket_event_emscripten)
     set(SRCS ${SRCS} Renderer/Wasm.c)
 else()
     set(SRCS ${SRCS} Renderer/Native.cc)
