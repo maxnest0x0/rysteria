@@ -1460,6 +1460,8 @@ static int api_lws_callback(struct lws *ws, enum lws_callback_reasons reason,
             }
             if (rr_binary_encoder_read_varuint(&decoder) == client->nonce)
             {
+                if (client->dev)
+                    break;
                 printf("<rr_server::client_kick::%s>\n", client->rivet_account.uuid);
                 client->pending_kick = 1;
             }
@@ -1545,7 +1547,9 @@ static void server_tick(struct rr_server *this)
         if (!rr_bitset_get(this->clients_in_use, i))
             continue;
         struct rr_server_client *c = &this->clients[i];
-        if (c->player_info == NULL)
+        if (c->player_info == NULL ||
+            c->player_info->flower_id == RR_NULL_ENTITY ||
+            is_dead_flower(&this->simulation, c->player_info->flower_id))
             continue;
         lb_sorted[lb_count].client_index = i;
         lb_sorted[lb_count].points = c->pvp_points;

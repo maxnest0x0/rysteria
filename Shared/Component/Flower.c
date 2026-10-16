@@ -119,17 +119,17 @@ void rr_component_flower_set_dead(struct rr_component_flower *this,
                 struct rr_component_player_info *killer_info =
                     rr_simulation_get_player_info(simulation,
                                                   health->last_attacker);
-                if (killer_info->client != player_info->client)
+                if (killer_info->flower_id != RR_NULL_ENTITY &&
+                    !is_dead_flower(simulation, killer_info->flower_id))
                     killer_info->client->pvp_points +=
                         player_info->client->pvp_points / 2;
             }
-            player_info->client->pvp_points /= 2;
-
             uint8_t drop_rarity = rr_rarity_id_max;
             for (uint8_t r = 0; r <= rr_rarity_id_mythic; ++r)
                 if (player_info->client->pvp_points >=
                     RR_PVP_POINTS_PER_RARITY[r])
                     drop_rarity = r;
+            player_info->client->pvp_points /= 2;
             if (drop_rarity == rr_rarity_id_max)
                 return;
             EntityIdx drop_id = rr_simulation_alloc_entity(simulation);
