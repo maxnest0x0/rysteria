@@ -131,6 +131,9 @@ void rr_component_health_do_damage(struct rr_simulation *simulation,
     struct rr_component_player_info *player_info =
         rr_simulation_get_player_info(simulation, p_info_id);
     this->squad_damage_counter[player_info->squad] += damage;
+#ifdef PVP
+    this->last_attacker = p_info_id;
+#endif
     struct rr_component_physical *physical =
         rr_simulation_get_physical(simulation, this->parent_id);
     struct rr_simulation_animation *animation =

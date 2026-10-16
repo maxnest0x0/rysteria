@@ -129,3 +129,4 @@ RR_DECLARE_PUBLIC_FIELD(player_info, EntityHash, flower_id);
 RR_DECLARE_PUBLIC_FIELD(player_info, EntityIdx, arena);
 RR_DECLARE_PUBLIC_FIELD(player_info, uint8_t, squad_pos);
 RR_DECLARE_PUBLIC_FIELD(player_info, EntityHash, spectate_target);
+RR_DECLARE_PUBLIC_FIELD(player_info, uint8_t, squad);

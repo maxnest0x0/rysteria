@@ -46,6 +46,9 @@ struct rr_component_health
     RR_CLIENT_ONLY(uint8_t prev_flags;)
     RR_SERVER_ONLY(uint8_t damage_paused;)
     RR_SERVER_ONLY(float squad_damage_counter[RR_SQUAD_COUNT];)
+#ifdef PVP
+    EntityHash last_attacker;
+#endif
     RR_SERVER_ONLY(float gradually_healed;)
     RR_SERVER_ONLY(uint8_t gradually_healed_ticks;)
 };

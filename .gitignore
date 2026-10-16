@@ -1,4 +1,6 @@
 build/
+build-default/
+build-pvp/
 frontend_release_build/
 node_modules/
 .vs/
@@ -17,3 +19,4 @@ logs.txt
 # Added by cargo
 target/
 
+scripts/

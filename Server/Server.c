@@ -88,7 +88,7 @@ static void rr_server_client_create_player_info(struct rr_server *server,
             &server->simulation,
             rr_simulation_alloc_entity(&server->simulation));
     player_info->client = client;
-    player_info->squad = client->squad;
+    rr_component_player_info_set_squad(player_info, client->squad);
     struct rr_squad_member *member = player_info->squad_member =
         rr_squad_get_client_slot(server, client);
     rr_component_player_info_set_squad_pos(player_info, client->squad_pos);
@@ -268,7 +268,8 @@ void rr_server_client_broadcast_update(struct rr_server_client *this)
     proto_bug_write_uint8(&encoder, squad->expose_code, "expose_code");
     proto_bug_write_uint8(&encoder, RR_GLOBAL_BIOME, "biome");
     char joined_code[16];
-    sprintf(joined_code, "%s-%s", server->server_alias, squad->squad_code);
+    sprintf(joined_code, "%s-%s", RR_BIOME_SERVERS[RR_GLOBAL_BIOME].squad_prefix,
+            squad->squad_code);
     proto_bug_write_string(&encoder, joined_code, 16, "squad code");
     proto_bug_write_varuint(&encoder, this->afk_ticks, "afk_ticks");
     if (this->afk_ticks > RR_AFK_WARNING)
@@ -313,6 +314,9 @@ void rr_server_init(struct rr_server *this)
     memset(this, 0, sizeof *this);
 #ifndef RIVET_BUILD
     // RR_GLOBAL_BIOME = rr_biome_id_garden;
+#endif
+#ifdef PVP
+    RR_GLOBAL_BIOME = rr_biome_id_pvp;
 #endif
     rr_static_data_init();
     rr_simulation_init(&this->simulation);
@@ -1391,6 +1395,9 @@ static int api_lws_callback(struct lws *ws, enum lws_callback_reasons reason,
                     if (rr_bitset_get_bit(drop->picked_up_by, j))
                         rr_bitset_set(drop->picked_up_by, i);
                 }
+#ifdef PVP
+                client->pvp_points = this->clients[j].pvp_points;
+#endif
                 client->squad_pos = this->clients[j].squad_pos;
                 client->squad = this->clients[j].squad;
                 client->in_squad = this->clients[j].in_squad;
@@ -1443,6 +1450,8 @@ static int api_lws_callback(struct lws *ws, enum lws_callback_reasons reason,
             }
             if (rr_binary_encoder_read_varuint(&decoder) == client->nonce)
             {
+                if (client->dev)
+                    break;
                 printf("<rr_server::client_kick::%s>\n", client->rivet_account.uuid);
                 client->pending_kick = 1;
             }
@@ -1504,11 +1513,53 @@ void *thread_func(void *arg)
 
 static void lws_log(int level, char const *log) { printf("%d %s", level, log); }
 
+#ifdef PVP
+struct rr_leaderboard_sort_entry
+{
+    uint8_t client_index;
+    uint64_t points;
+};
+#endif
+
 static void server_tick(struct rr_server *this)
 {
     if (!this->api_ws_ready)
         return;
     rr_simulation_tick(&this->simulation);
+
+#ifdef PVP
+    uint8_t lb_top_n = 0;
+    struct rr_leaderboard_sort_entry lb_sorted[RR_MAX_CLIENT_COUNT];
+    uint32_t lb_rank_by_client[RR_MAX_CLIENT_COUNT] = {0};
+    uint32_t lb_count = 0;
+    for (uint64_t i = 0; i < RR_MAX_CLIENT_COUNT; ++i)
+    {
+        if (!rr_bitset_get(this->clients_in_use, i))
+            continue;
+        struct rr_server_client *c = &this->clients[i];
+        if (c->player_info == NULL ||
+            c->player_info->flower_id == RR_NULL_ENTITY ||
+            is_dead_flower(&this->simulation, c->player_info->flower_id))
+            continue;
+        lb_sorted[lb_count].client_index = i;
+        lb_sorted[lb_count].points = c->pvp_points;
+        ++lb_count;
+    }
+    for (uint32_t a = 1; a < lb_count; ++a)
+    {
+        struct rr_leaderboard_sort_entry tmp = lb_sorted[a];
+        uint32_t b = a;
+        while (b > 0 && lb_sorted[b - 1].points < tmp.points)
+        {
+            lb_sorted[b] = lb_sorted[b - 1];
+            --b;
+        }
+        lb_sorted[b] = tmp;
+    }
+    for (uint32_t a = 0; a < lb_count; ++a)
+        lb_rank_by_client[lb_sorted[a].client_index] = a + 1;
+    lb_top_n = lb_count < 10 ? lb_count : 10;
+#endif
     for (uint64_t i = 0; i < RR_MAX_CLIENT_COUNT; ++i)
     {
         if (rr_bitset_get(this->clients_in_use, i))
@@ -1673,7 +1724,8 @@ static void server_tick(struct rr_server *this)
                 char joined_code[16];
                 if (client->dev || squad->expose_code ||
                     (client->in_squad && client->squad == s))
-                    sprintf(joined_code, "%s-%s", this->server_alias,
+                    sprintf(joined_code, "%s-%s",
+                            RR_BIOME_SERVERS[RR_GLOBAL_BIOME].squad_prefix,
                             squad->squad_code);
                 else
                     strcpy(joined_code, "(private)");
@@ -1681,6 +1733,32 @@ static void server_tick(struct rr_server *this)
             }
             rr_server_client_write_message(client, encoder.start,
                                            encoder.current - encoder.start);
+#ifdef PVP
+            struct proto_bug lb_encoder;
+            proto_bug_init(&lb_encoder, outgoing_message);
+            proto_bug_write_uint8(&lb_encoder, rr_clientbound_leaderboard_update,
+                                  "header");
+            proto_bug_write_uint8(&lb_encoder, lb_top_n, "leaderboard count");
+            for (uint8_t a = 0; a < lb_top_n; ++a)
+            {
+                struct rr_server_client *entry_client =
+                    &this->clients[lb_sorted[a].client_index];
+                proto_bug_write_string(
+                    &lb_encoder,
+                    this->squads[entry_client->squad]
+                        .members[entry_client->squad_pos]
+                        .nickname,
+                    16, "nickname");
+                proto_bug_write_varuint(&lb_encoder, lb_sorted[a].points,
+                                        "points");
+            }
+            proto_bug_write_varuint(&lb_encoder, lb_rank_by_client[i],
+                                    "own rank");
+            proto_bug_write_varuint(&lb_encoder, client->pvp_points,
+                                    "own points");
+            rr_server_client_write_message(
+                client, lb_encoder.start, lb_encoder.current - lb_encoder.start);
+#endif
         }
     }
     rr_simulation_for_each_entity(&this->simulation, &this->simulation,
@@ -1697,7 +1775,7 @@ void rr_server_run(struct rr_server *this)
                                       MESSAGE_BUFFER_SIZE, 0, NULL, 0},
                                      {0}};
 
-        info.port = 1234;
+        info.port = RR_BIOME_SERVERS[RR_GLOBAL_BIOME].port;
         info.user = this;
         info.pt_serv_buf_size = MESSAGE_BUFFER_SIZE;
 

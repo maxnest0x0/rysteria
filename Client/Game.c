@@ -403,7 +403,6 @@ void rr_game_init(struct rr_game *this)
     strcpy(this->rivet_account.token, "");
     strcpy(this->rivet_account.code, "");
     strcpy(this->rivet_account.uuid, "");
-    rr_discord_oauth2_init(this);
 
     // clang-format off
     rr_ui_container_add_element(
@@ -442,7 +441,8 @@ void rr_game_init(struct rr_game *this)
         rr_ui_set_background(
             rr_ui_pad(
                 rr_ui_set_justify(
-                    rr_ui_h_container_init(rr_ui_container_init(), 10, 10, 
+                    rr_ui_h_container_init(rr_ui_container_init(), 10, 10,
+                    rr_ui_leaderboard_init(this),
                     rr_ui_minimap_init(this),
                     NULL
                 )
@@ -489,19 +489,19 @@ void rr_game_init(struct rr_game *this)
                                 rr_ui_join_button_init(),
                                 NULL
                             ),
-                            /*
-                            rr_ui_h_container_init(rr_ui_container_init(), 0, 10,
-                                rr_ui_biome_button_init("Hell Creek", 0xffff0000, 0),
-                                rr_ui_biome_button_init("Ocean", 0xffcdb423, 1),
-                                NULL
+                            rr_ui_flex_container_init(
+                                rr_ui_h_container_init(rr_ui_container_init(), 0, 10,
+                                    rr_ui_biome_button_init("Hell Creek", 0xff990000, rr_biome_id_hell_creek),
+                                    rr_ui_biome_button_init("PvP", 0xff3a6ee0, rr_biome_id_pvp),
+                                    NULL
+                                ),
+                                rr_ui_h_container_init(rr_ui_container_init(), 0, 10,
+                                    rr_ui_create_squad_button_init(),
+                                    rr_ui_squad_button_init(),
+                                    NULL
+                                ),
+                                20
                             ),
-                            */
-                            rr_ui_set_justify(
-                                rr_ui_h_container_init(rr_ui_container_init(), 0, 10, 
-                                rr_ui_create_squad_button_init(),
-                                rr_ui_squad_button_init(),
-                                NULL
-                            ), 1, -1),
                             NULL
                         ),
                         rr_ui_set_background(
@@ -815,11 +815,15 @@ void rr_game_init(struct rr_game *this)
 
     rr_assets_init(this);
     rr_game_cache_load(this);
+    if (this->selected_biome >= rr_biome_id_garden ||
+        RR_BIOME_SERVERS[this->selected_biome].port == 0)
+        this->selected_biome = 0;
     rr_dom_set_text("_0x4346", this->cache.nickname);
     this->ticks_until_text_cache = 24;
     this->is_mobile = rr_dom_test_mobile();
     this->slots_unlocked =
         RR_SLOT_COUNT_FROM_LEVEL(level_from_xp(this->cache.experience));
+    rr_discord_oauth2_init(this);
 }
 
 void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
@@ -845,7 +849,6 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
             rr_particle_manager_clear(&this->default_particle_manager);
             rr_particle_manager_clear(&this->foreground_particle_manager);
         }
-        memset(&this->crafting_data, 0, sizeof this->crafting_data);
         this->simulation_ready = 0;
         this->socket.recieved_first_packet = 0;
         break;
@@ -1257,6 +1260,23 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
         case rr_clientbound_oauth2_data:
             rr_discord_oauth2_read_data(this, &encoder);
             break;
+        case rr_clientbound_leaderboard_update:
+        {
+            this->leaderboard_count =
+                proto_bug_read_uint8(&encoder, "leaderboard count");
+            for (uint8_t i = 0; i < this->leaderboard_count; ++i)
+            {
+                proto_bug_read_string(&encoder, this->leaderboard[i].nickname,
+                                      16, "nickname");
+                this->leaderboard[i].points =
+                    proto_bug_read_varuint(&encoder, "points");
+            }
+            this->leaderboard_own_rank =
+                proto_bug_read_varuint(&encoder, "own rank");
+            this->leaderboard_own_points =
+                proto_bug_read_varuint(&encoder, "own points");
+            break;
+        }
         default:
             RR_UNREACHABLE("how'd this happen");
         }
@@ -1386,11 +1406,23 @@ void player_info_finder(struct rr_game *this)
 {
     struct rr_simulation *simulation = this->simulation;
     uint8_t counter = 1;
+    uint8_t other_counter = 0;
     memset(&this->player_infos, 0, sizeof this->player_infos);
+    memset(&this->arena_player_infos, 0, sizeof this->arena_player_infos);
     this->player_infos[0] = this->player_info->parent_id;
     for (EntityIdx i = 0; i < simulation->player_info_count; ++i)
-        if (simulation->player_info_vector[i] != this->player_info->parent_id)
-            this->player_infos[counter++] = simulation->player_info_vector[i];
+    {
+        EntityIdx p_id = simulation->player_info_vector[i];
+        if (p_id == this->player_info->parent_id)
+            continue;
+        struct rr_component_player_info *p_info =
+            rr_simulation_get_player_info(simulation, p_id);
+        if (p_info->squad == this->player_info->squad &&
+            counter < RR_SQUAD_MEMBER_COUNT)
+            this->player_infos[counter++] = p_id;
+        else if (other_counter < RR_MAX_CLIENT_COUNT)
+            this->arena_player_infos[other_counter++] = p_id;
+    }
 }
 
 static void write_serverbound_packet_desktop(struct rr_game *this)
@@ -1658,7 +1690,8 @@ void rr_game_tick(struct rr_game *this, float delta)
                 rr_renderer_translate(this->renderer, newLeftX + GRID_SIZE / 2,
                                       currY + GRID_SIZE / 2);
                 rr_renderer_scale(this->renderer, (GRID_SIZE + 2) / 256);
-                if (this->selected_biome == 0)
+                if (this->selected_biome == rr_biome_id_hell_creek ||
+                    this->selected_biome == rr_biome_id_pvp)
                     rr_renderer_draw_tile_hell_creek(this->renderer,
                                                      tile_index);
                 else
@@ -1911,20 +1944,42 @@ void rr_game_tick(struct rr_game *this, float delta)
 
 void rr_game_connect_socket(struct rr_game *this)
 {
+    rr_websocket_disconnect(&this->socket, this);
     this->socket_ready = 0;
     this->simulation_ready = 0;
     this->socket_pending = 1;
+    this->is_dev = 0;
+    memset(&this->crafting_data, 0, sizeof this->crafting_data);
+    memset(&this->other_squads, 0, sizeof this->other_squads);
 
+    struct rr_biome_server const *server = &RR_BIOME_SERVERS[this->selected_biome];
 #ifdef RIVET_BUILD
     rr_rivet_lobbies_find(this, NULL);
 #else
     rr_websocket_init(&this->socket);
     this->socket.user_data = this;
     char url[128];
-    rr_dom_get_socket_url(url);
+    if (server->ws_path != NULL)
+        rr_dom_get_socket_url(server->port, server->ws_path, url);
+    else
+        return;
     rr_websocket_connect_to(&this->socket, url);
     // rr_websocket_connect_to(&this->socket, "45.79.197.197", 1234, 0);
 #endif
+}
+
+void rr_game_select_biome(struct rr_game *this, uint8_t biome)
+{
+    if (biome >= rr_biome_id_garden || RR_BIOME_SERVERS[biome].port == 0)
+        return;
+    if (this->selected_biome == biome)
+        return;
+    this->selected_biome = biome;
+    rr_game_connect_socket(this);
+    this->socket_ready = 0;
+    this->simulation_ready = 0;
+    this->socket_pending = 0;
+    this->socket_error = 0;
 }
 
 struct on_find_captures

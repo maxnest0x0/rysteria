@@ -64,13 +64,14 @@ void rr_server_client_create_flower(struct rr_server_client *this)
     struct rr_component_arena *arena =
         rr_simulation_get_arena(simulation, physical->arena);
     struct rr_maze_declaration *decl = &RR_MAZES[RR_GLOBAL_BIOME];
+    uint8_t checkpoint = this->checkpoint[RR_GLOBAL_BIOME];
     rr_component_physical_set_x(
         physical,
-        2 * decl->grid_size * (decl->checkpoints[this->checkpoint].spawn_x +
+        2 * decl->grid_size * (decl->checkpoints[checkpoint].spawn_x +
                                rr_frand()));
     rr_component_physical_set_y(
         physical,
-        2 * decl->grid_size * (decl->checkpoints[this->checkpoint].spawn_y +
+        2 * decl->grid_size * (decl->checkpoints[checkpoint].spawn_y +
                                rr_frand()));
     struct rr_binary_encoder encoder;
     rr_binary_encoder_init(&encoder, outgoing_message);
@@ -266,7 +267,7 @@ int rr_server_client_read_from_api(struct rr_server_client *this,
     rr_binary_encoder_read_nt_string(encoder, this->rivet_account.id);
     if (this->dev)
     {
-        this->checkpoint = 0;
+        memset(this->checkpoint, 0, sizeof this->checkpoint);
         this->experience = 0;
         for (uint32_t lvl = 2; lvl <= 140; ++lvl)
             this->experience += xp_to_reach_level(lvl);
@@ -279,11 +280,12 @@ int rr_server_client_read_from_api(struct rr_server_client *this,
         return 1;
     }
     this->experience = rr_binary_encoder_read_float64(encoder);
-    this->checkpoint = rr_binary_encoder_read_uint8(encoder);
-    if (this->checkpoint >=
-        rr_simulation_get_arena(
-            &this->server->simulation, 1)->maze->checkpoint_count)
-        this->checkpoint = 0;
+    for (uint8_t biome = 0; biome < 2; ++biome)
+    {
+        this->checkpoint[biome] = rr_binary_encoder_read_uint8(encoder);
+        if (this->checkpoint[biome] >= RR_MAZES[biome].checkpoint_count)
+            this->checkpoint[biome] = 0;
+    }
     uint8_t id = rr_binary_encoder_read_uint8(encoder);
     while (id)
     {
@@ -323,7 +325,8 @@ void rr_server_client_write_to_api(struct rr_server_client *this)
     rr_binary_encoder_write_uint8(&encoder, 2);
     rr_binary_encoder_write_nt_string(&encoder, this->rivet_account.uuid);
     rr_binary_encoder_write_float64(&encoder, this->experience);
-    rr_binary_encoder_write_uint8(&encoder, this->checkpoint);
+    for (uint8_t biome = 0; biome < 2; ++biome)
+        rr_binary_encoder_write_uint8(&encoder, this->checkpoint[biome]);
     for (uint8_t id = 1; id < rr_petal_id_max; ++id)
         for (uint8_t rarity = 0; rarity < rr_rarity_id_max; ++rarity)
         {

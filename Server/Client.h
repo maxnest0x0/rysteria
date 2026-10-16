@@ -68,6 +68,9 @@ struct rr_server_client
     struct rr_component_player_info *player_info;
     struct rr_server_client_dev_cheats dev_cheats;
     double experience;
+#ifdef PVP
+    uint64_t pvp_points;
+#endif
     float player_accel_x;
     float player_accel_y;
     char ip_address[100];
@@ -84,7 +87,7 @@ struct rr_server_client
     char blocked_clients[RR_MAX_CLIENT_COUNT][37];
     uint8_t squad_pos;
     uint8_t squad;
-    uint8_t checkpoint;
+    uint8_t checkpoint[2];
     uint8_t received_first_packet : 1;
     uint8_t verified : 1;
     uint8_t dev : 1;

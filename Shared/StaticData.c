@@ -185,6 +185,7 @@ double RR_HELL_CREEK_MOB_ID_RARITY_COEFFICIENTS[rr_mob_id_max] = {
     75,   //quetz
     25,   //edmo
 };
+
 double RR_GARDEN_MOB_ID_RARITY_COEFFICIENTS[rr_mob_id_max] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 10};
 
 struct rr_petal_rarity_scale RR_PETAL_RARITY_SCALE[rr_rarity_id_max] = {
@@ -218,10 +219,15 @@ char const *RR_RARITY_NAMES[rr_rarity_id_max] = {
     "Common",    "Unusual", "Rare",   "Epic",
     "Legendary", "Mythic",  "Exotic", "Ancient"};
 
+#ifdef PVP
+uint64_t RR_PVP_POINTS_PER_RARITY[rr_rarity_id_max] = {
+    20, 100, 1000, 10000, 150000, 2250000, 45000000, 900000000};
+#endif
+
 double RR_MOB_WAVE_RARITY_COEFFICIENTS[rr_rarity_id_max + 1] = {
     0, 1, 6, 10, 15, 25, 160, 1200, 250};
 
-double RR_DROP_RARITY_COEFFICIENTS[rr_rarity_id_exotic + 2] = {
+double RR_DROP_RARITY_COEFFICIENTS[rr_rarity_id_max] = {
     0, 1, 8, 15, 40, 150, 500, 2500};
 double RR_MOB_LOOT_RARITY_COEFFICIENTS[rr_rarity_id_max] = {2.5, 4,  6,   15,
                                                             35,  50, 125, 150};
@@ -451,6 +457,7 @@ void rr_static_data_init()
     init_game_coefficients();
     init(HELL_CREEK);
     init(BURROW);
+    init(PVP);
 #ifdef RR_SERVER
     print_chances(1);  // c
     print_chances(4);  // C
@@ -555,6 +562,50 @@ RR_DEFINE_MAZE(HELL_CREEK, 80) = {
 {_,L,L,L,L,L,L,L,L,_,m,m,m,_,_,_,M,_,_,M,M,M,M,M,_,_,M,_,_,_,x,x,x,x,X,X,X,X,X,_}, // 38
 {_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_}, // 39
 };
+RR_DEFINE_MAZE(PVP, 80) = {
+//                     11  13  15  17  19  21  23  25  27  29  31  33  35  37  39
+// 1 2 3 4 5 6 7 8 9 10  12  14  16  18  20  22  24  26  28  30  32  34  36  38
+{_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_}, // 0
+{_,_,_,_,_,R,R,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_}, // 1
+{_,_,_,R,R,R,R,R,_,_,R,R,R,_,_,_,_,_,r,r,r,_,_,_,_,_,r,_,_,_,_,U,U,U,U,U,U,_,_,_}, // 2
+{_,_,R,R,R,R,R,R,_,R,R,R,R,R,R,_,_,_,r,r,r,r,r,_,_,r,r,r,r,U,U,U,U,U,U,U,U,U,U,_}, // 3
+{_,_,_,R,R,R,R,R,_,_,R,R,R,R,R,R,_,r,r,r,r,r,_,_,r,r,r,_,_,U,U,U,_,U,U,U,U,U,U,_}, // 4
+{_,R,_,R,R,R,R,R,R,_,_,R,R,R,R,R,_,r,r,r,r,_,_,r,r,r,_,_,_,_,U,U,_,_,_,_,U,U,U,_}, // 5
+{_,R,_,_,R,R,R,R,R,R,_,R,R,R,R,R,_,_,r,r,_,_,r,r,r,_,_,r,r,_,_,U,U,U,U,_,_,_,_,_}, // 6
+{_,R,R,_,_,_,R,_,_,_,_,_,_,R,r,_,_,_,r,r,r,r,r,r,_,_,r,r,r,r,_,U,U,U,U,U,U,_,_,_}, // 7
+{_,R,R,R,R,R,R,R,R,R,R,R,R,r,r,r,r,r,r,r,r,r,r,_,_,r,r,r,r,r,_,_,U,U,U,U,U,U,_,_}, // 8
+{_,R,R,R,R,R,R,R,_,_,_,_,_,_,_,_,_,_,_,_,_,r,r,r,r,r,r,r,r,r,r,_,U,U,U,U,U,U,_,_}, // 9
+{_,R,R,R,R,R,R,R,R,R,R,R,R,R,_,_,_,u,u,u,_,_,_,_,_,_,_,_,_,r,r,_,U,U,U,U,U,U,_,_}, // 10
+{_,R,R,R,R,R,R,R,R,R,R,R,R,R,R,_,_,u,u,u,u,u,U,U,U,U,U,U,_,_,_,_,U,U,U,U,U,U,_,_}, // 11
+{_,_,R,R,R,R,R,R,R,R,R,R,R,R,R,R,_,u,u,u,u,_,_,_,U,U,U,U,U,U,U,U,U,U,U,U,U,U,_,_}, // 12
+{_,_,R,R,R,R,R,R,R,R,R,R,R,R,R,R,_,u,u,_,_,_,u,_,_,_,U,U,_,_,_,_,U,U,U,U,U,U,_,_}, // 13
+{_,_,_,R,R,R,R,R,R,R,R,R,R,R,R,_,_,u,_,_,u,u,u,u,u,_,U,_,_,c,c,_,_,U,U,U,U,_,_,_}, // 14
+{_,R,_,_,R,R,R,R,R,R,R,R,R,_,_,_,_,u,u,u,u,u,u,u,u,_,U,_,c,c,c,c,_,_,U,U,U,_,L,_}, // 15
+{_,R,R,_,_,R,R,R,R,R,R,_,_,_,R,R,_,u,_,u,u,u,u,u,u,_,_,_,c,c,c,c,c,_,_,_,_,_,L,_}, // 16
+{_,R,R,R,_,_,R,R,R,R,_,_,R,R,R,R,_,u,_,u,u,u,u,u,_,_,_,C,C,c,c,c,_,_,L,L,L,L,L,_}, // 17
+{_,R,R,R,R,_,_,R,R,_,_,R,R,R,R,R,_,u,_,u,u,u,_,_,_,C,C,C,_,_,_,_,_,L,L,L,L,L,L,_}, // 18
+{_,R,R,R,R,R,_,R,R,_,R,R,R,R,R,R,_,u,_,u,_,_,_,C,C,C,C,_,_,L,L,L,L,L,L,L,L,L,L,_}, // 19
+{_,R,R,R,R,R,R,R,R,R,R,R,R,R,R,R,_,u,_,_,_,C,C,C,C,C,_,_,L,L,_,_,L,L,L,L,L,L,L,_}, // 20
+{_,e,R,R,R,R,R,R,R,R,R,R,R,R,R,R,_,u,C,C,C,C,C,C,_,_,_,L,L,L,L,_,L,L,L,L,L,L,L,_}, // 21
+{_,e,e,R,R,R,R,R,R,R,R,R,R,e,e,e,_,u,_,_,_,_,_,_,_,m,_,L,L,L,L,_,_,L,L,L,L,L,L,_}, // 22
+{_,e,e,e,R,R,R,R,R,R,R,R,e,e,e,e,_,u,_,_,_,_,_,A,_,m,L,L,L,L,L,L,_,L,L,L,L,L,L,_}, // 23
+{_,e,e,e,e,R,R,R,R,R,R,e,e,e,e,e,_,u,_,_,u,u,_,_,_,m,_,L,L,L,L,L,_,L,L,L,L,L,L,_}, // 24
+{_,_,e,e,e,e,R,R,R,R,e,e,e,e,e,e,_,u,_,u,u,u,u,u,_,_,_,L,L,L,L,L,_,_,_,l,_,_,L,_}, // 25
+{_,_,_,e,e,e,e,e,e,e,e,e,e,e,e,e,_,u,u,u,u,u,u,u,u,u,_,L,L,L,_,_,_,l,l,l,l,_,L,_}, // 26
+{_,_,_,_,e,e,e,e,e,e,e,e,e,e,e,e,_,u,_,_,_,u,u,u,u,u,_,_,_,_,_,l,l,l,l,l,l,_,_,_}, // 27
+{_,_,_,_,_,e,e,e,e,e,e,e,e,e,e,_,_,u,u,u,_,_,u,u,u,_,_,E,E,_,_,l,l,l,l,l,l,l,l,_}, // 28
+{_,_,_,_,_,_,e,e,e,e,e,e,e,_,_,_,u,u,u,u,u,_,_,_,_,_,E,E,E,E,_,_,_,l,l,l,l,l,l,_}, // 29
+{_,_,_,e,e,_,_,_,_,e,e,e,_,_,_,u,u,u,u,u,u,u,_,E,E,E,E,E,E,E,E,E,_,_,l,l,l,l,l,_}, // 30
+{_,_,e,e,e,e,e,e,_,_,e,e,_,e,_,u,u,u,u,u,u,_,_,E,E,E,E,E,E,E,E,E,_,_,l,_,_,_,l,_}, // 31
+{_,e,e,e,e,e,e,e,e,e,e,e,e,e,_,_,u,u,u,u,u,_,E,E,E,E,E,E,E,E,E,_,_,l,l,l,l,_,_,_}, // 32
+{_,e,e,e,e,e,e,e,e,e,_,e,e,e,e,_,_,u,u,_,_,_,E,E,E,E,E,E,E,E,_,_,l,l,l,l,l,l,_,_}, // 33
+{_,e,e,e,e,e,e,e,e,_,_,e,e,e,e,e,_,_,_,_,E,_,_,_,E,E,E,E,E,E,_,l,l,l,l,l,l,l,_,_}, // 34
+{_,_,e,e,e,e,e,e,e,_,e,e,e,e,e,e,_,_,E,E,E,E,E,_,_,_,E,E,_,_,_,E,l,l,l,l,l,l,l,_}, // 35
+{_,_,_,e,e,e,e,e,_,_,e,e,e,e,e,e,E,_,_,E,E,E,E,E,E,_,E,E,_,E,E,E,E,l,l,l,l,l,l,_}, // 36
+{_,_,_,_,e,e,_,_,_,e,e,e,e,e,e,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,l,l,l,l,l,_}, // 37
+{_,_,_,_,_,_,_,e,e,e,e,e,e,e,e,_,_,_,_,E,E,E,E,E,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_}, // 38
+{_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_}, // 39
+};
 // clang-format on
 RR_DEFINE_MAZE(BURROW, 4) = {{1, 1}, {0, 1}};
 
@@ -574,11 +625,27 @@ struct rr_maze_declaration RR_MAZES[rr_biome_id_max] = {
         {1,  37, 2, 2, 1,  38, 100}, // 7
         {4,  24, 2, 2, 5,  25, 100}, // 8
     }},
+    {MAZE_ENTRY(PVP, 512), 6, {
+        {28, 15, 3, 3, 29, 16,  1},  // 0
+        {17, 10, 3, 3, 18, 11, 20},  // 1
+        {25,  2, 3, 3, 26,  3, 40},  // 2
+        { 5,  8, 3, 3,  6,  9, 60},  // 3
+        { 9, 30, 3, 3, 10, 31, 80},  // 4
+        {31, 35, 3, 3, 32, 36, 100}, // 5
+    }},
     {MAZE_ENTRY(HELL_CREEK, 1024), 0},
     {MAZE_ENTRY(BURROW, 512), 0},
 };
 
+struct rr_biome_server RR_BIOME_SERVERS[rr_biome_id_max] = {
+    {"default",   1234,           "hc"}, // hell creek
+    {"pvp",       1235,          "pvp"}, // pvp
+    {NULL,           0,           NULL}, // garden, doesn't have a server
+    {NULL,           0,           NULL}, // beehive, lives inside other arenas
+};
+
 uint8_t RR_GLOBAL_BIOME = rr_biome_id_hell_creek;
+
 #undef _
 #undef c
 #undef C

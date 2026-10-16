@@ -59,7 +59,8 @@ void render_background(struct rr_component_player_info *player_info,
             rr_renderer_translate(renderer, newLeftX + GRID_SIZE / 2,
                                   currY + GRID_SIZE / 2);
             rr_renderer_scale(renderer, (GRID_SIZE + 2) / 256);
-            if (this->selected_biome == 0)
+            if (this->selected_biome == rr_biome_id_hell_creek ||
+                this->selected_biome == rr_biome_id_pvp)
                 rr_renderer_draw_tile_hell_creek(renderer, tile_index);
             else
                 rr_renderer_draw_tile_garden(renderer, tile_index);

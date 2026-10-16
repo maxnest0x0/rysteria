@@ -4,7 +4,8 @@
     },
     "postCreateCommand": {
         "Client": "cmake -S Client -B Client/build -DWASM_BUILD=1",
-        "Server": "cmake -S Server -B Server/build",
+        "Default Server": "cmake -S Server -B Server/build-default",
+        "PvP Server": "cmake -S Server -B Server/build-pvp -DPVP=1",
         "Master Server": "npm install --prefix MasterServer"
     },
     "portsAttributes": {
@@ -17,7 +18,11 @@
             "onAutoForward": "silent"
         },
         "1234": {
-            "label": "Game Server",
+            "label": "Default Server",
+            "onAutoForward": "openBrowserOnce"
+        },
+        "1235": {
+            "label": "PvP Server",
             "onAutoForward": "openBrowserOnce"
         }
     },

@@ -109,6 +109,12 @@ struct rr_game_cache
     char nickname[128];
 };
 
+struct rr_leaderboard_entry
+{
+    char nickname[16];
+    uint64_t points;
+};
+
 struct rr_game_squad
 {
     struct rr_squad_member squad_members[RR_SQUAD_MEMBER_COUNT];
@@ -195,9 +201,15 @@ struct rr_game
     uint32_t failed_crafts[rr_petal_id_max][rr_rarity_id_max];
     uint8_t loadout_counts[rr_petal_id_max][rr_rarity_id_max];
     EntityIdx player_infos[RR_SQUAD_MEMBER_COUNT];
+    EntityIdx arena_player_infos[RR_MAX_CLIENT_COUNT];
     uint64_t dev_flag;
     float lerp_delta;
     uint16_t afk_ticks;
+
+    struct rr_leaderboard_entry leaderboard[10];
+    uint8_t leaderboard_count;
+    uint32_t leaderboard_own_rank;
+    uint64_t leaderboard_own_points;
 
     uint8_t socket_ready : 1;
     uint8_t socket_pending : 1;
@@ -228,6 +240,7 @@ struct rr_game
 void rr_game_init(struct rr_game *);
 void rr_game_tick(struct rr_game *, float);
 void rr_game_connect_socket(struct rr_game *);
+void rr_game_select_biome(struct rr_game *, uint8_t);
 void rr_simulation_read_binary(struct rr_game *, struct proto_bug *);
 void rr_write_dev_cheat_packets(struct rr_game *, uint8_t);
 

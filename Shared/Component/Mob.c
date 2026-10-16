@@ -84,6 +84,17 @@ void rr_component_mob_free(struct rr_component_mob *this,
     --arena->mob_count;
     if (this->no_drop)
         return;
+#ifdef PVP
+    if (arena->pvp && rr_simulation_entity_alive(simulation, health->last_attacker) &&
+        rr_simulation_has_player_info(simulation, health->last_attacker))
+    {
+        struct rr_component_player_info *killer_info =
+            rr_simulation_get_player_info(simulation, health->last_attacker);
+        if (killer_info->flower_id != RR_NULL_ENTITY &&
+            !is_dead_flower(simulation, killer_info->flower_id))
+            killer_info->client->pvp_points += pow(3, this->rarity);
+    }
+#endif
     for (uint32_t squad = 0; squad < RR_SQUAD_COUNT; ++squad)
     {
         if (rr_simulation_has_arena(simulation, this->parent_id) &&

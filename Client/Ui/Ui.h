@@ -258,6 +258,8 @@ extern struct rr_ui_element *rr_ui_loot_container_init();
 
 extern struct rr_ui_element *rr_ui_minimap_init(struct rr_game *);
 
+extern struct rr_ui_element *rr_ui_leaderboard_init(struct rr_game *);
+
 extern struct rr_ui_element *rr_ui_chat_bar_init(struct rr_game *);
 extern struct rr_ui_element *rr_ui_message_box_init(struct rr_game *);
 

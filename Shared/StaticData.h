@@ -64,7 +64,8 @@ enum rr_clientbound_packet_header
     rr_clientbound_squad_leave,
     rr_clientbound_account_result,
     rr_clientbound_craft_result,
-    rr_clientbound_oauth2_data
+    rr_clientbound_oauth2_data,
+    rr_clientbound_leaderboard_update
 };
 
 enum rr_dev_cheat_type
@@ -86,6 +87,7 @@ enum rr_dev_cheat_type
 enum rr_biome_id
 {
     rr_biome_id_hell_creek,
+    rr_biome_id_pvp,
     rr_biome_id_garden,
     rr_biome_id_beehive,
     rr_biome_id_max
@@ -232,7 +234,7 @@ extern char const *RR_MOB_NAMES[rr_mob_id_max];
 extern struct rr_mob_rarity_scale RR_MOB_RARITY_SCALING[rr_rarity_id_max];
 extern struct rr_petal_rarity_scale RR_PETAL_RARITY_SCALE[rr_rarity_id_max];
 extern double RR_MOB_LOOT_RARITY_COEFFICIENTS[rr_rarity_id_max];
-extern double RR_DROP_RARITY_COEFFICIENTS[rr_rarity_id_exotic + 2];
+extern double RR_DROP_RARITY_COEFFICIENTS[rr_rarity_id_max];
 extern double RR_MOB_WAVE_RARITY_COEFFICIENTS[rr_rarity_id_max + 1];
 
 extern uint32_t RR_MOB_DIFFICULTY_COEFFICIENTS[rr_mob_id_max];
@@ -241,6 +243,10 @@ extern double RR_GARDEN_MOB_ID_RARITY_COEFFICIENTS[rr_mob_id_max];
 
 extern uint32_t RR_RARITY_COLORS[rr_rarity_id_max];
 extern char const *RR_RARITY_NAMES[rr_rarity_id_max];
+
+#ifdef PVP
+extern uint64_t RR_PVP_POINTS_PER_RARITY[rr_rarity_id_max];
+#endif
 
 struct rr_maze_grid
 {
@@ -289,8 +295,21 @@ struct rr_maze_declaration
 // RR_DECLARE_MAZE(HELL_CREEK, 54)
 RR_DECLARE_MAZE(HELL_CREEK, 80)
 RR_DECLARE_MAZE(BURROW, 4)
+RR_DECLARE_MAZE(PVP, 80)
 
 extern struct rr_maze_declaration RR_MAZES[rr_biome_id_max];
+
+// where each biome's game server lives. one server process runs one biome, the
+// main menu's biome buttons connect the client to the matching entry. this is
+// the one place to change when a server moves
+struct rr_biome_server
+{
+    char const *ws_path;
+    uint16_t port;
+    char const *squad_prefix;
+};
+
+extern struct rr_biome_server RR_BIOME_SERVERS[rr_biome_id_max];
 
 extern uint8_t RR_GLOBAL_BIOME;
 

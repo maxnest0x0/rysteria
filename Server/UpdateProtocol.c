@@ -191,6 +191,10 @@ void rr_simulation_write_binary(struct rr_simulation *this,
 
     rr_simulation_find_entities_in_view(this, player_info,
                                         &new_entities_in_view[0]);
+#ifdef PVP
+    struct rr_component_arena *viewer_arena =
+        rr_simulation_get_arena(this, player_info->arena);
+#endif
     for (uint64_t i = 0; i < this->player_info_count; i++)
     {
         EntityIdx p_id = this->player_info_vector[i];
@@ -198,9 +202,18 @@ void rr_simulation_write_binary(struct rr_simulation *this,
             continue;
         struct rr_component_player_info *p_info =
             rr_simulation_get_player_info(this, p_id);
-        if (p_info->squad != player_info->squad ||
-            p_info->client->dev_cheats.invisible)
+        if (p_info->client->dev_cheats.invisible)
             continue;
+        uint8_t same_squad = p_info->squad == player_info->squad;
+#ifdef PVP
+        uint8_t same_pvp_arena =
+            viewer_arena->pvp && p_info->arena == player_info->arena;
+        if (!same_squad && !same_pvp_arena)
+            continue;
+#else
+        if (!same_squad)
+            continue;
+#endif
         rr_bitset_set(new_entities_in_view, p_id);
         if (entity_alive(this, (EntityIdx)p_info->flower_id) &&
             p_info->arena == player_info->arena)
