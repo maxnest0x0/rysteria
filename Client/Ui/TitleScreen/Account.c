@@ -23,6 +23,7 @@
 #include <Client/DOM.h>
 #include <Client/Game.h>
 #include <Client/InputData.h>
+#include <Client/Platform.h>
 #include <Client/Renderer/Renderer.h>
 #include <Client/Ui/Engine.h>
 
@@ -204,7 +205,7 @@ static void render_link(struct rr_ui_element *this, struct rr_game *game)
 static void link_rivet_account(struct rr_ui_element *this, struct rr_game *game)
 {
     if (game->input_data->mouse_buttons_up_this_tick & 1)
-        rr_discord_oauth2_link_account();
+        rr_discord_oauth2_link_account(game);
     rr_ui_render_tooltip_right(this, game->link_account_tooltip, game);
     game->cursor = rr_game_cursor_pointer;
 }
@@ -222,6 +223,35 @@ static struct rr_ui_element *link_account_button_init(struct rr_game *game)
 static uint8_t linked_account(struct rr_ui_element *this, struct rr_game *game)
 {
     return !game->account_linked;
+}
+
+// 0 off crazygames (nothing shown), 1 linked, 2 not linked
+static uint8_t crazygames_section_choose(struct rr_ui_element *this,
+                                         struct rr_game *game)
+{
+    if (!rr_platform_on_crazygames())
+        return 0;
+    return game->cg_linked ? 1 : 2;
+}
+
+static void link_crazygames_account(struct rr_ui_element *this,
+                                    struct rr_game *game)
+{
+    struct rr_ui_labeled_button_metadata *data = this->data;
+    data->clickable = 1;
+    if (game->input_data->mouse_buttons_up_this_tick & 1)
+        rr_crazygames_link(game);
+    game->cursor = rr_game_cursor_pointer;
+}
+
+static struct rr_ui_element *link_crazygames_button_init()
+{
+    struct rr_ui_element *this =
+        rr_ui_labeled_button_init("Link CrazyGames", 28, NULL);
+    struct rr_ui_labeled_button_metadata *data = this->data;
+    data->clickable = 1;
+    this->on_event = link_crazygames_account;
+    return this;
 }
 
 static void copy_uuid(struct rr_ui_element *this, struct rr_game *game)
@@ -265,8 +295,26 @@ struct rr_ui_element *rr_ui_account_container_init(struct rr_game *game)
                                 ),
                                 NULL
                             ),
-                            rr_ui_text_init("Logged in", 20, 0xffffffff),
+                            rr_ui_text_init("Discord linked", 20, 0xffffffff),
                             linked_account
+                        ),
+                        rr_ui_multi_choose_element_init(
+                            crazygames_section_choose,
+                            rr_ui_static_space_init(0),
+                            rr_ui_text_init("CrazyGames linked", 20, 0xffffffff),
+                            rr_ui_v_container_init(rr_ui_container_init(), 0, 0,
+                                rr_ui_flex_container_init(
+                                    rr_ui_v_container_init(rr_ui_container_init(), 0, 5,
+                                        rr_ui_text_init("Link your CrazyGames account", 15, 0xffffffff),
+                                        rr_ui_text_init("to keep your progress on any device", 15, 0xffffffff),
+                                        NULL
+                                    ),
+                                    link_crazygames_button_init(),
+                                    10
+                                ),
+                                NULL
+                            ),
+                            NULL
                         ),
                         NULL
                     ), -1, -1

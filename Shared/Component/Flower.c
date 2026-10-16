@@ -82,6 +82,7 @@ void rr_component_flower_set_dead(struct rr_component_flower *this,
                                   uint8_t dead)
 {
     this->protocol_state |= (this->dead != dead) * state_flags_dead;
+    uint8_t newly_dead = dead && !this->dead;
     this->dead = dead;
     struct rr_component_relations *relations =
         rr_simulation_get_relations(simulation, this->parent_id);
@@ -109,6 +110,9 @@ void rr_component_flower_set_dead(struct rr_component_flower *this,
 #ifdef PVP
         if (arena->pvp)
         {
+            // the score for the leaderboard is what they had before losing half
+            if (newly_dead)
+                rr_server_client_report_pvp_score(player_info->client);
             if (rr_simulation_entity_alive(simulation, health->last_attacker) &&
                 rr_simulation_has_player_info(simulation, health->last_attacker))
             {

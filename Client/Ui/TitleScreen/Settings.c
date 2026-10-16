@@ -22,6 +22,7 @@
 
 #include <Client/Game.h>
 #include <Client/InputData.h>
+#include <Client/Platform.h>
 #include <Client/Renderer/Renderer.h>
 #include <Client/Ui/Engine.h>
 #include <Client/Assets/RenderFunctions.h>
@@ -137,6 +138,23 @@ static struct rr_ui_element *region_join_button_init()
     this->on_render = region_join_button_on_render;
     this->on_event = region_join_button_on_event;
     return this;
+}
+
+// Crazygames' reviewers need to see the interface, so the setting does not
+// exist there. The mode is fixed before the game starts, so the row is simply
+// not built.
+static struct rr_ui_element *hide_ui_row_init(struct rr_game *game)
+{
+    if (rr_platform_on_crazygames())
+        return rr_ui_static_space_init(0);
+    return rr_ui_flex_container_init(
+        rr_ui_h_container_init(
+            rr_ui_container_init(), 0, 10,
+            rr_ui_toggle_box_init(&game->cache.hide_ui),
+            rr_ui_text_init("Hide UI", 15, 0xffffffff),
+            NULL),
+            rr_ui_text_init("[I]", 15, 0xffffffff),
+        10);
 }
 
 static uint8_t settings_container_should_show(struct rr_ui_element *this,
@@ -390,6 +408,7 @@ struct rr_ui_element *rr_ui_settings_container_init(struct rr_game *game)
                                                 0xffffffff),
                                 NULL),
                             -1, -1),
+                        rr_ui_set_justify(rr_ui_legal_button_init(), -1, -1),
                         NULL),
                     -1, -1),
                 50),
