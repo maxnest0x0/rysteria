@@ -77,7 +77,7 @@ static struct rr_ui_element *leaderboard_row_init(uint8_t rank)
 static uint8_t leaderboard_own_row_should_show(struct rr_ui_element *this,
                                                struct rr_game *game)
 {
-    return game->leaderboard_own_rank > 7;
+    return game->leaderboard_own_rank > game->leaderboard_count;
 }
 
 static void leaderboard_own_row_on_render(struct rr_ui_element *this,
@@ -99,6 +99,13 @@ static struct rr_ui_element *leaderboard_own_row_init()
     return this;
 }
 
+static uint8_t leaderboard_should_show(struct rr_ui_element *this,
+                                       struct rr_game *game)
+{
+    return game->selected_biome == rr_biome_id_pvp &&
+           game->leaderboard_count > 0;
+}
+
 struct rr_ui_element *rr_ui_leaderboard_init(struct rr_game *game)
 {
     struct rr_ui_element *rows = rr_ui_v_container_init(
@@ -106,8 +113,13 @@ struct rr_ui_element *rr_ui_leaderboard_init(struct rr_game *game)
         leaderboard_row_init(1), leaderboard_row_init(2),
         leaderboard_row_init(3), leaderboard_row_init(4),
         leaderboard_row_init(5), leaderboard_row_init(6),
-        leaderboard_own_row_init(), NULL);
-    return rr_ui_set_justify(rr_ui_v_container_init(
-        rr_ui_container_init(), 10, 10,
-        rr_ui_text_init("Leaderboard", 20, 0xffffffff), rows, NULL), 1, -1);
+        leaderboard_row_init(7), leaderboard_row_init(8),
+        leaderboard_row_init(9), leaderboard_own_row_init(), NULL);
+    return rr_ui_link_toggle(
+        rr_ui_set_justify(
+            rr_ui_v_container_init(
+                rr_ui_container_init(), 10, 10,
+                rr_ui_text_init("Leaderboard", 20, 0xffffffff), rows, NULL),
+            1, -1),
+        leaderboard_should_show);
 }

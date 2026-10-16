@@ -289,14 +289,6 @@ static uint8_t ui_not_hidden_and_simulation_ready(struct rr_ui_element *this,
     return !game->cache.hide_ui && game->simulation_ready;
 }
 
-static uint8_t leaderboard_should_show(struct rr_ui_element *this,
-                                       struct rr_game *game)
-{
-    return ui_not_hidden_and_simulation_ready(this, game) &&
-           game->selected_biome == rr_biome_id_pvp &&
-           game->leaderboard_count > 0;
-}
-
 static uint8_t ui_not_hidden_and_player_dead(struct rr_ui_element *this,
                                              struct rr_game *game)
 {
@@ -450,8 +442,7 @@ void rr_game_init(struct rr_game *this)
             rr_ui_pad(
                 rr_ui_set_justify(
                     rr_ui_h_container_init(rr_ui_container_init(), 10, 10,
-                    rr_ui_link_toggle(rr_ui_leaderboard_init(this),
-                                      leaderboard_should_show),
+                    rr_ui_leaderboard_init(this),
                     rr_ui_minimap_init(this),
                     NULL
                 )
@@ -500,7 +491,7 @@ void rr_game_init(struct rr_game *this)
                             ),
                             rr_ui_flex_container_init(
                                 rr_ui_h_container_init(rr_ui_container_init(), 0, 10,
-                                    rr_ui_biome_button_init("Hell Creek", 0xffff0000, rr_biome_id_hell_creek),
+                                    rr_ui_biome_button_init("Hell Creek", 0xff990000, rr_biome_id_hell_creek),
                                     rr_ui_biome_button_init("PvP", 0xff3a6ee0, rr_biome_id_pvp),
                                     NULL
                                 ),
@@ -858,7 +849,6 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
             rr_particle_manager_clear(&this->default_particle_manager);
             rr_particle_manager_clear(&this->foreground_particle_manager);
         }
-        memset(&this->crafting_data, 0, sizeof this->crafting_data);
         this->simulation_ready = 0;
         this->socket.recieved_first_packet = 0;
         break;
@@ -1427,11 +1417,9 @@ void player_info_finder(struct rr_game *this)
             continue;
         struct rr_component_player_info *p_info =
             rr_simulation_get_player_info(simulation, p_id);
-        if (p_info->squad == this->player_info->squad)
-        {
-            if (counter < RR_SQUAD_MEMBER_COUNT)
-                this->player_infos[counter++] = p_id;
-        }
+        if (p_info->squad == this->player_info->squad &&
+            counter < RR_SQUAD_MEMBER_COUNT)
+            this->player_infos[counter++] = p_id;
         else if (other_counter < RR_MAX_CLIENT_COUNT)
             this->arena_player_infos[other_counter++] = p_id;
     }
@@ -1960,6 +1948,9 @@ void rr_game_connect_socket(struct rr_game *this)
     this->socket_ready = 0;
     this->simulation_ready = 0;
     this->socket_pending = 1;
+    this->is_dev = 0;
+    memset(&this->crafting_data, 0, sizeof this->crafting_data);
+    memset(&this->other_squads, 0, sizeof this->other_squads);
 
     struct rr_biome_server const *server = &RR_BIOME_SERVERS[this->selected_biome];
 #ifdef RIVET_BUILD

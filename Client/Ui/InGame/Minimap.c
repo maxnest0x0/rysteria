@@ -24,6 +24,7 @@
 #include <Client/Game.h>
 #include <Client/Renderer/Renderer.h>
 #include <Client/Simulation.h>
+#include <Client/Ui/Engine.h>
 #include <Shared/StaticData.h>
 
 struct rr_renderer minimap;
@@ -193,5 +194,5 @@ struct rr_ui_element *rr_ui_minimap_init(struct rr_game *game)
     this->on_render = minimap_on_render;
     rr_renderer_init(&minimap);
     minimap.on_context_restore = minimap_redraw;
-    return this;
+    return rr_ui_set_justify(this, 1, -1);
 }

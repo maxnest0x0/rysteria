@@ -510,8 +510,10 @@ static void crafting_inventory_button_on_event(struct rr_ui_element *this,
         count += game->crafting_data.count;
     if (data->count > 0)
     {
-        if (count >= PETALS_PER_CRAFT && data->rarity < rr_rarity_id_max - 1 &&
-            game->crafting_data.animation == 0 && !game->crafting_data.autocraft)
+        if (game->socket_ready && count >= PETALS_PER_CRAFT &&
+            data->rarity < rr_rarity_id_max - 1 &&
+            game->crafting_data.animation == 0 &&
+            !game->crafting_data.autocraft)
         {
             if (game->input_data->mouse_buttons_up_this_tick & 1 &&
                 game->pressed == this)
