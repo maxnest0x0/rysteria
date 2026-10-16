@@ -2023,8 +2023,8 @@ void rr_game_join_squad_by_code(struct rr_game *this, char const *input)
         size_t prefix_length = code - buffer;
         for (uint8_t b = 0; b < rr_biome_id_garden; ++b)
             if (RR_BIOME_SERVERS[b].port != 0 &&
-                strlen(RR_BIOME_SERVERS[b].squad_prefix) == prefix_length &&
-                strncmp(buffer, RR_BIOME_SERVERS[b].squad_prefix,
+                strlen(RR_BIOME_SERVERS[b].rivet_game_mode) == prefix_length &&
+                strncmp(buffer, RR_BIOME_SERVERS[b].rivet_game_mode,
                         prefix_length) == 0)
                 biome = b;
         ++code;
