@@ -304,15 +304,9 @@ extern struct rr_maze_declaration RR_MAZES[rr_biome_id_max];
 // the one place to change when a server moves
 struct rr_biome_server
 {
-    // where non rivet clients connect. NULL means the same host the page came
-    // from on the usual port, which is what a single server setup needs
-    char const *ws_url;
-    // port the server listens on, so a hell creek and a pvp server can run side
-    // by side. rivet still maps it to a public address itself
+    char const *ws_path;
     uint16_t port;
-    // rivet builds ask rivet's matchmaker for a lobby in this game mode instead
-    // of using ws_url
-    char const *rivet_game_mode;
+    char const *squad_prefix;
 };
 
 extern struct rr_biome_server RR_BIOME_SERVERS[rr_biome_id_max];

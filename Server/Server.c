@@ -268,7 +268,7 @@ void rr_server_client_broadcast_update(struct rr_server_client *this)
     proto_bug_write_uint8(&encoder, squad->expose_code, "expose_code");
     proto_bug_write_uint8(&encoder, RR_GLOBAL_BIOME, "biome");
     char joined_code[16];
-    sprintf(joined_code, "%s-%s", RR_BIOME_SERVERS[RR_GLOBAL_BIOME].rivet_game_mode,
+    sprintf(joined_code, "%s-%s", RR_BIOME_SERVERS[RR_GLOBAL_BIOME].squad_prefix,
             squad->squad_code);
     proto_bug_write_string(&encoder, joined_code, 16, "squad code");
     proto_bug_write_varuint(&encoder, this->afk_ticks, "afk_ticks");
@@ -1721,7 +1721,7 @@ static void server_tick(struct rr_server *this)
                 if (client->dev || squad->expose_code ||
                     (client->in_squad && client->squad == s))
                     sprintf(joined_code, "%s-%s",
-                            RR_BIOME_SERVERS[RR_GLOBAL_BIOME].rivet_game_mode,
+                            RR_BIOME_SERVERS[RR_GLOBAL_BIOME].squad_prefix,
                             squad->squad_code);
                 else
                     strcpy(joined_code, "(private)");

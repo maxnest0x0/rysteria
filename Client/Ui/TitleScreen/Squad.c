@@ -657,6 +657,19 @@ static void join_code_on_event(struct rr_ui_element *this, struct rr_game *game)
     {
         if (game->input_data->mouse_buttons_up_this_tick & 1)
         {
+#ifdef RIVET_BUILD
+            {
+                game->socket_pending = 1;
+                if (game->socket_ready)
+                    rr_websocket_disconnect(&game->socket, game);
+                char server[16] = {0};
+                char *link = server;
+                char *code = game->connect_code;
+                while (*code != 0 && *code != '-')
+                    *link++ = *code++;
+                rr_api_get_server_alias(server, game);
+            }
+#endif
             char *code = game->connect_code;
             while (*code != 0 && *code != '-')
                 ++code;
@@ -666,10 +679,10 @@ static void join_code_on_event(struct rr_ui_element *this, struct rr_game *game)
                 size_t prefix_length = code - game->connect_code;
                 for (uint8_t b = 0; b < rr_biome_id_garden; ++b)
                     if (RR_BIOME_SERVERS[b].port != 0 &&
-                        strlen(RR_BIOME_SERVERS[b].rivet_game_mode) ==
+                        strlen(RR_BIOME_SERVERS[b].squad_prefix) ==
                             prefix_length &&
                         strncmp(game->connect_code,
-                                RR_BIOME_SERVERS[b].rivet_game_mode,
+                                RR_BIOME_SERVERS[b].squad_prefix,
                                 prefix_length) == 0)
                         biome = b;
                 ++code;

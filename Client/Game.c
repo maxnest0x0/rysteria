@@ -1965,13 +1965,13 @@ void rr_game_connect_socket(struct rr_game *this)
 
     struct rr_biome_server const *server = &RR_BIOME_SERVERS[this->selected_biome];
 #ifdef RIVET_BUILD
-    rr_rivet_lobbies_find(this, NULL, server->rivet_game_mode);
+    rr_rivet_lobbies_find(this, NULL);
 #else
     rr_websocket_init(&this->socket);
     this->socket.user_data = this;
     char url[128];
-    if (server->ws_url != NULL)
-        rr_dom_get_socket_url(server->port, server->ws_url, url);
+    if (server->ws_path != NULL)
+        rr_dom_get_socket_url(server->port, server->ws_path, url);
     else
         return;
     rr_websocket_connect_to(&this->socket, url);
@@ -2010,7 +2010,8 @@ void rr_rivet_lobby_on_find(char *s, char *token, uint16_t port, void *_game)
         game->socket_ready = 0;
         return;
     }
-    rr_websocket_disconnect(&game->socket, game);
+    // if (game->socket_ready)
+    // rr_websocket_disconnect(&game->socket, game);
     rr_websocket_init(&game->socket);
     game->socket.user_data = game;
     game->socket_pending = 1;
