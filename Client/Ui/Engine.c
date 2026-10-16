@@ -194,8 +194,8 @@ void rr_ui_h_container_set(struct rr_ui_element *c)
     height += 2 * outer_spacing;
     width += outer_spacing - inner_spacing;
 
-    c->abs_width = width;
-    c->abs_height = height;
+    c->width = c->abs_width = width;
+    c->height = c->abs_height = height;
 }
 
 void rr_ui_v_container_set(struct rr_ui_element *c)
@@ -227,8 +227,8 @@ void rr_ui_v_container_set(struct rr_ui_element *c)
     width += 2 * outer_spacing;
     height += outer_spacing - inner_spacing;
 
-    c->abs_width = width;
-    c->abs_height = height;
+    c->width = c->abs_width = width;
+    c->height = c->abs_height = height;
 }
 
 void rr_ui_choose_container_set(struct rr_ui_element *c)

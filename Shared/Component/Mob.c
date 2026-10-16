@@ -90,7 +90,9 @@ void rr_component_mob_free(struct rr_component_mob *this,
     {
         struct rr_component_player_info *killer_info =
             rr_simulation_get_player_info(simulation, health->last_attacker);
-        killer_info->client->pvp_points += pow(3, this->rarity);
+        if (killer_info->flower_id != RR_NULL_ENTITY &&
+            !is_dead_flower(simulation, killer_info->flower_id))
+            killer_info->client->pvp_points += pow(3, this->rarity);
     }
 #endif
     for (uint32_t squad = 0; squad < RR_SQUAD_COUNT; ++squad)

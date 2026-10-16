@@ -293,8 +293,8 @@ static uint8_t leaderboard_should_show(struct rr_ui_element *this,
                                        struct rr_game *game)
 {
     return ui_not_hidden_and_simulation_ready(this, game) &&
-           game->cache.show_leaderboard &&
-           game->selected_biome == rr_biome_id_pvp;
+           game->selected_biome == rr_biome_id_pvp &&
+           game->leaderboard_count > 0;
 }
 
 static uint8_t ui_not_hidden_and_player_dead(struct rr_ui_element *this,
@@ -449,10 +449,10 @@ void rr_game_init(struct rr_game *this)
         rr_ui_set_background(
             rr_ui_pad(
                 rr_ui_set_justify(
-                    rr_ui_v_container_init(rr_ui_container_init(), 10, 10,
-                    rr_ui_minimap_init(this),
+                    rr_ui_h_container_init(rr_ui_container_init(), 10, 10,
                     rr_ui_link_toggle(rr_ui_leaderboard_init(this),
                                       leaderboard_should_show),
+                    rr_ui_minimap_init(this),
                     NULL
                 )
             , 1, -1),
@@ -1875,8 +1875,6 @@ void rr_game_tick(struct rr_game *this, float delta)
             this->cache.low_performance_mode ^= 1;
         if (rr_bitset_get_bit(this->input_data->keys_pressed_this_tick, 'O'))
             this->cache.show_loot ^= 1;
-        if (rr_bitset_get_bit(this->input_data->keys_pressed_this_tick, 'B'))
-            this->cache.show_leaderboard ^= 1;
     }
     if (this->cache.hide_ui && this->simulation_ready)
         this->menu_open = 0;

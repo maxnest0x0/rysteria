@@ -89,7 +89,13 @@ void rr_component_player_info_free(struct rr_component_player_info *this,
 #ifdef RR_SERVER
     free(this->entities_in_view);
     if (rr_simulation_entity_alive(simulation, this->flower_id))
+    {
+        if (!is_dead_flower(simulation, this->flower_id))
+            rr_component_flower_set_dead(
+                rr_simulation_get_flower(simulation, this->flower_id),
+                simulation, 1);
         rr_simulation_request_entity_deletion(simulation, this->flower_id);
+    }
 #endif
 }
 
