@@ -25,6 +25,7 @@
 #include <Client/DOM.h>
 #include <Client/Game.h>
 #include <Client/InputData.h>
+#include <Client/Platform.h>
 #include <Client/Renderer/Renderer.h>
 #include <Client/Simulation.h>
 #include <Client/Ui/Engine.h>
@@ -609,6 +610,20 @@ static void copy_code_on_event(struct rr_ui_element *this, struct rr_game *game)
         data->clickable = 0;
 }
 
+static void copy_link_on_event(struct rr_ui_element *this, struct rr_game *game)
+{
+    struct rr_ui_labeled_button_metadata *data = this->data;
+    if (game->socket_ready)
+    {
+        if (game->input_data->mouse_buttons_up_this_tick & 1)
+            rr_platform_copy_invite_link(game->squad.squad_code);
+        game->cursor = rr_game_cursor_pointer;
+        data->clickable = 1;
+    }
+    else
+        data->clickable = 0;
+}
+
 static void toggle_private_on_event(struct rr_ui_element *this,
                                     struct rr_game *game)
 {
@@ -657,38 +672,7 @@ static void join_code_on_event(struct rr_ui_element *this, struct rr_game *game)
     {
         if (game->input_data->mouse_buttons_up_this_tick & 1)
         {
-            char *code = game->connect_code;
-            while (*code != 0 && *code != '-')
-                ++code;
-            uint8_t biome = rr_biome_id_max;
-            if (*code == '-')
-            {
-                size_t prefix_length = code - game->connect_code;
-                for (uint8_t b = 0; b < rr_biome_id_garden; ++b)
-                    if (RR_BIOME_SERVERS[b].port != 0 &&
-                        strlen(RR_BIOME_SERVERS[b].rivet_game_mode) ==
-                            prefix_length &&
-                        strncmp(game->connect_code,
-                                RR_BIOME_SERVERS[b].rivet_game_mode,
-                                prefix_length) == 0)
-                        biome = b;
-                ++code;
-            }
-            if (biome == rr_biome_id_max)
-                code[0] = 0;
-            else
-                rr_game_select_biome(game, biome);
-            struct proto_bug encoder2;
-            proto_bug_init(&encoder2, RR_OUTGOING_PACKET);
-            proto_bug_write_uint8(&encoder2, game->socket.quick_verification,
-                                  "qv");
-            proto_bug_write_uint8(&encoder2, rr_serverbound_squad_join,
-                                  "header");
-            proto_bug_write_uint8(&encoder2, 1, "join type");
-            proto_bug_write_string(&encoder2, code, 7, "connect link");
-
-            rr_websocket_queue_send(&game->socket,
-                                    encoder2.current - encoder2.start);
+            rr_game_join_squad_by_code(game, game->connect_code);
             game->connect_code[0] = 0;
             rr_dom_set_text("_0x4347", "");
         }
@@ -783,6 +767,15 @@ struct rr_ui_element *rr_ui_copy_squad_code_button_init()
     struct rr_ui_element *this = rr_ui_labeled_button_init("Copy Code", 24, 0);
     this->animate = ready_button_animate;
     this->on_event = copy_code_on_event;
+    this->should_show = copy_button_should_show;
+    return this;
+}
+
+struct rr_ui_element *rr_ui_copy_squad_link_button_init()
+{
+    struct rr_ui_element *this = rr_ui_labeled_button_init("Copy Link", 24, 0);
+    this->animate = ready_button_animate;
+    this->on_event = copy_link_on_event;
     this->should_show = copy_button_should_show;
     return this;
 }

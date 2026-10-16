@@ -168,6 +168,21 @@ void rr_server_client_write_account(struct rr_server_client *client)
                                    encoder.current - encoder.start);
 }
 
+void rr_server_client_report_pvp_score(struct rr_server_client *this)
+{
+#ifdef PVP
+    if (this->rivet_account.cg_id[0] == 0 || this->pvp_points == 0)
+        return;
+    struct rr_binary_encoder encoder;
+    rr_binary_encoder_init(&encoder, outgoing_message);
+    rr_binary_encoder_write_uint8(&encoder, 4);
+    rr_binary_encoder_write_nt_string(&encoder, this->rivet_account.uuid);
+    rr_binary_encoder_write_float64(&encoder, (double)this->pvp_points);
+    lws_write(this->server->api_client, encoder.start,
+              encoder.at - encoder.start, LWS_WRITE_BINARY);
+#endif
+}
+
 void rr_server_client_write_oauth2_data(struct rr_server_client *client) {
     struct proto_bug encoder;
     proto_bug_init(&encoder, outgoing_message);
@@ -178,6 +193,8 @@ void rr_server_client_write_oauth2_data(struct rr_server_client *client) {
                            sizeof client->rivet_account.token, "token");
     proto_bug_write_string(&encoder, client->rivet_account.name,
                            sizeof client->rivet_account.name, "name");
+    proto_bug_write_uint8(&encoder, client->rivet_account.cg_id[0] != 0,
+                          "crazygames linked");
     rr_server_client_write_message(client, encoder.start,
                                    encoder.current - encoder.start);
 }
@@ -265,6 +282,7 @@ int rr_server_client_read_from_api(struct rr_server_client *this,
     rr_binary_encoder_read_nt_string(encoder, this->rivet_account.token);
     rr_binary_encoder_read_nt_string(encoder, this->rivet_account.name);
     rr_binary_encoder_read_nt_string(encoder, this->rivet_account.id);
+    rr_binary_encoder_read_nt_string(encoder, this->rivet_account.cg_id);
     if (this->dev)
     {
         memset(this->checkpoint, 0, sizeof this->checkpoint);

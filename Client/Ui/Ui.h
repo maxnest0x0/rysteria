@@ -219,6 +219,11 @@ extern struct rr_ui_element *rr_ui_account_toggle_button_init();
 extern struct rr_ui_element *rr_ui_discord_toggle_button_init();
 extern struct rr_ui_element *rr_ui_github_toggle_button_init();
 extern struct rr_ui_element *rr_ui_gardn_toggle_button_init();
+extern struct rr_ui_element *rr_ui_crazygames_login_button_init();
+extern struct rr_ui_element *rr_ui_copy_squad_link_button_init();
+extern struct rr_ui_element *rr_ui_legal_button_init();
+extern struct rr_ui_element *rr_ui_legal_container_init(struct rr_game *);
+extern struct rr_ui_element *rr_ui_crazygames_user_init(struct rr_game *);
 
 extern struct rr_ui_element *rr_ui_settings_container_init(struct rr_game *);
 extern struct rr_ui_element *rr_ui_squad_button_init();

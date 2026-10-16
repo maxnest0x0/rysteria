@@ -25,6 +25,7 @@ const crypto = require("crypto");
 const protocol = require("./protocol");
 const GameServer = require("./gameserver");
 const GameClient = require("./client");
+const crazygames = require("./crazygames");
 const app = express();
 const port = 55554;
 const namespace = "/api";
@@ -34,8 +35,11 @@ const CLOUD_TOKEN = "cloud.eyJ0eXAiOiJKV1QiLCJhbGciOiJFZERTQSJ9.CKOM_-XtMRCjtLqo
 const NAMESPACE_ID = "04cfba67-e965-4899-bcb9-b7497cc6863b";
 const SERVER_SECRET = "ad904nf3adrgnariwpanyf3qap8unri4t9b384wna3g34ytgdr4bwtvd4y";
 
-const REDIRECT_URI = "https://rysteria.pro/";
-const CLIENT_ID = "1453525695228678349";
+// must match, character for character, what the client sends
+// (origin + pathname, so with the trailing slash) and what is registered in
+// the Discord developer portal
+const REDIRECT_URI = "https://game.parshwa.blog/";
+const CLIENT_ID = "1242286155320393859";
 const CLIENT_SECRET = process.env["CLIENT_SECRET"] || "";
 const BOT_TOKEN = process.env["BOT_TOKEN"] || "";
 const PASSWORD_SALT = process.env["PASSWORD_SALT"] || "";
@@ -126,6 +130,7 @@ function apply_missing_defaults(account)
         mob_gallery: {},
         checkpoint: { hell_creek: 0, pvp: 0 },
         discord_id: "",
+        cg_id: "",
         // inflated_up_to: 1,
     };
 
@@ -469,6 +474,7 @@ wss.on("connection", (ws, req) => {
                 const uuid = decoder.ReadStringNT();
                 const token = decoder.ReadStringNT();
                 const code = decoder.ReadStringNT();
+                const cg_token = decoder.ReadStringNT();
                 const nonce = decoder.ReadVarUint();
                 const pos = decoder.ReadUint8();
                 log("attempt init", [uuid, token, code]);
@@ -500,6 +506,25 @@ wss.on("connection", (ws, req) => {
                             log("discord link", [user.username, discord]);
                         } else if (database.links[discord])
                             user = await db_read_or_create_user(database.links[discord], SERVER_SECRET);
+                    }
+                    // linking is only attempted when the player pressed the
+                    // link button, which is when the client sends a token
+                    let cg_id = "";
+                    if (cg_token) {
+                        try {
+                            cg_id = await crazygames.user_id_from_token(cg_token);
+                        } catch (e) {
+                            console.error("crazygames token rejected:", e.message);
+                        }
+                    }
+                    if (cg_id) {
+                        const link = "cg:" + cg_id;
+                        if (!user.cg_id && !database.links[link]) {
+                            user.cg_id = cg_id;
+                            database.links[link] = user.username;
+                            log("crazygames link", [user.username, cg_id]);
+                        } else if (database.links[link])
+                            user = await db_read_or_create_user(database.links[link], SERVER_SECRET);
                     }
                     user.password = hash(user.username + PASSWORD_SALT);
                     write_db_entry(user.username, user);
@@ -590,6 +615,19 @@ wss.on("connection", (ws, req) => {
                 }
 
                 db_append_petals_to_logs(petals);
+                break;
+            }
+            case 4:
+            {
+                // a linked player died in pvp, their score goes to the
+                // CrazyGames leaderboard
+                const uuid = decoder.ReadStringNT();
+                const score = decoder.ReadFloat64();
+                const client = connected_clients[uuid];
+                if (!client || client.server !== game_server.alias)
+                    break;
+                if (client.user.cg_id)
+                    crazygames.submit_score(client.user.cg_id, score);
                 break;
             }
             case 101:

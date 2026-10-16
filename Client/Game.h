@@ -36,7 +36,8 @@ enum rr_game_menu
     rr_game_menu_crafting,
     rr_game_menu_settings,
     rr_game_menu_account,
-    rr_game_menu_dev_squad_panel
+    rr_game_menu_dev_squad_panel,
+    rr_game_menu_legal
 };
 
 enum rr_game_cursor
@@ -222,6 +223,10 @@ struct rr_game
     uint8_t is_mobile : 1;
     uint8_t logged_in : 1;
     uint8_t account_linked : 1;
+    uint8_t cg_linked : 1;
+    uint8_t cg_logged_in : 1;
+    // the server has answered the login, so squad requests are accepted
+    uint8_t account_ready : 1;
     uint8_t is_dev : 1;
     uint8_t text_input_focused : 1;
     uint8_t socket_error;
@@ -235,6 +240,9 @@ struct rr_game
 
     char rivet_player_token[400];
     char connect_code[16];
+    // the logged in CrazyGames user, filled in by rr_platform_tick
+    char cg_username[64];
+    char cg_label[96];
     char afk_challenge[7];
 };
 
@@ -242,6 +250,9 @@ void rr_game_init(struct rr_game *);
 void rr_game_tick(struct rr_game *, float);
 void rr_game_connect_socket(struct rr_game *);
 void rr_game_select_biome(struct rr_game *, uint8_t);
+// code is a squad code with the name of its server in front ("hc-abcdef"),
+// which switches to that server if needed
+void rr_game_join_squad_by_code(struct rr_game *, char const *code);
 void rr_simulation_read_binary(struct rr_game *, struct proto_bug *);
 void rr_write_dev_cheat_packets(struct rr_game *, uint8_t);
 

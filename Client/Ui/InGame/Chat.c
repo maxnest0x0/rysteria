@@ -16,9 +16,12 @@
 
 #include <Client/Ui/Ui.h>
 
+#include <stdio.h>
 #include <string.h>
 
+#include <Client/Filter.h>
 #include <Client/Game.h>
+#include <Client/Platform.h>
 #include <Client/InputData.h>
 #include <Client/Simulation.h>
 #include <Client/Socket.h>
@@ -64,7 +67,13 @@ static void chat_bar_animate(struct rr_ui_element *this, struct rr_game *game)
                 proto_bug_init(&encoder, RR_OUTGOING_PACKET);
                 proto_bug_write_uint8(&encoder, game->socket.quick_verification, "qv");
                 proto_bug_write_uint8(&encoder, rr_serverbound_chat, "header");
-                proto_bug_write_string(&encoder, game->chat.sending, 64, "chat");
+                char message[64];
+                snprintf(message, sizeof message, "%s", game->chat.sending);
+                // the server answers afk checks with exactly three letters,
+                // which a filter could turn into stars
+                if (strlen(message) != 3)
+                    rr_filter_censor(message);
+                proto_bug_write_string(&encoder, message, 64, "chat");
                 rr_websocket_send(&game->socket, encoder.current - encoder.start);
             }
             memset(game->chat.sending, 0, sizeof game->chat.sending);
@@ -94,6 +103,7 @@ static uint8_t chat_should_show(struct rr_ui_element *this,
 {
     uint8_t r = game->simulation_ready &&
                 !game->cache.disable_chat &&
+                !rr_platform_chat_disabled() &&
                 !game->cache.hide_ui &&
                 game->menu_open != rr_game_menu_inventory &&
                 game->menu_open != rr_game_menu_gallery &&

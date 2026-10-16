@@ -230,9 +230,20 @@ void rr_dom_get_socket_url(uint16_t port, char const *suffix, char *out)
         HEAPU8[$0] = 0;
         if (!window["rrolfScript"])
             return;
-        const url = window["rrolfScript"].src.replace("http", "ws")
-            .replace("8080", ($1).toString())
-            .replace("rrolf-client.js", UTF8ToString($2));
+        const suffix = UTF8ToString($2);
+        const host = new URL(window["rrolfScript"].src).hostname;
+        let url;
+        if (host === "game.parshwa.blog" || host === "crazygames.com" ||
+            host.endsWith(".crazygames.com"))
+        {
+            url = "wss://" + suffix + "-game.parshwa.blog";
+        }
+        else
+        {
+            url = window["rrolfScript"].src.replace("http", "ws")
+                .replace("8080", ($1).toString())
+                .replace("rrolf-client.js", suffix);
+        }
         const arr = new TextEncoder().encode(url);
         if (arr.length >= 128)
             return;

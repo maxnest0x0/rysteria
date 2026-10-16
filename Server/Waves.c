@@ -30,8 +30,8 @@ uint32_t get_spawn_rarity(float difficulty)
     double rarity_seed = rr_frand();
     uint32_t rarity_cap = rr_rarity_id_common + (difficulty + 7) / 8;
 #ifdef PVP
-    if (rarity_cap > rr_rarity_id_mythic)
-        rarity_cap = rr_rarity_id_mythic;
+    if (rarity_cap > rr_rarity_id_ultimate)
+        rarity_cap = rr_rarity_id_ultimate;
 #else
     if (rarity_cap > rr_rarity_id_ultimate)
         rarity_cap = rr_rarity_id_ultimate;
