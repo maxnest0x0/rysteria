@@ -53,6 +53,7 @@ enum rr_serverbound_packet_header
     rr_serverbound_chat,
     rr_serverbound_chat_block,
     rr_serverbound_dev_cheat,
+    rr_serverbound_account_request,
 };
 
 enum rr_clientbound_packet_header
@@ -65,7 +66,18 @@ enum rr_clientbound_packet_header
     rr_clientbound_account_result,
     rr_clientbound_craft_result,
     rr_clientbound_oauth2_data,
-    rr_clientbound_leaderboard_update
+    rr_clientbound_leaderboard_update,
+    rr_clientbound_account_reply
+};
+
+// what a rr_serverbound_account_request asks the master server (through the
+// game server) to do, and what a rr_clientbound_account_reply answers
+enum rr_account_request_kind
+{
+    rr_account_request_discord,
+    rr_account_request_crazygames,
+    rr_account_request_code_create,
+    rr_account_request_code_redeem
 };
 
 enum rr_dev_cheat_type
@@ -104,7 +116,7 @@ enum rr_rarity_id
     rr_rarity_id_legendary,
     rr_rarity_id_mythic,
     rr_rarity_id_exotic,
-    rr_rarity_id_ultimate,
+    rr_rarity_id_ancient,
     rr_rarity_id_max
 };
 

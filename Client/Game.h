@@ -28,6 +28,22 @@
 
 #define RR_DEBUG_POLL_SIZE 10
 
+// the buttons the first-time tutorial points at
+enum rr_tutorial_target
+{
+    rr_tutorial_target_join,
+    rr_tutorial_target_create_squad,
+    rr_tutorial_target_find_squad,
+    rr_tutorial_target_inventory,
+    rr_tutorial_target_gallery,
+    rr_tutorial_target_crafting,
+    rr_tutorial_target_account,
+    rr_tutorial_target_cg_login,
+    rr_tutorial_target_cg_link,
+    rr_tutorial_target_discord_link,
+    rr_tutorial_target_max
+};
+
 enum rr_game_menu
 {
     rr_game_menu_none,
@@ -36,7 +52,8 @@ enum rr_game_menu
     rr_game_menu_crafting,
     rr_game_menu_settings,
     rr_game_menu_account,
-    rr_game_menu_dev_squad_panel
+    rr_game_menu_dev_squad_panel,
+    rr_game_menu_legal
 };
 
 enum rr_game_cursor
@@ -221,6 +238,10 @@ struct rr_game
     uint8_t is_mobile : 1;
     uint8_t logged_in : 1;
     uint8_t account_linked : 1;
+    uint8_t cg_linked : 1;
+    uint8_t cg_logged_in : 1;
+    // the server has answered the login, so squad requests are accepted
+    uint8_t account_ready : 1;
     uint8_t is_dev : 1;
     uint8_t text_input_focused : 1;
     uint8_t socket_error;
@@ -234,13 +255,52 @@ struct rr_game
 
     char rivet_player_token[400];
     char connect_code[16];
+    // the logged in CrazyGames user, filled in by rr_platform_tick
+    char cg_username[64];
+    char cg_label[96];
     char afk_challenge[7];
+    char auth_message[96];
+    char transfer_code[24];
+    char enter_code[16];
+    // an account request waiting for the connection, and the account to
+    // reconnect with after one that changed it, see Oauth2.c
+    uint8_t auth_pending;
+    uint8_t auth_kind;
+    // reconnected after an account change, waiting for the account to load
+    uint8_t auth_reconnected;
+    float auth_wait;
+    float auth_reconnect_in;
+    char auth_payload[2048];
+    // how long the connection has been verified, and how many in a row were
+    // dropped within seconds, see the reconnect in rr_game_tick
+    float socket_lifetime;
+    float reconnect_wait;
+    uint8_t quick_closes;
+    // first-time tutorial, see Ui/InGame/Tutorial.c
+    struct
+    {
+        // where the player is in the tutorial, remembered in localStorage
+        uint8_t stage;
+        uint8_t has_start;
+        uint8_t saw_craft;
+        uint8_t craft_id;
+        uint8_t craft_rarity;
+        float progress;
+        float start_x;
+        float start_y;
+        float pulse;
+        // the buttons the tutorial can point at, see rr_tutorial_target
+        struct rr_ui_element *targets[rr_tutorial_target_max];
+    } tutorial;
 };
 
 void rr_game_init(struct rr_game *);
 void rr_game_tick(struct rr_game *, float);
 void rr_game_connect_socket(struct rr_game *);
 void rr_game_select_biome(struct rr_game *, uint8_t);
+// code is a squad code with the name of its server in front ("hc-abcdef"),
+// which switches to that server if needed
+void rr_game_join_squad_by_code(struct rr_game *, char const *code);
 void rr_simulation_read_binary(struct rr_game *, struct proto_bug *);
 void rr_write_dev_cheat_packets(struct rr_game *, uint8_t);
 

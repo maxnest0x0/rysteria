@@ -141,6 +141,7 @@ uint8_t rr_is_text_input_focused()
 {
     return rr_dom_has_focus("_0x4346") ||
            rr_dom_has_focus("_0x4347") ||
+           rr_dom_has_focus("_0x4348") ||
            rr_dom_has_focus("_0x4523");
 }
 
@@ -226,19 +227,56 @@ void rr_dom_set_cursor(uint8_t cursor)
 
 void rr_dom_get_socket_url(uint16_t port, char const *suffix, char *out)
 {
+#ifdef PDEV
     EM_ASM({
         HEAPU8[$0] = 0;
         if (!window["rrolfScript"])
             return;
-        const url = window["rrolfScript"].src.replace("http", "ws")
-            .replace("8080", ($1).toString())
-            .replace("rrolf-client.js", UTF8ToString($2));
+        const suffix = UTF8ToString($2);
+        const host = new URL(window["rrolfScript"].src).hostname;
+        let url;
+        if (host === "game.parshwa.blog" || host === "crazygames.com" ||
+            host.endsWith(".crazygames.com"))
+        {
+            url = "wss://" + suffix + "-game.parshwa.blog";
+        }
+        else
+        {
+            url = window["rrolfScript"].src.replace("http", "ws")
+                .replace("8080", ($1).toString())
+                .replace("rrolf-client.js", suffix);
+        }
         const arr = new TextEncoder().encode(url);
         if (arr.length >= 128)
             return;
         HEAPU8.set(arr, $0);
         HEAPU8[$0 + arr.length] = 0;
     }, out, port, suffix);
+#else
+    EM_ASM({
+        HEAPU8[$0] = 0;
+        if (!window["rrolfScript"])
+            return;
+        let url_tmp;
+        if (host === "crazygames.com" ||
+            host.endsWith(".crazygames.com"))
+        {
+            url_tmp = "wss://rysteria.pro/" + suffix;
+        }
+        else
+        {
+            url_tmp = window["rrolfScript"].src.replace("http", "ws")
+                .replace("8080", ($1).toString())
+                .replace("rrolf-client.js", suffix);
+        }
+        const url = url_tmp;
+        const arr = new TextEncoder().encode(url);
+        if (arr.length >= 128)
+            return;
+        HEAPU8.set(arr, $0);
+        HEAPU8[$0 + arr.length] = 0;
+    }, out, port, suffix);
+#endif
 }
 
 void rr_dom_request_fullscreen()

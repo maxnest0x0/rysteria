@@ -21,13 +21,14 @@
 #include <Client/DOM.h>
 #include <Client/Game.h>
 #include <Client/InputData.h>
+#include <Client/Platform.h>
 #include <Client/Renderer/Renderer.h>
 #include <Client/Ui/Engine.h>
 
 static uint8_t fullscreen_toggle_button_should_show(struct rr_ui_element *this,
                                                     struct rr_game *game)
 {
-    return game->is_mobile;
+    return game->is_mobile && !rr_platform_on_crazygames();
 }
 
 static void fullscreen_toggle_button_on_render(struct rr_ui_element *this,

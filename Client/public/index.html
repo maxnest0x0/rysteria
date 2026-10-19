@@ -22,8 +22,15 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
         <title>Rysteria</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
         <link href="logo.png" rel="icon" type="image/png">
-        <link href="https://fonts.googleapis.com/css?family=Ubuntu:700" rel="stylesheet" type="text/css">
         <style>
+            /* shipped with the game (Ubuntu Font Licence, see fonts/) instead of
+               fetched from Google, CrazyGames wants every file on their side */
+            @font-face {
+                font-family: "Ubuntu";
+                font-weight: 700;
+                src: url("fonts/Ubuntu-Bold.ttf") format("truetype");
+            }
+
             * {
                 margin: 0px;
                 padding: 0px;
@@ -72,6 +79,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
     </head>
     <body>
         <h2 id="rrolf-error">Sorry, the server is not running</h2>
+        <script src="platform.js"></script>
         <script>
             let rrolfErrors = 0;
             function rrolfError() {
@@ -81,7 +89,45 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
                 }
             }
             var rrolfScript = null;
+
+            var rrolfOauthPopup = false;
+            try {
+                const params = new URLSearchParams(window.location.search);
+                const state = params.get("state");
+                if (state && state.startsWith("p.")) {
+                    rrolfOauthPopup = true;
+                    const el = document.querySelector("#rrolf-error");
+                    el.textContent = "Logging in...";
+                    el.style.display = "block";
+                    fetch("/oauth/" + encodeURIComponent(state), {
+                        method: "POST",
+                        body: params.get("code") || "",
+                    }).then(function(response) {
+                        if (!response.ok)
+                            throw new Error(response.status);
+                        el.textContent = "Logged in, you can close this window.";
+                        setTimeout(function() { window.close(); }, 300);
+                    }).catch(function() {
+                        el.textContent = "Login failed, close this window and try again.";
+                    });
+                }
+            } catch (e) {}
+
+            if (!rrolfOauthPopup) {
+                const fontReady = (document.fonts && document.fonts.load)
+                    ? Promise.race([
+                          document.fonts.load("700 16px Ubuntu"),
+                          new Promise(function(resolve) { setTimeout(resolve, 1500); }),
+                      ]).catch(function() {})
+                    : Promise.resolve();
+                Promise.all([window.rrolfPlatform.init(), fontReady]).then(function() {
+                    const script = document.createElement("script");
+                    script.src = "rrolf-client.js";
+                    script.onerror = rrolfError;
+                    script.onload = function() { rrolfScript = this; };
+                    document.body.appendChild(script);
+                });
+            }
         </script>
-        <script src="rrolf-client.js" onerror="rrolfError()" onload="rrolfScript = this"></script>
     </body>
 </html>

@@ -46,6 +46,8 @@
 #include <Shared/Component/Petal.h>
 #include <Shared/Component/Physical.h>
 #include <Shared/Component/PlayerInfo.h>
+#include <Client/Filter.h>
+#include <Client/Platform.h>
 #include <Shared/Crypto.h>
 #include <Shared/Rivet.h>
 #include <Shared/Utilities.h>
@@ -411,7 +413,7 @@ void rr_game_init(struct rr_game *this)
             rr_ui_set_justify(
                 rr_ui_h_container_init(rr_ui_container_init(), 10, 10,
                     rr_ui_settings_toggle_button_init(),
-                    rr_ui_account_toggle_button_init(),
+                    rr_tutorial_target(this, rr_tutorial_target_account, rr_ui_account_toggle_button_init()),
                     rr_ui_dev_panel_toggle_button_init(),
                     rr_ui_fullscreen_toggle_button_init(),
                     rr_ui_link_toggle(rr_ui_close_button_init(30, abandon_game_on_event), simulation_ready),
@@ -426,6 +428,8 @@ void rr_game_init(struct rr_game *this)
         rr_ui_link_toggle(
             rr_ui_set_justify(
                 rr_ui_h_container_init(rr_ui_container_init(), 10, 10,
+                    rr_tutorial_target(this, rr_tutorial_target_cg_login, rr_ui_crazygames_login_button_init()),
+                    rr_ui_crazygames_user_init(this),
                     rr_ui_gardn_toggle_button_init(),
                     rr_ui_github_toggle_button_init(),
                     rr_ui_discord_toggle_button_init(),
@@ -486,7 +490,7 @@ void rr_game_init(struct rr_game *this)
                                         ), 
                                     0x00000000, 0x00000000),
                                 simulation_not_ready),
-                                rr_ui_join_button_init(),
+                                rr_tutorial_target(this, rr_tutorial_target_join, rr_ui_join_button_init()),
                                 NULL
                             ),
                             rr_ui_flex_container_init(
@@ -496,8 +500,8 @@ void rr_game_init(struct rr_game *this)
                                     NULL
                                 ),
                                 rr_ui_h_container_init(rr_ui_container_init(), 0, 10,
-                                    rr_ui_create_squad_button_init(),
-                                    rr_ui_squad_button_init(),
+                                    rr_tutorial_target(this, rr_tutorial_target_create_squad, rr_ui_create_squad_button_init()),
+                                    rr_tutorial_target(this, rr_tutorial_target_find_squad, rr_ui_squad_button_init()),
                                     NULL
                                 ),
                                 20
@@ -524,7 +528,11 @@ void rr_game_init(struct rr_game *this)
                                             NULL
                                         ),
                                         rr_ui_flex_container_init(
-                                            rr_ui_copy_squad_code_button_init(),
+                                            rr_ui_h_container_init(rr_ui_container_init(), 0, 10,
+                                                rr_ui_copy_squad_code_button_init(),
+                                                rr_ui_copy_squad_link_button_init(),
+                                                NULL
+                                            ),
                                             rr_ui_h_container_init(rr_ui_container_init(), 0, 10,
                                                 rr_ui_set_fill_stroke(
                                                     rr_ui_h_container_init(rr_ui_container_init(), 0, 0,
@@ -638,9 +646,9 @@ void rr_game_init(struct rr_game *this)
                 rr_ui_link_toggle(
                     rr_ui_set_justify(
                         rr_ui_v_container_init(rr_ui_container_init(), 10, 10,
-                            rr_ui_inventory_toggle_button_init(),
-                            rr_ui_mob_gallery_toggle_button_init(),
-                            rr_ui_crafting_toggle_button_init(),
+                            rr_tutorial_target(this, rr_tutorial_target_inventory, rr_ui_inventory_toggle_button_init()),
+                            rr_tutorial_target(this, rr_tutorial_target_gallery, rr_ui_mob_gallery_toggle_button_init()),
+                            rr_tutorial_target(this, rr_tutorial_target_crafting, rr_ui_crafting_toggle_button_init()),
                             NULL
                         ),
                     -1, 1),
@@ -662,6 +670,7 @@ void rr_game_init(struct rr_game *this)
     rr_ui_container_add_element(this->window, rr_ui_container_add_element(rr_ui_crafting_container_init(this), close_menu_button_init(25))->container);
     rr_ui_container_add_element(this->window, rr_ui_container_add_element(rr_ui_settings_container_init(this), close_menu_button_init(25))->container);
     rr_ui_container_add_element(this->window, rr_ui_container_add_element(rr_ui_account_container_init(this), close_menu_button_init(25))->container);
+    rr_ui_container_add_element(this->window, rr_ui_container_add_element(rr_ui_legal_container_init(this), close_menu_button_init(25))->container);
     rr_ui_container_add_element(this->window, rr_ui_container_add_element(rr_ui_dev_panel_container_init(this), close_menu_button_init(25))->container);
 
     this->link_account_tooltip = rr_ui_container_add_element(
@@ -774,6 +783,10 @@ void rr_game_init(struct rr_game *this)
         rr_ui_anti_afk_container_init(this)
     );
 
+    // last, so they draw above everything else
+    rr_ui_container_add_element(this->window, rr_ui_tutorial_init(this));
+    rr_ui_container_add_element(this->window, rr_ui_tutorial_highlight_init(this));
+
     // clang-format on
 
     for (uint32_t i = 0; i < RR_SQUAD_MEMBER_COUNT; ++i)
@@ -823,6 +836,7 @@ void rr_game_init(struct rr_game *this)
     this->is_mobile = rr_dom_test_mobile();
     this->slots_unlocked =
         RR_SLOT_COUNT_FROM_LEVEL(level_from_xp(this->cache.experience));
+    rr_tutorial_init(this);
     rr_discord_oauth2_init(this);
 }
 
@@ -840,6 +854,18 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
     case rr_websocket_event_type_close:
         // memset the clients
         printf("<rr_websocket::close::%llu>\n", size);
+        if (this->socket_lifetime < 5)
+        {
+            if (this->quick_closes < 8)
+                ++this->quick_closes;
+        }
+        else
+            this->quick_closes = 0;
+        this->reconnect_wait =
+            this->quick_closes > 1 ? 0.5f * (1 << (this->quick_closes - 1)) : 0;
+        if (this->reconnect_wait > 8)
+            this->reconnect_wait = 8;
+        this->socket_lifetime = 0;
         this->socket_ready = 0;
         this->socket_pending = 0;
         this->socket_error = 1;
@@ -950,6 +976,7 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
                 proto_bug_read_string(&encoder,
                                       this->squad.squad_members[i].nickname, 16,
                                       "nickname");
+                rr_filter_censor(this->squad.squad_members[i].nickname);
                 proto_bug_read_string(&encoder,
                                       this->squad.squad_members[i].role, 16,
                                       "role");
@@ -1011,8 +1038,10 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
                 proto_bug_write_uint8(&encoder, this->socket.quick_verification, "qv");
                 proto_bug_write_uint8(&encoder, rr_serverbound_squad_update,
                                       "header");
-                proto_bug_write_string(&encoder, this->cache.nickname, 16,
-                                       "nickname");
+                char nickname[17];
+                snprintf(nickname, sizeof nickname, "%s", this->cache.nickname);
+                rr_filter_censor(nickname);
+                proto_bug_write_string(&encoder, nickname, 16, "nickname");
                 proto_bug_write_uint8(&encoder, this->slots_unlocked,
                                       "loadout count");
                 for (uint32_t i = 0; i < this->slots_unlocked; ++i)
@@ -1086,6 +1115,7 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
                     proto_bug_read_string(&encoder,
                                           squad->squad_members[i].nickname, 16,
                                           "nickname");
+                    rr_filter_censor(squad->squad_members[i].nickname);
                     proto_bug_read_string(&encoder,
                                           squad->squad_members[i].role, 16,
                                           "role");
@@ -1173,6 +1203,17 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
                     break;
                 }
                 case rr_animation_type_chat:
+                {
+                    char sender_name[65] = {0};
+                    char chat_message[65] = {0};
+                    proto_bug_read_string(&encoder, sender_name, 64, "name");
+                    proto_bug_read_string(&encoder, chat_message, 64, "chat");
+                    sender_name[64] = chat_message[64] = 0;
+                    // the strings are read either way to stay in sync
+                    if (rr_platform_chat_disabled())
+                        break;
+                    rr_filter_censor(sender_name);
+                    rr_filter_censor(chat_message);
                     if (this->chat.at < 9)
                         this->chat.at++;
                     else
@@ -1181,10 +1222,11 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
                             this->chat.messages[i] = this->chat.messages[i + 1];
                     }
                     struct rr_game_chat_message *message = &this->chat.messages[this->chat.at];
-                    proto_bug_read_string(&encoder, message->sender_name, 64, "name");
-                    proto_bug_read_string(&encoder, message->message, 64, "chat");
+                    snprintf(message->sender_name, sizeof message->sender_name, "%s", sender_name);
+                    snprintf(message->message, sizeof message->message, "%s", chat_message);
                     sprintf(message->text, "%s: %s", message->sender_name, message->message);
                     break;
+                }
                 case rr_animation_type_area_damage:
                     particle->x = proto_bug_read_float32(&encoder, "ani x");
                     particle->y = proto_bug_read_float32(&encoder, "ani y");
@@ -1252,6 +1294,9 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
         case rr_clientbound_oauth2_data:
             rr_discord_oauth2_read_data(this, &encoder);
             break;
+        case rr_clientbound_account_reply:
+            rr_auth_read_reply(this, &encoder);
+            break;
         case rr_clientbound_leaderboard_update:
         {
             this->leaderboard_count =
@@ -1260,6 +1305,7 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
             {
                 proto_bug_read_string(&encoder, this->leaderboard[i].nickname,
                                       16, "nickname");
+                rr_filter_censor(this->leaderboard[i].nickname);
                 this->leaderboard[i].points =
                     proto_bug_read_varuint(&encoder, "points");
             }
@@ -1794,6 +1840,9 @@ void rr_game_tick(struct rr_game *this, float delta)
     rr_ui_container_refactor(this->window, this);
     rr_ui_render_element(this->window, this);
     rr_dom_set_cursor(this->cursor);
+    rr_platform_tick(this, delta);
+    rr_auth_tick(this, delta);
+    rr_tutorial_tick(this, delta);
     rr_game_crafting_tick(this, delta);
     rr_game_autocraft_tick(this, delta);
 #ifndef __EMSCRIPTEN__
@@ -1801,6 +1850,7 @@ void rr_game_tick(struct rr_game *this, float delta)
 #endif
     if (this->socket_ready)
     {
+        this->socket_lifetime += delta;
         if (this->simulation_ready)
         {
             if (!this->is_mobile)
@@ -1836,7 +1886,14 @@ void rr_game_tick(struct rr_game *this, float delta)
         }
     }
     else if (!this->socket_pending)
-        rr_game_connect_socket(this);
+    {
+        // A connection that keeps getting dropped right away (the same
+        // account open in two tabs takes the session from each other) waits
+        // longer each time instead of reconnecting in a storm
+        this->reconnect_wait -= delta;
+        if (this->reconnect_wait <= 0)
+            rr_game_connect_socket(this);
+    }
     if (!this->text_input_focused)
     {
         if (rr_bitset_get_bit(this->input_data->keys_pressed_this_tick, 186))
@@ -1845,7 +1902,9 @@ void rr_game_tick(struct rr_game *this, float delta)
             this->cache.use_mouse ^= 1;
         if (rr_bitset_get_bit(this->input_data->keys_pressed_this_tick, 'H'))
             this->cache.show_hitboxes ^= 1;
-        if (rr_bitset_get_bit(this->input_data->keys_pressed_this_tick, 'I'))
+        // crazygames' reviewers need to see the interface
+        if (rr_bitset_get_bit(this->input_data->keys_pressed_this_tick, 'I') &&
+            !rr_platform_on_crazygames())
             this->cache.hide_ui ^= 1;
         if (rr_bitset_get_bit(this->input_data->keys_pressed_this_tick, 'K'))
             this->cache.hold_attack ^= 1;
@@ -1960,6 +2019,38 @@ void rr_game_connect_socket(struct rr_game *this)
     rr_websocket_connect_to(&this->socket, url);
     // rr_websocket_connect_to(&this->socket, "45.79.197.197", 1234, 0);
 #endif
+}
+
+void rr_game_join_squad_by_code(struct rr_game *this, char const *input)
+{
+    char buffer[16];
+    snprintf(buffer, sizeof buffer, "%s", input);
+    char *code = buffer;
+    while (*code != 0 && *code != '-')
+        ++code;
+    uint8_t biome = rr_biome_id_max;
+    if (*code == '-')
+    {
+        size_t prefix_length = code - buffer;
+        for (uint8_t b = 0; b < rr_biome_id_garden; ++b)
+            if (RR_BIOME_SERVERS[b].port != 0 &&
+                strlen(RR_BIOME_SERVERS[b].squad_prefix) == prefix_length &&
+                strncmp(buffer, RR_BIOME_SERVERS[b].squad_prefix,
+                        prefix_length) == 0)
+                biome = b;
+        ++code;
+    }
+    if (biome == rr_biome_id_max)
+        code[0] = 0;
+    else
+        rr_game_select_biome(this, biome);
+    struct proto_bug encoder;
+    proto_bug_init(&encoder, RR_OUTGOING_PACKET);
+    proto_bug_write_uint8(&encoder, this->socket.quick_verification, "qv");
+    proto_bug_write_uint8(&encoder, rr_serverbound_squad_join, "header");
+    proto_bug_write_uint8(&encoder, 1, "join type");
+    proto_bug_write_string(&encoder, code, 7, "connect link");
+    rr_websocket_queue_send(&this->socket, encoder.current - encoder.start);
 }
 
 void rr_game_select_biome(struct rr_game *this, uint8_t biome)

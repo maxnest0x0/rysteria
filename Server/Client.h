@@ -103,6 +103,13 @@ void rr_server_client_write_message(struct rr_server_client *, uint8_t *,
                                     uint64_t);
 void rr_server_client_write_account(struct rr_server_client *);
 void rr_server_client_write_oauth2_data(struct rr_server_client *);
+
+void rr_server_client_write_account_reply(struct rr_server_client *, uint8_t ok,
+                                          uint8_t kind, char const *message,
+                                          char const *uuid, char const *token,
+                                          char const *code);
+void rr_server_client_report_pvp_score(struct rr_server_client *);
+
 void rr_server_client_craft_petal(struct rr_server_client *, struct rr_server *,
                                   uint8_t, uint8_t, uint32_t);
 int rr_server_client_read_from_api(struct rr_server_client *,

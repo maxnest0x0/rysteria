@@ -24,6 +24,7 @@
 #include <Client/DOM.h>
 #include <Client/Game.h>
 #include <Client/InputData.h>
+#include <Client/Platform.h>
 #include <Client/Renderer/Renderer.h>
 #include <Client/Ui/Engine.h>
 
@@ -80,7 +81,8 @@ static void rr_renderer_flower_icon_draw(struct rr_renderer_filter filter)
 static uint8_t gardn_button_should_show(struct rr_ui_element *this,
                                          struct rr_game *game)
 {
-    return !game->simulation_ready;
+    //Sadly crazygames doesn't alow this :(
+    return !game->simulation_ready && !rr_platform_on_crazygames();
 }
 
 static void gardn_toggle_button_on_render(struct rr_ui_element *this,

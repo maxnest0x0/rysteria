@@ -29,6 +29,7 @@ struct rr_rivet_account
     char uuid[500];
     char name[500];
     char id[500];
+    char cg_id[500];
 };
 
 // user must define this function.
@@ -55,5 +56,5 @@ RR_CLIENT_ONLY(extern void rr_rivet_link_account(char *game_user,
 
 RR_CLIENT_ONLY(extern void rr_discord_oauth2_init(void *);)
 RR_CLIENT_ONLY(extern void rr_discord_oauth2_on_log_in(char *, char *, char *, void *);)
-RR_CLIENT_ONLY(extern void rr_discord_oauth2_link_account();)
+RR_CLIENT_ONLY(extern void rr_discord_oauth2_link_account(void *);)
 RR_CLIENT_ONLY(extern void rr_discord_oauth2_read_data(void *, void *);)

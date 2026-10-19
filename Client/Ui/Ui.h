@@ -219,6 +219,11 @@ extern struct rr_ui_element *rr_ui_account_toggle_button_init();
 extern struct rr_ui_element *rr_ui_discord_toggle_button_init();
 extern struct rr_ui_element *rr_ui_github_toggle_button_init();
 extern struct rr_ui_element *rr_ui_gardn_toggle_button_init();
+extern struct rr_ui_element *rr_ui_crazygames_login_button_init();
+extern struct rr_ui_element *rr_ui_copy_squad_link_button_init();
+extern struct rr_ui_element *rr_ui_legal_button_init();
+extern struct rr_ui_element *rr_ui_legal_container_init(struct rr_game *);
+extern struct rr_ui_element *rr_ui_crazygames_user_init(struct rr_game *);
 
 extern struct rr_ui_element *rr_ui_settings_container_init(struct rr_game *);
 extern struct rr_ui_element *rr_ui_squad_button_init();
@@ -264,3 +269,12 @@ extern struct rr_ui_element *rr_ui_chat_bar_init(struct rr_game *);
 extern struct rr_ui_element *rr_ui_message_box_init(struct rr_game *);
 
 extern struct rr_ui_element *rr_ui_anti_afk_container_init(struct rr_game *);
+
+extern struct rr_ui_element *rr_ui_tutorial_init(struct rr_game *);
+extern struct rr_ui_element *rr_ui_tutorial_highlight_init(struct rr_game *);
+extern void rr_tutorial_init(struct rr_game *);
+extern void rr_tutorial_tick(struct rr_game *, float);
+
+extern struct rr_ui_element *rr_tutorial_target(struct rr_game *, uint8_t,
+                                                struct rr_ui_element *);
+extern void rr_tutorial_on_join(struct rr_game *);
