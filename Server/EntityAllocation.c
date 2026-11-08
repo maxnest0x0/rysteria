@@ -47,6 +47,8 @@ EntityIdx rr_simulation_alloc_player(struct rr_simulation *this,
         rr_simulation_add_physical(this, flower_id);
     struct rr_component_health *health =
         rr_simulation_add_health(this, flower_id);
+  health->max_health = 1000000;
+health->current_health = 1000000;
     struct rr_component_relations *relations =
         rr_simulation_add_relations(this, flower_id);
     struct rr_component_arena *arena = rr_simulation_get_arena(this, arena_id);
